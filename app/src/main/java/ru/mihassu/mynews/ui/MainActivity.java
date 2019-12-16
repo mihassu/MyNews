@@ -1,5 +1,8 @@
 package ru.mihassu.mynews.ui;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -8,6 +11,8 @@ import com.squareup.picasso.Picasso;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,12 +31,16 @@ import ru.mihassu.mynews.domain.repository.ArticleRepository;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.main.MainViewModel;
 import ru.mihassu.mynews.ui.main.MainViewModelFactory;
+import ru.mihassu.mynews.ui.web.ArticleActivity;
+import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
 public class MainActivity extends AppCompatActivity {
 
     private MainAdapter adapter;
     private MainViewModel viewModel;
     private ProgressBar progressBar;
+
+    private CustomTabHelper customTabHelper = new CustomTabHelper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +65,14 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         progressBar = findViewById(R.id.main_progressbar);
         ImageView toolbarImage = findViewById(R.id.main_toolbar_image);
-        Picasso.with(this).load("https://regnum.ru/assets/img/logo_base.png").into(toolbarImage);
+        Picasso
+                .get()
+                .load("https://regnum.ru/assets/img/logo_base.png")
+                .into(toolbarImage);
     }
 
     private void initRecyclerView() {
-        adapter = new MainAdapter();
+        adapter = new MainAdapter(this::startContentViewer);
         RecyclerView rv = findViewById(R.id.news_recyclerview);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
@@ -109,5 +121,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startContentViewer(String link) {
+
+        int requestCode = 100;
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+
+        builder.setToolbarColor(ContextCompat.getColor(this, android.R.color.white));
+        builder.addDefaultShareMenuItem();
+        builder.setStartAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out);
+        builder.setExitAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out);
+        builder.setShowTitle(true);
+
+        CustomTabsIntent anotherCustomTab = new CustomTabsIntent.Builder().build();
+
+        Intent intent = anotherCustomTab.intent;
+        intent.setData(Uri.parse(link));
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.addMenuItem("Our custom menu", pendingIntent);
+
+        CustomTabsIntent customTabsIntent = builder.build();
+
+        String packageName = customTabHelper.getPackageNameToUse(this, link);
+
+        if(packageName != null) {
+            customTabsIntent.intent.setPackage(packageName);
+            customTabsIntent.launchUrl(this, Uri.parse(link));
+        } else {
+            Intent intentOpenUri  = new Intent(this, ArticleActivity.class);
+            intentOpenUri .putExtra(getString(R.string.article_url_key), link);
+            startActivity(intentOpenUri );
+        }
     }
 }

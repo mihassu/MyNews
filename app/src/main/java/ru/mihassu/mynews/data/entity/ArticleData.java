@@ -14,6 +14,16 @@ public class ArticleData {
     @Element (name = "description")
     private String content;
 
+    @Element(name = "link")
+    private String link;
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
 
     public String getTitle() {
         return title;
@@ -32,6 +42,6 @@ public class ArticleData {
     }
 
     public MyArticle convertToModel() {
-        return new MyArticle(title, content);
+        return new MyArticle(title, link, content);
     }
 }
