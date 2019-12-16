@@ -1,10 +1,11 @@
-package ru.mihassu.mynews.ui;
+package ru.mihassu.mynews.ui.main;
 
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.Picasso;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,20 +13,13 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
+import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.data.network.RegnumApi;
-import ru.mihassu.mynews.data.network.RetrofitInit;
-import ru.mihassu.mynews.data.repository.ArticleRepositoryRegnum;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
-import ru.mihassu.mynews.ui.main.MainAdapter;
-import ru.mihassu.mynews.ui.main.MainViewModel;
-import ru.mihassu.mynews.ui.main.MainViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView() {
         adapter = new MainAdapter();
         RecyclerView rv = findViewById(R.id.news_recyclerview);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
     }
 
@@ -83,8 +79,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        RegnumApi api = RetrofitInit.newApiInstance();
-        ArticleRepository repository = new ArticleRepositoryRegnum(api);
+
+        ArticleRepository repository = ((App) getApplication()).getAppComponent().getRepository();
+//        RegnumApi api = RetrofitInit.newApiInstance();
+//        ArticleRepository repository = new ArticleRepositoryRegnum(api);
         viewModel = ViewModelProviders.of(this, new MainViewModelFactory(repository))
                 .get(MainViewModel.class);
     }
