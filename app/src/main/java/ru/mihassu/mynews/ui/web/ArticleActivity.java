@@ -20,7 +20,9 @@ public class ArticleActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String url = intent.getStringExtra(getString(R.string.article_url_key));
-        showContent(mobileUrl(url));
+
+        WebView webView = findViewById (R.id.web_view);
+        webView.loadUrl(mobileUrl(url));
     }
 
     private String mobileUrl(String url) {
@@ -29,12 +31,5 @@ public class ArticleActivity extends AppCompatActivity {
             result = url.replace("//", "//m.");
         }
         return result;
-    }
-
-    private void showContent(String url) {
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        builder.setToolbarColor(Color.CYAN);
-        customTabsIntent.launchUrl(this, Uri.parse(url));
     }
 }
