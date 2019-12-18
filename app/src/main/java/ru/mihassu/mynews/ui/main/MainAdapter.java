@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import ru.mihassu.mynews.R;
@@ -21,6 +22,12 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
+    private static final int ITEM_WITH_PIC = 1;
+    private static final int ITEM_NO_PIC = 2;
+    private static int[] itemLayouts = {
+            R.layout.item_article_image_left,
+            R.layout.item_article_image_right,
+            R.layout.item_article_image_top};
 
     private List<MyArticle> dataList = new ArrayList<>();
     private Consumer<String> clickHandler;
@@ -38,16 +45,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     @Override
     public MainAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v;
 
-        if(viewType == 0) {
-            v = inflater.inflate(R.layout.item_article, parent, false);
-        } else {
-            v = inflater.inflate(R.layout.item_article_with_img, parent, false);
-        }
+        // Рандомно выбрать макет для элемента списка
+        int i = new Random().nextInt(itemLayouts.length);
+        View v = inflater.inflate(itemLayouts[i], parent, false);
 
-        v.setOnClickListener( view -> {
-            TextView tv = view.findViewById(R.id.item_link);
+        v.setOnClickListener(view -> {
             clickHandler.accept(view.getTag().toString());
         });
 
@@ -59,14 +62,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         holder.bind(dataList.get(position));
     }
 
-
     @Override
     public int getItemViewType(int position) {
-        if(dataList.get(position).image != null) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return dataList.get(position).image != null ? ITEM_WITH_PIC : ITEM_NO_PIC;
     }
 
     @Override
@@ -81,13 +79,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         TextView itemContent;
         TextView itemLink;
         ImageView itemPreview;
+        int maxSize = 120;
 
         public ViewHolder(@NonNull View itemView) {
+
+
             super(itemView);
             this.itemView = itemView;
             this.itemTitle = itemView.findViewById(R.id.item_title);
             this.itemContent = itemView.findViewById(R.id.item_content);
-            this.itemLink = itemView.findViewById(R.id.item_link);
             this.itemPreview = itemView.findViewById(R.id.item_preview);
         }
 
@@ -97,16 +97,24 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             itemView.setTag(item.link);
 
             itemTitle.setText(item.title);
-            itemContent.setText(item.description);
 
-            if(itemLink != null) {
-                itemLink.setText(item.link);
+            String content = item.description;
+
+            if(content.length() > maxSize ){
+                content = content.substring(0, maxSize) + "...";
             }
 
-            if(itemPreview != null && item.image != null) {
+            itemContent.setText(content);
+
+            if (item.image != null) {
                 Picasso
                         .get()
                         .load(item.image)
+                        .into(itemPreview);
+            } else {
+                Picasso
+                        .get()
+                        .load(R.drawable.ic_news_logo)
                         .into(itemPreview);
             }
         }
