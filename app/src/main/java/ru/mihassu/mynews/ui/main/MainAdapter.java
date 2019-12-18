@@ -77,7 +77,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         View itemView;
         TextView itemTitle;
         TextView itemContent;
-        TextView itemLink;
         ImageView itemPreview;
         int maxSize = 120;
 
@@ -101,7 +100,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             String content = item.description;
 
             if(content.length() > maxSize ){
-                content = content.substring(0, maxSize) + "...";
+                content = content.trim().substring(0, maxSize) + "...";
             }
 
             itemContent.setText(content);
@@ -114,7 +113,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             } else {
                 Picasso
                         .get()
-                        .load(R.drawable.ic_news_logo)
+                        .load(R.drawable.news_logo)
                         .into(itemPreview);
             }
         }
