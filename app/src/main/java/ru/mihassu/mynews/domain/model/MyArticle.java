@@ -1,38 +1,40 @@
 package ru.mihassu.mynews.domain.model;
 
-public class MyArticle {
+import androidx.annotation.NonNull;
 
-    private String title;
-    private String content;
-    private String link;
+import java.util.Date;
 
-    public MyArticle(String title, String link, String content) {
+public class MyArticle implements Comparable<MyArticle> {
+
+    public final String title;
+    public final String description;
+    public final String link;
+    public final long pubDate;
+    public final String author;
+    public final String image;
+
+    public MyArticle(String title, String description, String link, long pubDate, String author, String image) {
         this.title = title;
+        this.description = description;
         this.link = link;
-        this.content = content;
+        this.pubDate = pubDate;
+        this.author = author;
+        this.image = image;
     }
 
-    public String getLink() {
-        return link;
+    @NonNull
+    public String toString() {
+        return new Date(pubDate).toString() + "\n" + title;
     }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
+    // Сортировка по дате
+    @Override
+    public int compareTo(@NonNull MyArticle another) {
+        if (this.pubDate > another.pubDate) {
+            return -1;
+        } else if (this.pubDate < another.pubDate) {
+            return 1;
+        }
+        return 0;
     }
 }

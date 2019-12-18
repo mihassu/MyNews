@@ -4,10 +4,11 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.Picasso;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -17,16 +18,22 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.data.network.RegnumApi;
 import ru.mihassu.mynews.data.network.RetrofitInit;
 import ru.mihassu.mynews.data.repository.ArticleRepositoryRegnum;
+import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.main.MainViewModel;
@@ -41,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private CustomTabHelper customTabHelper = new CustomTabHelper();
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +60,28 @@ public class MainActivity extends AppCompatActivity {
         initViewModel();
         initRecyclerView();
 
-        viewModel.articleLiveData.observe(this, data -> {
-            adapter.setDataList(data);
-            progressBar.setVisibility(View.GONE);
-        });
+        loadChannels(disposable);
 
-        viewModel.loadArticles();
-        progressBar.setVisibility(View.VISIBLE);
+//        viewModel.articleLiveData.observe(this, data -> {
+//            adapter.setDataList(data);
+//            progressBar.setVisibility(View.GONE);
+//        });
+//
+//        viewModel.loadArticles();
+//        progressBar.setVisibility(View.VISIBLE);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposable.clear();
+    }
+
+    private void drawList(List<MyArticle> listItems) {
+
+        adapter.setDataList(listItems);
+        System.out.println("APP_TAG items received " + listItems.size());
     }
 
     private void initView() {
@@ -123,6 +145,26 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Запускаем процесс получения данных
+     */
+    private void loadChannels(CompositeDisposable disposable) {
+        App app = (App) getApplication();
+        disposable.add(
+                app
+                        .getCollector()
+                        .collectChannels()
+                        .map(list -> {
+                            List<MyArticle> sortedList = new ArrayList<>();
+                            sortedList.addAll(list);
+                            Collections.sort(sortedList);
+                            return sortedList;
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::drawList)
+        );
+    }
+
     private void startContentViewer(String link) {
 
         int requestCode = 100;
@@ -146,13 +188,13 @@ public class MainActivity extends AppCompatActivity {
 
         String packageName = customTabHelper.getPackageNameToUse(this, link);
 
-        if(packageName != null) {
+        if (packageName != null) {
             customTabsIntent.intent.setPackage(packageName);
             customTabsIntent.launchUrl(this, Uri.parse(link));
         } else {
-            Intent intentOpenUri  = new Intent(this, ArticleActivity.class);
-            intentOpenUri .putExtra(getString(R.string.article_url_key), link);
-            startActivity(intentOpenUri );
+            Intent intentOpenUri = new Intent(this, ArticleActivity.class);
+            intentOpenUri.putExtra(getString(R.string.article_url_key), link);
+            startActivity(intentOpenUri);
         }
     }
 }
