@@ -20,12 +20,10 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import retrofit2.http.Url;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 import static ru.mihassu.mynews.Utils.logIt;
-
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
@@ -84,6 +82,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         View itemView;
         TextView itemTitle;
         TextView itemContent;
+        TextView itemSourceStamp;
         ImageView itemPreview;
         ImageView itemFavicon;
         int maxSize = 120;
@@ -91,29 +90,28 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
+
             this.itemTitle = itemView.findViewById(R.id.item_title);
             this.itemContent = itemView.findViewById(R.id.item_content);
             this.itemPreview = itemView.findViewById(R.id.item_preview);
             this.itemFavicon = itemView.findViewById(R.id.favicon);
+            this.itemSourceStamp = itemView.findViewById(R.id.source_stamp);
         }
 
         public void bind(MyArticle item) {
 
-            logIt(articleTime(item.pubDate));
-
             // Ссылку на контент статьи сохр в теге элемента списка
             itemView.setTag(item.link);
-
+            // Заголовок статьи
             itemTitle.setText(item.title);
-
+            // Обрезать строку контента
             String content = item.description;
-
             if (content.length() > maxSize) {
                 content = content.trim().substring(0, maxSize) + "...";
             }
-
             itemContent.setText(content);
 
+            // Показать картинку
             if (item.image != null) {
                 Picasso
                         .get()
@@ -126,20 +124,35 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                         .into(itemPreview);
             }
 
+            // Показать favicon.ico и дату новости
             try {
                 String host = new URL(item.link).getHost();
+                String iconRequest =
+                        "https://www.google.com/s2/favicons?domain_url=http%3A%2F%2F" + host + "%2F";
 
                 Picasso
                         .get()
-                        .load("http://www.google.com/s2/favicons?domain=" + host)
+                        .load(iconRequest)
                         .into(itemFavicon);
 
+                String sourceStamp =
+                        String.format(
+                                "%s %s %s",
+                                host,
+                                Character.toString((char) 183),
+                                articleTime(item.pubDate));
+
+                itemSourceStamp.setText(sourceStamp);
+
             } catch (MalformedURLException e) {
-                logIt("No loading");
+                logIt("favicon load error");
                 e.printStackTrace();
             }
         }
 
+        /**
+         * Время выхода новости
+         */
         private String articleTime(long time) {
             long current = System.currentTimeMillis();
             long pastHours = (current - time) / (60 * 60 * 1000);

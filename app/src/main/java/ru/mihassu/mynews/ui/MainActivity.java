@@ -22,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,8 @@ import ru.mihassu.mynews.ui.main.MainViewModel;
 import ru.mihassu.mynews.ui.main.MainViewModelFactory;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
+
+import static ru.mihassu.mynews.Utils.logIt;
 
 public class MainActivity extends AppCompatActivity {
 
