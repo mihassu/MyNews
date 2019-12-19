@@ -35,12 +35,9 @@ public class ChannelRepositoryImpl implements ChannelRepository {
                     return new ArrayList<>();
                     // Отфильровать новости без картинок
                 }).map(
-                        list -> {
-                            return ((List<MyArticle>) list)
-                                    .stream()
-                                    .filter(article -> article.image != null)
-                                    .collect(Collectors.toList());
-                        }
-                );
+                        list -> ((List<MyArticle>) list)
+                                .stream()
+                                .filter(article -> article.image != null)
+                                .collect(Collectors.toList()));
     }
 }
