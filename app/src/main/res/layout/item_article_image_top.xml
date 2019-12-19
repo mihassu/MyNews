@@ -24,11 +24,11 @@
 
         <TextView
             android:id="@+id/item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             tools:text="Заголовок" />
 
         <TextView
@@ -40,5 +40,11 @@
             android:layout_marginBottom="8dp"
             tools:text="Текст новости" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/favicon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_gravity="start|bottom" />
 
 </com.google.android.material.card.MaterialCardView>

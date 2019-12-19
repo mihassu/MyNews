@@ -2,6 +2,7 @@ package ru.mihassu.mynews.data.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.Single;
 import ru.mihassu.mynews.data.network.ChannelParser;
@@ -32,6 +33,14 @@ public class ChannelRepositoryImpl implements ChannelRepository {
                         e.printStackTrace();
                     }
                     return new ArrayList<>();
-                });
+                    // Отфильровать новости без картинок
+                }).map(
+                        list -> {
+                            return ((List<MyArticle>) list)
+                                    .stream()
+                                    .filter(article -> article.image != null)
+                                    .collect(Collectors.toList());
+                        }
+                );
     }
 }

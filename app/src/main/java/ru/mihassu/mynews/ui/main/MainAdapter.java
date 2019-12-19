@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import retrofit2.http.Url;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
@@ -82,16 +85,16 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         TextView itemTitle;
         TextView itemContent;
         ImageView itemPreview;
+        ImageView itemFavicon;
         int maxSize = 120;
 
         public ViewHolder(@NonNull View itemView) {
-
-
             super(itemView);
             this.itemView = itemView;
             this.itemTitle = itemView.findViewById(R.id.item_title);
             this.itemContent = itemView.findViewById(R.id.item_content);
             this.itemPreview = itemView.findViewById(R.id.item_preview);
+            this.itemFavicon = itemView.findViewById(R.id.favicon);
         }
 
         public void bind(MyArticle item) {
@@ -121,6 +124,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                         .get()
                         .load(R.drawable.news_logo)
                         .into(itemPreview);
+            }
+
+            try {
+                String host = new URL(item.link).getHost();
+
+                Picasso
+                        .get()
+                        .load("http://www.google.com/s2/favicons?domain=" + host)
+                        .into(itemFavicon);
+
+            } catch (MalformedURLException e) {
+                logIt("No loading");
+                e.printStackTrace();
             }
         }
 
