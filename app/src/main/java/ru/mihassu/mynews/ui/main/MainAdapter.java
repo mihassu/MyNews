@@ -105,7 +105,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
             String content = item.description;
 
-            if(content.length() > maxSize ){
+            if (content.length() > maxSize) {
                 content = content.trim().substring(0, maxSize) + "...";
             }
 
@@ -125,17 +125,20 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         }
 
         private String articleTime(long time) {
-            String hour = "hour";
-            String hours = "hours";
-
             long current = System.currentTimeMillis();
+            long pastHours = (current - time) / (60 * 60 * 1000);
 
-            int pastHours = (int)((current - time) / (60 * 60 * 1000));
-
-            if(pastHours > 24) {
+            if (pastHours > 24) {
                 return new SimpleDateFormat("dd MMM yy", Locale.getDefault()).format(time);
+            } else if (pastHours >= 1) {
+
+                String h = pastHours == 1 ? "hour" : "hours";
+
+                return String.format(Locale.getDefault(), "%d %s ago",
+                        pastHours, h);
             } else {
-                return  String.format(Locale.getDefault(), "%d %s ago", pastHours, pastHours == 1 ? hour : hours);
+                return String.format(Locale.getDefault(), "%s",
+                        new SimpleDateFormat("H:mm", Locale.getDefault()).format(time));
             }
         }
     }
