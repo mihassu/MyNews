@@ -9,11 +9,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import ru.mihassu.mynews.domain.model.MyArticle;
+
+import static ru.mihassu.mynews.Utils.logIt;
 
 public class ChannelParser {
 
@@ -24,7 +28,7 @@ public class ChannelParser {
     private static final String TAG_TITLE = "title";
     private static final String TAG_DESCRIPTION = "description";
     private static final String TAG_LINK = "link";
-    private static final String TAG_DATE = "date";
+    private static final String TAG_DATE = "pubDate";
     private static final String TAG_AUTHOR = "author";
     private static final String TAG_ENCLOSURE = "enclosure";
 
@@ -239,7 +243,8 @@ public class ChannelParser {
         long result = System.currentTimeMillis();
 
         try {
-            result = new SimpleDateFormat("E, dd MMMMM yyyy HH:mm:ss Z", Locale.getDefault())
+
+            result = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH)
                     .parse(date)
                     .getTime();
         }

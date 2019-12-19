@@ -11,13 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.function.Consumer;
 
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
+
+import static ru.mihassu.mynews.Utils.logIt;
 
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
@@ -92,6 +96,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         public void bind(MyArticle item) {
 
+            logIt(articleTime(item.pubDate));
+
             // Ссылку на контент статьи сохр в теге элемента списка
             itemView.setTag(item.link);
 
@@ -115,6 +121,21 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                         .get()
                         .load(R.drawable.news_logo)
                         .into(itemPreview);
+            }
+        }
+
+        private String articleTime(long time) {
+            String hour = "hour";
+            String hours = "hours";
+
+            long current = System.currentTimeMillis();
+
+            int pastHours = (int)((current - time) / (60 * 60 * 1000));
+
+            if(pastHours > 24) {
+                return new SimpleDateFormat("dd MMM yy", Locale.getDefault()).format(time);
+            } else {
+                return  String.format(Locale.getDefault(), "%d %s ago", pastHours, pastHours == 1 ? hour : hours);
             }
         }
     }
