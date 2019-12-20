@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.data.entity;
+package ru.mihassu.mynews.domain.entity;
 
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Path;

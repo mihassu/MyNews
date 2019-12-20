@@ -6,7 +6,6 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import ru.mihassu.mynews.data.entity.RSSNews;
 import ru.mihassu.mynews.data.network.RegnumApi;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
