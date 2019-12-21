@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">О нас</string>
+    <string name="action_settings">Настройки</string>
+    <string name="bookmarks">Закладки</string>
+    <string name="menu_group_main">Главное</string>
+    <string name="menu_group_settings_and_features">Настройки и всякое</string>
+    <string name="news">Новости</string>
+    <string name="settings">Настройки</string>
+</resources>
