@@ -21,9 +21,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -43,6 +46,7 @@ import ru.mihassu.mynews.domain.repository.ArticleRepository;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.main.MainViewModel;
 import ru.mihassu.mynews.ui.main.MainViewModelFactory;
+import ru.mihassu.mynews.ui.news.NewsPageAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
@@ -51,11 +55,15 @@ public class MainFragment extends Fragment {
     private MainViewModel viewModel;
     private View view;
 
-    private CustomTabHelper customTabHelper = new CustomTabHelper();
+    private NewsPageAdapter viewPagerAdapter;
+    private ViewPager2 viewPager;
+
+//    private CustomTabHelper customTabHelper = new CustomTabHelper();
     private CompositeDisposable disposable = new CompositeDisposable();
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_main, container, false);
+        initViewPager();
         return view;
     }
 
@@ -64,9 +72,17 @@ public class MainFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         initViewModel();
-        initRecyclerView();
-
+//        initRecyclerView();
         loadChannels(disposable);
+    }
+
+    //Tabs
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        TabLayout tabLayout = view.findViewById(R.id.news_tabs);
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
+                tab.setText("Newss"))
+        .attach();
     }
 
     @Override
@@ -77,22 +93,33 @@ public class MainFragment extends Fragment {
 
     private void drawList(List<MyArticle> listItems) {
 
-        adapter.setDataList(listItems);
+//        adapter.setDataList(listItems);
+        List<List<MyArticle>> newsList = new ArrayList<>();
+        newsList.add(listItems);
+        newsList.add(listItems);
+        viewPagerAdapter.setDataList(newsList);
         System.out.println("APP_TAG items received " + listItems.size());
     }
 
-    private void initRecyclerView() {
-        adapter = new MainAdapter(this::startContentViewer);
-        RecyclerView rv = view.findViewById(R.id.news_recyclerview);
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        rv.setAdapter(adapter);
-    }
+//    private void initRecyclerView() {
+//        adapter = new MainAdapter(this::startContentViewer);
+//        RecyclerView rv = view.findViewById(R.id.news_recyclerview);
+//        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+//        rv.setAdapter(adapter);
+//    }
 
     private void initViewModel() {
         RegnumApi api = RetrofitInit.newApiInstance();
         ArticleRepository repository = new ArticleRepositoryRegnum(api);
         viewModel = ViewModelProviders.of(this, new MainViewModelFactory(repository))
                 .get(MainViewModel.class);
+    }
+
+    //ViewPager
+    private void initViewPager() {
+        viewPagerAdapter = new NewsPageAdapter();
+        viewPager = view.findViewById(R.id.news_viewpager);
+        viewPager.setAdapter(viewPagerAdapter);
     }
 
 
@@ -115,36 +142,36 @@ public class MainFragment extends Fragment {
         );
     }
 
-    private void startContentViewer(String link) {
-
-        int requestCode = 100;
-
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-
-        builder.setToolbarColor(ContextCompat.getColor(getContext(), android.R.color.white));
-        builder.addDefaultShareMenuItem();
-        builder.setStartAnimations(getContext(), android.R.anim.fade_in, android.R.anim.fade_out);
-        builder.setExitAnimations(getContext(), android.R.anim.fade_in, android.R.anim.fade_out);
-        builder.setShowTitle(true);
-
-        CustomTabsIntent anotherCustomTab = new CustomTabsIntent.Builder().build();
-
-        Intent intent = anotherCustomTab.intent;
-        intent.setData(Uri.parse(link));
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.addMenuItem("Our custom menu", pendingIntent);
-
-        CustomTabsIntent customTabsIntent = builder.build();
-
-        String packageName = customTabHelper.getPackageNameToUse(getContext(), link);
-
-        if (packageName != null) {
-            customTabsIntent.intent.setPackage(packageName);
-            customTabsIntent.launchUrl(getContext(), Uri.parse(link));
-        } else {
-            Intent intentOpenUri = new Intent(getContext(), ArticleActivity.class);
-            intentOpenUri.putExtra(getString(R.string.article_url_key), link);
-            startActivity(intentOpenUri);
-        }
-    }
+//    private void startContentViewer(String link) {
+//
+//        int requestCode = 100;
+//
+//        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+//
+//        builder.setToolbarColor(ContextCompat.getColor(getContext(), android.R.color.white));
+//        builder.addDefaultShareMenuItem();
+//        builder.setStartAnimations(getContext(), android.R.anim.fade_in, android.R.anim.fade_out);
+//        builder.setExitAnimations(getContext(), android.R.anim.fade_in, android.R.anim.fade_out);
+//        builder.setShowTitle(true);
+//
+//        CustomTabsIntent anotherCustomTab = new CustomTabsIntent.Builder().build();
+//
+//        Intent intent = anotherCustomTab.intent;
+//        intent.setData(Uri.parse(link));
+//        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        builder.addMenuItem("Our custom menu", pendingIntent);
+//
+//        CustomTabsIntent customTabsIntent = builder.build();
+//
+//        String packageName = customTabHelper.getPackageNameToUse(getContext(), link);
+//
+//        if (packageName != null) {
+//            customTabsIntent.intent.setPackage(packageName);
+//            customTabsIntent.launchUrl(getContext(), Uri.parse(link));
+//        } else {
+//            Intent intentOpenUri = new Intent(getContext(), ArticleActivity.class);
+//            intentOpenUri.putExtra(getString(R.string.article_url_key), link);
+//            startActivity(intentOpenUri);
+//        }
+//    }
 }

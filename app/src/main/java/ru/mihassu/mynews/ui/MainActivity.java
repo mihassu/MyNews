@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         ProgressBar progressBar = findViewById(R.id.main_progressbar);
-        ImageView toolbarImage = findViewById(R.id.main_toolbar_image);
-        Picasso
-                .get()
-                .load("https://regnum.ru/assets/img/logo_base.png")
-                .into(toolbarImage);
+//        ImageView toolbarImage = findViewById(R.id.main_toolbar_image);
+//        Picasso
+//                .get()
+//                .load("https://regnum.ru/assets/img/logo_base.png")
+//                .into(toolbarImage);
     }
 
     @Override
