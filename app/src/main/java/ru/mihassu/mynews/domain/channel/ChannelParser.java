@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.data.network;
+package ru.mihassu.mynews.domain.channel;
 
 import android.util.Xml;
 
@@ -9,15 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import ru.mihassu.mynews.domain.model.MyArticle;
-
-import static ru.mihassu.mynews.Utils.logIt;
 
 public class ChannelParser {
 
@@ -31,6 +27,7 @@ public class ChannelParser {
     private static final String TAG_DATE = "pubDate";
     private static final String TAG_AUTHOR = "author";
     private static final String TAG_ENCLOSURE = "enclosure";
+    private static final String TAG_CATEGORY = "category";
 
     private static final int TAG_ID_TITLE = 1;
     private static final int TAG_ID_DESCRIPTION = 2;
@@ -38,9 +35,12 @@ public class ChannelParser {
     private static final int TAG_ID_DATE = 4;
     private static final int TAG_ID_AUTHOR = 5;
     private static final int TAG_ID_ENCLOSURE = 6;
+    private static final int TAG_ID_CATEGORY = 7;
 
     private static final String ATTR_TYPE = "type";
     private static final String ATTR_URL = "url";
+
+    private Classifier classifier;
 
     // Не использовать namespace
     private static final String ns = null;
@@ -105,6 +105,7 @@ public class ChannelParser {
         String description = null;
         String author = null;
         String image = null;
+        String category = null;
         long pubDate = 0;
 
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -139,7 +140,7 @@ public class ChannelParser {
                     skip(parser);
             }
         }
-        return new MyArticle(title, description, link, pubDate, author, image);
+        return new MyArticle(title, description, link, pubDate, author, image, category);
     }
 
     /**

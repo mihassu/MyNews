@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.reactivex.Single;
-import ru.mihassu.mynews.data.network.ChannelParser;
+import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
 import ru.mihassu.mynews.domain.repository.RawChannelRepository;

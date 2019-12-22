@@ -12,14 +12,22 @@ public class MyArticle implements Comparable<MyArticle> {
     public final long pubDate;
     public final String author;
     public final String image;
+    public final String category;
 
-    public MyArticle(String title, String description, String link, long pubDate, String author, String image) {
+    public MyArticle(String title,
+                     String description,
+                     String link,
+                     long pubDate,
+                     String author,
+                     String image,
+                     String category) {
         this.title = title;
         this.description = description;
         this.link = link;
         this.pubDate = pubDate;
         this.author = author;
         this.image = image;
+        this.category = category;
     }
 
     @NonNull

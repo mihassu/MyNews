@@ -27,10 +27,13 @@ public class ArticleData {
     @Element(name = "image")
     public String image;
 
+    @Element(name = "category")
+    public String category;
+
 
     public MyArticle convertToModel() {
         return new MyArticle(
-                title, description, link, pubDate, author, image
+                title, description, link, pubDate, author, image, category
         );
     }
 }
