@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import java.util.Date;
 
+import ru.mihassu.mynews.domain.entity.ArticleCategory;
+
 public class MyArticle implements Comparable<MyArticle> {
 
     public final String title;
@@ -12,7 +14,7 @@ public class MyArticle implements Comparable<MyArticle> {
     public final long pubDate;
     public final String author;
     public final String image;
-    public final String category;
+    public final ArticleCategory category;
 
     public MyArticle(String title,
                      String description,
@@ -20,7 +22,7 @@ public class MyArticle implements Comparable<MyArticle> {
                      long pubDate,
                      String author,
                      String image,
-                     String category) {
+                     ArticleCategory category) {
         this.title = title;
         this.description = description;
         this.link = link;

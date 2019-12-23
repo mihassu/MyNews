@@ -13,9 +13,11 @@ import ru.mihassu.mynews.domain.repository.RawChannelRepository;
 public class ChannelRepositoryImpl implements ChannelRepository {
 
     private RawChannelRepository repo;
+    private ChannelParser parser;
 
-    public ChannelRepositoryImpl(RawChannelRepository repo) {
+    public ChannelRepositoryImpl(RawChannelRepository repo, ChannelParser parser) {
         this.repo = repo;
+        this.parser = parser;
     }
 
     @Override
@@ -24,8 +26,6 @@ public class ChannelRepositoryImpl implements ChannelRepository {
         return repo
                 .create()
                 .map(response -> {
-
-                    ChannelParser parser = new ChannelParser();
 
                     try {
                         return parser.parse(response.body().byteStream());

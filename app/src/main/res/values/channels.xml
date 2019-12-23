@@ -2,6 +2,8 @@
 <resources>
     <string-array name="rss_channels">
         <item>https://lenta.ru/rss</item>
-        <item>https://regnum.ru/rss/news</item>
+        <item>https://www.vesti.ru/vesti.rss</item>
+        <item>https://www.rosbalt.ru/feed/</item>
+<!--        <item>https://regnum.ru/rss/news</item>-->
     </string-array>
 </resources>

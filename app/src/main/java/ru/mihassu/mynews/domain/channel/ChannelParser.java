@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
+
+import static ru.mihassu.mynews.Utils.logIt;
 
 public class ChannelParser {
 
@@ -44,6 +47,10 @@ public class ChannelParser {
 
     // Не использовать namespace
     private static final String ns = null;
+
+    public ChannelParser(Classifier classifier) {
+        this.classifier = classifier;
+    }
 
     public List<MyArticle> parse(InputStream in)
             throws XmlPullParserException, IOException {
@@ -105,7 +112,7 @@ public class ChannelParser {
         String description = null;
         String author = null;
         String image = null;
-        String category = null;
+        ArticleCategory category = null;
         long pubDate = 0;
 
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -136,6 +143,12 @@ public class ChannelParser {
                 case TAG_ENCLOSURE:
                     image = readTag(parser, TAG_ID_ENCLOSURE);
                     break;
+                case TAG_CATEGORY:
+                    category = classifier.classify(readTag(parser, TAG_ID_CATEGORY));
+                    if(category != ArticleCategory.NEWS) {
+                        logIt("Parsed category: " + category);
+                    }
+                    break;
                 default:
                     skip(parser);
             }
@@ -162,6 +175,8 @@ public class ChannelParser {
                 return readBasicTag(parser, TAG_AUTHOR);
             case TAG_ID_ENCLOSURE:
                 return readEnclosureLink(parser);
+            case TAG_ID_CATEGORY:
+                return readBasicTag(parser, TAG_CATEGORY);
             default:
                 throw new IllegalArgumentException("Unknown tag type: " + tagType);
         }

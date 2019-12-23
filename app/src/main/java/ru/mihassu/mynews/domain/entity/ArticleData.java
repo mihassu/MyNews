@@ -30,10 +30,9 @@ public class ArticleData {
     @Element(name = "category")
     public String category;
 
-
     public MyArticle convertToModel() {
         return new MyArticle(
-                title, description, link, pubDate, author, image, category
+                title, description, link, pubDate, author, image, ArticleCategory.NEWS
         );
     }
 }
