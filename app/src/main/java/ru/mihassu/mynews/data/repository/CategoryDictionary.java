@@ -46,4 +46,10 @@ public class CategoryDictionary {
     public HashMap<ArticleCategory, List<String>> getDictionary() {
         return dictionary;
     }
+
+    //Получить строковое значение категории (взять первое значение из объединенной категории)
+    public String getCategory(ArticleCategory category) {
+        if (category == NEWS) {return "Новости";}
+        return dictionary.get(category).get(0);
+    }
 }

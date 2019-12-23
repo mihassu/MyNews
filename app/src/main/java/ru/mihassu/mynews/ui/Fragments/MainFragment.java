@@ -36,11 +36,15 @@ import java.util.Objects;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import kotlin.jvm.internal.PackageReference;
+import kotlin.jvm.internal.PropertyReference0Impl;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.data.network.RegnumApi;
 import ru.mihassu.mynews.data.network.RetrofitInit;
 import ru.mihassu.mynews.data.repository.ArticleRepositoryRegnum;
+import ru.mihassu.mynews.data.repository.CategoryDictionary;
+import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
 import ru.mihassu.mynews.ui.main.MainAdapter;
@@ -58,7 +62,10 @@ public class MainFragment extends Fragment {
     private NewsPageAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
 
-//    private CustomTabHelper customTabHelper = new CustomTabHelper();
+    private List<List<MyArticle>> newsList = new ArrayList<>();
+
+
+    //    private CustomTabHelper customTabHelper = new CustomTabHelper();
     private CompositeDisposable disposable = new CompositeDisposable();
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -81,7 +88,8 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         TabLayout tabLayout = view.findViewById(R.id.news_tabs);
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
-                tab.setText("Newss"))
+                //Установка заголовка таба
+                tab.setText(CategoryDictionary.getInstance().getCategory(newsList.get(position).get(0).category)))
         .attach();
     }
 
@@ -91,13 +99,10 @@ public class MainFragment extends Fragment {
         disposable.clear();
     }
 
-    private void drawList(List<MyArticle> listItems) {
+    private void drawList(List<List<MyArticle>> listItems) {
 
 //        adapter.setDataList(listItems);
-        List<List<MyArticle>> newsList = new ArrayList<>();
-        newsList.add(listItems);
-        newsList.add(listItems);
-        viewPagerAdapter.setDataList(newsList);
+        viewPagerAdapter.setDataList(listItems);
         System.out.println("APP_TAG items received " + listItems.size());
     }
 
@@ -136,6 +141,60 @@ public class MainFragment extends Fragment {
                             List<MyArticle> sortedList = new ArrayList<>(list);
                             Collections.sort(sortedList);
                             return sortedList;
+                        })
+                        //Разделение по категориям
+                        .map(articleList -> {
+                            List<MyArticle> politic = new ArrayList<>();
+                            List<MyArticle> economic = new ArrayList<>();
+                            List<MyArticle> society = new ArrayList<>();
+                            List<MyArticle> sport = new ArrayList<>();
+                            List<MyArticle> culture = new ArrayList<>();
+                            List<MyArticle> crime = new ArrayList<>();
+                            List<MyArticle> it = new ArrayList<>();
+                            List<MyArticle> science = new ArrayList<>();
+                            List<MyArticle> celebrity = new ArrayList<>();
+                            List<MyArticle> travel = new ArrayList<>();
+                            List<MyArticle> news = new ArrayList<>();
+
+                            for (MyArticle article: articleList) {
+                                switch (article.category) {
+                                    case POLITICS: politic.add(article);
+                                        break;
+                                    case ECONOMICS: economic.add(article);
+                                        break;
+                                    case SOCIETY: society.add(article);
+                                        break;
+                                    case SPORT: sport.add(article);
+                                        break;
+                                    case CULTURE: culture.add(article);
+                                        break;
+                                    case CRIME: crime.add(article);
+                                        break;
+                                    case IT: it.add(article);
+                                        break;
+                                    case SCIENCE: science.add(article);
+                                        break;
+                                    case CELEBRITY: celebrity.add(article);
+                                        break;
+                                    case TRAVEL: travel.add(article);
+                                        break;
+                                    case NEWS: news.add(article);
+                                        break;
+                                }
+                            }
+                            newsList.add(politic);
+                            newsList.add(economic);
+                            newsList.add(society);
+                            newsList.add(sport);
+                            newsList.add(culture);
+                            newsList.add(crime);
+                            newsList.add(it);
+                            newsList.add(science);
+                            newsList.add(celebrity);
+                            newsList.add(travel);
+                            newsList.add(news);
+                            return newsList;
+
                         })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::drawList)

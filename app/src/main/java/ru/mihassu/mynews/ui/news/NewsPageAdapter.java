@@ -26,8 +26,8 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
 
     //список из списков новостей по темам
     private List<List<MyArticle>> newsList = new ArrayList<>();
-    private CustomTabHelper customTabHelper = new CustomTabHelper();
 
+    private CustomTabHelper customTabHelper = new CustomTabHelper();
 
     public void setDataList(List<List<MyArticle>> newsList) {
         this.newsList = newsList;
@@ -52,7 +52,7 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
 
     @Override
     public int getItemCount() {
-        return 2;
+        return newsList.size();
     }
 
     class NewsViewHolder extends RecyclerView.ViewHolder{
