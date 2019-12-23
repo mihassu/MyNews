@@ -2,9 +2,13 @@ package ru.mihassu.mynews.data.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
@@ -14,10 +18,44 @@ public class ChannelRepositoryImpl implements ChannelRepository {
 
     private RawChannelRepository repo;
     private ChannelParser parser;
+    private long updateInterval;
 
-    public ChannelRepositoryImpl(RawChannelRepository repo, ChannelParser parser) {
+    public ChannelRepositoryImpl(
+            RawChannelRepository repo,
+            ChannelParser parser,
+            long updateInterval) {
         this.repo = repo;
         this.parser = parser;
+        this.updateInterval = updateInterval;
+    }
+
+    @Override
+    public Observable<List<MyArticle>> getChannelObs() {
+
+        return Observable
+                .interval(0, updateInterval, TimeUnit.MINUTES)
+                .flatMap(new Function<Long, ObservableSource<List<MyArticle>>>() {
+                    @Override
+                    public ObservableSource<List<MyArticle>> apply(Long aLong) throws Exception {
+                        return repo
+                                .create()
+                                .map(response -> {
+                                    try {
+                                        return parser.parse(response.body().byteStream());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    return new ArrayList<>();
+                                    // Отфильровать новости без картинок
+                                })
+                                .map(
+                                        list -> ((List<MyArticle>) list)
+                                                .stream()
+                                                .filter(article -> article.image != null)
+                                                .collect(Collectors.toList()))
+                                .toObservable();
+                    }
+                });
     }
 
     @Override

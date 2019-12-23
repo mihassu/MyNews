@@ -32,7 +32,7 @@ public class CategoryDictionary {
         dictionary = new HashMap<>();
 
         dictionary.put(POLITICS, Arrays.asList("политика", "в мире", "россия", "мир", "бывший ссср", "в россии", "москва", "петербург"));
-        dictionary.put(ECONOMICS, Arrays.asList("экономика", "бизнес", "Недвижимость", "Оборона", "безопасность"));
+        dictionary.put(ECONOMICS, Arrays.asList("экономика", "бизнес", "Недвижимость", "Оборона", "безопасность", "Нацпроекты"));
         dictionary.put(SOCIETY, Arrays.asList("общество", "дом", "из жизни"));
         dictionary.put(SPORT, Arrays.asList("спорт", "олимпиада"));
         dictionary.put(CULTURE, Arrays.asList("культура", "ценности"));

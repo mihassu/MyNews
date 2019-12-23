@@ -38,7 +38,8 @@ public class App extends Application {
             channels.add(
                     new ChannelRepositoryImpl(
                             new RawChannelRepositoryImpl(client, channel),
-                            new ChannelParser(classifier)));
+                            new ChannelParser(classifier),
+                            1));
         }
 
         collector = new ChannelCollectorImpl(channels);
