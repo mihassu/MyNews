@@ -75,6 +75,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         TabLayout tabLayout = view.findViewById(R.id.news_tabs);
+
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
                 //Установка заголовка таба
                 tab.setText(CategoryDictionary.getInstance().getCategory(newsList.get(position).get(0).category)))
@@ -140,10 +141,12 @@ public class MainFragment extends Fragment {
                             }
 
                             for (MyArticle article : articleList) {
-                                    map.get(article.category).add(article);
+                                map.get(article.category).add(article);
                             }
 
-                            return new ArrayList(map.values());
+                            List<List<MyArticle>> li = new ArrayList(map.values());
+
+                            return li;
 
 
 //                            List<MyArticle> politic = new ArrayList<>();
