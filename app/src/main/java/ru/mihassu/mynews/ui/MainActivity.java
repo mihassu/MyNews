@@ -1,10 +1,7 @@
 package ru.mihassu.mynews.ui;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,8 +11,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
+
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.picasso.Picasso;
 
 import ru.mihassu.mynews.R;
 
@@ -27,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAppTheme();
         setContentView(R.layout.activity_main);
         initToolbar();
         initNavigationDrawer();
@@ -66,6 +65,16 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
 
+    }
+
+    private void setAppTheme() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean userTheme = preferences.getBoolean("dark_theme", false);
+        if (userTheme) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppThemePurple);
+        }
     }
 
 }

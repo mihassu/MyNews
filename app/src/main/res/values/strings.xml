@@ -9,4 +9,5 @@
     <string name="menu_group_main">Main</string>
     <string name="menu_group_settings_and_features">Settings and Features</string>
     <string name="mynews_logo" translatable="false">MyNews logo</string>
+    <string name="dark_theme" translatable="false">false</string>
 </resources>
