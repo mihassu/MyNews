@@ -17,6 +17,8 @@ import ru.mihassu.mynews.domain.repository.ChannelRepository;
 
 public class App extends Application {
 
+    private static final int UPDATE_INTERVAL_MINUTES = 5;
+
     OkHttpClient client;
     ChannelCollector collector;
     Classifier classifier;
@@ -39,7 +41,7 @@ public class App extends Application {
                     new ChannelRepositoryImpl(
                             new RawChannelRepositoryImpl(client, channel),
                             new ChannelParser(classifier),
-                            1));
+                            UPDATE_INTERVAL_MINUTES));
         }
 
         collector = new ChannelCollectorImpl(channels);

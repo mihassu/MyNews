@@ -1,43 +1,29 @@
 package ru.mihassu.mynews.ui.Fragments;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import kotlin.jvm.internal.PackageReference;
-import kotlin.jvm.internal.PropertyReference0Impl;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.data.network.RegnumApi;
@@ -51,8 +37,6 @@ import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.main.MainViewModel;
 import ru.mihassu.mynews.ui.main.MainViewModelFactory;
 import ru.mihassu.mynews.ui.news.NewsPageAdapter;
-import ru.mihassu.mynews.ui.web.ArticleActivity;
-import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
 public class MainFragment extends Fragment {
     private MainAdapter adapter;
@@ -67,8 +51,12 @@ public class MainFragment extends Fragment {
 
     //    private CustomTabHelper customTabHelper = new CustomTabHelper();
     private CompositeDisposable disposable = new CompositeDisposable();
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            ViewGroup container,
+            Bundle savedInstanceState) {
+
         view = inflater.inflate(R.layout.fragment_main, container, false);
         initViewPager();
         return view;
@@ -90,7 +78,7 @@ public class MainFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
                 //Установка заголовка таба
                 tab.setText(CategoryDictionary.getInstance().getCategory(newsList.get(position).get(0).category)))
-        .attach();
+                .attach();
     }
 
     @Override
@@ -144,56 +132,81 @@ public class MainFragment extends Fragment {
                         })
                         //Разделение по категориям
                         .map(articleList -> {
-                            List<MyArticle> politic = new ArrayList<>();
-                            List<MyArticle> economic = new ArrayList<>();
-                            List<MyArticle> society = new ArrayList<>();
-                            List<MyArticle> sport = new ArrayList<>();
-                            List<MyArticle> culture = new ArrayList<>();
-                            List<MyArticle> crime = new ArrayList<>();
-                            List<MyArticle> it = new ArrayList<>();
-                            List<MyArticle> science = new ArrayList<>();
-                            List<MyArticle> celebrity = new ArrayList<>();
-                            List<MyArticle> travel = new ArrayList<>();
-                            List<MyArticle> news = new ArrayList<>();
 
-                            for (MyArticle article: articleList) {
-                                switch (article.category) {
-                                    case POLITICS: politic.add(article);
-                                        break;
-                                    case ECONOMICS: economic.add(article);
-                                        break;
-                                    case SOCIETY: society.add(article);
-                                        break;
-                                    case SPORT: sport.add(article);
-                                        break;
-                                    case CULTURE: culture.add(article);
-                                        break;
-                                    case CRIME: crime.add(article);
-                                        break;
-                                    case IT: it.add(article);
-                                        break;
-                                    case SCIENCE: science.add(article);
-                                        break;
-                                    case CELEBRITY: celebrity.add(article);
-                                        break;
-                                    case TRAVEL: travel.add(article);
-                                        break;
-                                    case NEWS: news.add(article);
-                                        break;
-                                }
+                            HashMap<ArticleCategory, List<MyArticle>> map = new HashMap<>();
+
+                            for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
+                                map.put(c, new ArrayList<>());
                             }
-                            newsList.add(politic);
-                            newsList.add(economic);
-                            newsList.add(society);
-                            newsList.add(sport);
-                            newsList.add(culture);
-                            newsList.add(crime);
-                            newsList.add(it);
-                            newsList.add(science);
-                            newsList.add(celebrity);
-                            newsList.add(travel);
-                            newsList.add(news);
-                            return newsList;
+
+                            for (MyArticle article : articleList) {
+                                    map.get(article.category).add(article);
+                            }
+
+                            return new ArrayList(map.values());
+
+
+//                            List<MyArticle> politic = new ArrayList<>();
+//                            List<MyArticle> economic = new ArrayList<>();
+//                            List<MyArticle> society = new ArrayList<>();
+//                            List<MyArticle> sport = new ArrayList<>();
+//                            List<MyArticle> culture = new ArrayList<>();
+//                            List<MyArticle> crime = new ArrayList<>();
+//                            List<MyArticle> it = new ArrayList<>();
+//                            List<MyArticle> science = new ArrayList<>();
+//                            List<MyArticle> celebrity = new ArrayList<>();
+//                            List<MyArticle> travel = new ArrayList<>();
+//                            List<MyArticle> news = new ArrayList<>();
+//
+//                            for (MyArticle article : articleList) {
+//                                switch (article.category) {
+//                                    case POLITICS:
+//                                        politic.add(article);
+//                                        break;
+//                                    case ECONOMICS:
+//                                        economic.add(article);
+//                                        break;
+//                                    case SOCIETY:
+//                                        society.add(article);
+//                                        break;
+//                                    case SPORT:
+//                                        sport.add(article);
+//                                        break;
+//                                    case CULTURE:
+//                                        culture.add(article);
+//                                        break;
+//                                    case CRIME:
+//                                        crime.add(article);
+//                                        break;
+//                                    case IT:
+//                                        it.add(article);
+//                                        break;
+//                                    case SCIENCE:
+//                                        science.add(article);
+//                                        break;
+//                                    case CELEBRITY:
+//                                        celebrity.add(article);
+//                                        break;
+//                                    case TRAVEL:
+//                                        travel.add(article);
+//                                        break;
+//                                    case NEWS:
+//                                        news.add(article);
+//                                        break;
+//                                }
+//                            }
+//                            newsList.add(politic);
+//                            newsList.add(economic);
+//                            newsList.add(society);
+//                            newsList.add(sport);
+//                            newsList.add(culture);
+//                            newsList.add(crime);
+//                            newsList.add(it);
+//                            newsList.add(science);
+//                            newsList.add(celebrity);
+//                            newsList.add(travel);
+//                            newsList.add(news);
+//                            return newsList;
 
                         })
                         .observeOn(AndroidSchedulers.mainThread())
