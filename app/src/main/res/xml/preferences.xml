@@ -8,5 +8,9 @@
         app:key="dark_theme"
         app:title="Enable dark theme"/>
 
+    <SwitchPreferenceCompat
+        app:key="show_bottom_navigation"
+        app:title="Show bottom navigation menu"/>
+
 
 </PreferenceScreen>

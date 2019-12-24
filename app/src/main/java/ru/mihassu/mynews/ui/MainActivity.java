@@ -2,6 +2,7 @@ package ru.mihassu.mynews.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +14,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Objects;
 
 import ru.mihassu.mynews.R;
 
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setAppTheme();
         setContentView(R.layout.activity_main);
+        showBottomNavigationMenu();
         initToolbar();
         initNavigationDrawer();
         initView();
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }
 
     private void initView() {
@@ -74,6 +81,18 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.AppThemeDark);
         } else {
             setTheme(R.style.AppThemePurple);
+        }
+    }
+
+    private void showBottomNavigationMenu() {
+        View bottomNavigationMenu = findViewById(R.id.bottom_navigation);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean navigationMenuEnabled = preferences.getBoolean("show_bottom_navigation", false);
+        if (navigationMenuEnabled) {
+            bottomNavigationMenu.setVisibility(View.VISIBLE);
+        } else {
+            bottomNavigationMenu.setVisibility(View.GONE);
         }
     }
 
