@@ -7,6 +7,9 @@ import io.reactivex.Observable;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
+/**
+ * Не используется.
+ */
 public class CategoryFilter {
 
     private ArticleCategory category;

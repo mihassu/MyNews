@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
-import io.reactivex.Single;
 import io.reactivex.functions.Function;
 import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.model.MyArticle;
@@ -30,7 +29,7 @@ public class ChannelRepositoryImpl implements ChannelRepository {
     }
 
     @Override
-    public Observable<List<MyArticle>> getChannelObs() {
+    public Observable<List<MyArticle>> getChannel() {
 
         return Observable
                 .interval(0, updateInterval, TimeUnit.MINUTES)
@@ -56,26 +55,5 @@ public class ChannelRepositoryImpl implements ChannelRepository {
                                 .toObservable();
                     }
                 });
-    }
-
-    @Override
-    public Single<List<MyArticle>> getChannel() {
-
-        return repo
-                .create()
-                .map(response -> {
-
-                    try {
-                        return parser.parse(response.body().byteStream());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return new ArrayList<>();
-                    // Отфильровать новости без картинок
-                }).map(
-                        list -> ((List<MyArticle>) list)
-                                .stream()
-                                .filter(article -> article.image != null)
-                                .collect(Collectors.toList()));
     }
 }

@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import ru.mihassu.mynews.data.repository.CategoryDictionary;
-import ru.mihassu.mynews.data.repository.ClassifierImpl;
-import ru.mihassu.mynews.data.repository.RawChannelRepositoryImpl;
 import ru.mihassu.mynews.data.repository.ChannelCollectorImpl;
 import ru.mihassu.mynews.data.repository.ChannelRepositoryImpl;
+import ru.mihassu.mynews.data.repository.ClassifierImpl;
+import ru.mihassu.mynews.data.repository.RawChannelRepositoryImpl;
 import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.channel.Classifier;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
@@ -49,6 +49,5 @@ public class App extends Application {
 
     public ChannelCollector getCollector() {
         return collector;
-
     }
 }

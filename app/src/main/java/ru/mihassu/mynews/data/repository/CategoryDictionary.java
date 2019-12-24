@@ -31,16 +31,17 @@ public class CategoryDictionary {
     private CategoryDictionary() {
         dictionary = new HashMap<>();
 
-        dictionary.put(POLITICS, Arrays.asList("политика", "в мире", "россия", "мир", "бывший ссср", "в россии", "москва", "петербург"));
+        dictionary.put(POLITICS, Arrays.asList("политика", "в мире", "россия", "мир", "бывший ссср"));
         dictionary.put(ECONOMICS, Arrays.asList("экономика", "бизнес", "Недвижимость", "Оборона", "безопасность", "Нацпроекты"));
-        dictionary.put(SOCIETY, Arrays.asList("общество", "дом", "из жизни"));
+        dictionary.put(SOCIETY, Arrays.asList("общество", "дом", "из жизни", "москва", "петербург", "в россии"));
         dictionary.put(SPORT, Arrays.asList("спорт", "олимпиада"));
         dictionary.put(CULTURE, Arrays.asList("культура", "ценности"));
         dictionary.put(CRIME, Arrays.asList("силовые структуры", "криминал", "происшествия"));
-        dictionary.put(IT, Arrays.asList("интернет", "смартфон", "ios", "android"));
+        dictionary.put(IT, Arrays.asList("смартфон", "ios", "android"));
         dictionary.put(SCIENCE, Arrays.asList("наука и техника"));
         dictionary.put(CELEBRITY, Arrays.asList("стиль", "мода"));
         dictionary.put(TRAVEL, Arrays.asList("путешествия", "туризм"));
+        dictionary.put(NEWS, Arrays.asList("сми", "интернет"));
     }
 
     public HashMap<ArticleCategory, List<String>> getDictionary() {
@@ -48,8 +49,8 @@ public class CategoryDictionary {
     }
 
     //Получить строковое значение категории (взять первое значение из объединенной категории)
-    public String getCategory(ArticleCategory category) {
-        if (category == NEWS) {return "Новости";}
-        return dictionary.get(category).get(0);
-    }
+//    public String getCategory(ArticleCategory category) {
+//        if (category == NEWS) {return "Новости";}
+//        return dictionary.get(category).get(0);
+//    }
 }

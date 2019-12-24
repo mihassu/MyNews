@@ -13,10 +13,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 
 import ru.mihassu.mynews.R;
+import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
@@ -24,56 +25,57 @@ import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
 public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsViewHolder> {
 
-    //список из списков новостей по темам
-    private List<List<MyArticle>> newsList = new ArrayList<>();
+    // Набор списков новостей по категориям
+    private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
 
+    // Helper для работы с Custom Tabs
     private CustomTabHelper customTabHelper = new CustomTabHelper();
 
-    public void setDataList(List<List<MyArticle>> newsList) {
-        this.newsList = newsList;
+    public void setClassifiedNews(EnumMap<ArticleCategory, List<MyArticle>> map) {
+        classifiedNews = map;
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public NewsPageAdapter.NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.item_news, parent,false);
-        return new NewsPageAdapter.NewsViewHolder(v);
+        View v = inflater.inflate(R.layout.item_news, parent, false);
+        return new NewsViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        if (newsList.size() != 0) {
-            holder.bind(newsList.get(position));
+        if (classifiedNews != null && classifiedNews.size() != 0) {
+            holder.bind(classifiedNews.get(ArticleCategory.values()[position]));
         }
     }
 
     @Override
     public int getItemCount() {
-        return newsList.size();
+        return ArticleCategory.values().length;
     }
 
-    class NewsViewHolder extends RecyclerView.ViewHolder{
+    /**
+     * Holder отдельной ViewGroup внутри ViewPager2
+     */
+    class NewsViewHolder extends RecyclerView.ViewHolder {
 
-        RecyclerView rv;
-        MainAdapter adapter;
-
+        private RecyclerView rv;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
             rv = itemView.findViewById(R.id.news_recyclerview);
         }
 
-
         public void bind(List<MyArticle> articles) {
-            adapter = new MainAdapter(this::startContentViewer);
+            MainAdapter adapter = new MainAdapter(this::startContentViewer);
             adapter.setDataList(articles);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rv.setAdapter(adapter);
         }
 
+        // Отобразить новость в новой Activity (CustomTabs)
         private void startContentViewer(String link) {
 
             int requestCode = 100;
@@ -107,6 +109,4 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
             }
         }
     }
-
-
 }

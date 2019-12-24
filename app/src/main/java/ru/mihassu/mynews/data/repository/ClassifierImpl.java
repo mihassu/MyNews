@@ -30,7 +30,7 @@ public class ClassifierImpl implements Classifier {
             }
         }
 
-        logIt("Unknown category: " + categoryTag);
+        logIt("Unknown category found <" + categoryTag + ">. Parsed as " + NEWS);
         return NEWS;
     }
 }
