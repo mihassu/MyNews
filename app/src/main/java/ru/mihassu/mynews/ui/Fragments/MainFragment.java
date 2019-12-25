@@ -85,7 +85,12 @@ public class MainFragment extends Fragment {
                 .get(MainViewModel.class);
     }
 
-    // Запускаем процесс получения данных
+    //
+
+    /**
+     * Запускаем процесс получения данных
+     * На выходе получаем списки статей упорядоченные по категориям в HashMap'е
+     */
     private void loadChannels() {
         App app = (App) Objects.requireNonNull(getActivity()).getApplication();
 
@@ -95,7 +100,7 @@ public class MainFragment extends Fragment {
                 .observe(this,
                         articleList -> {
 
-                            // Порядок ключей будет совпадать с порядке элементов в ArticleCategory
+                            // Порядок ключей будет совпадать с порядком элементов в ArticleCategory
                             EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
 
                             for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
@@ -106,13 +111,16 @@ public class MainFragment extends Fragment {
                                 Objects.requireNonNull(enumMap.get(article.category)).add(article);
                             }
 
-                            drawList(enumMap);
+                            renderArticles(enumMap);
                         }
                 );
     }
 
-    private void drawList(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
+    /**
+     *
+     * @param enumMap - списки статей упорядоченные по категориям
+     */
+    private void renderArticles(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
         viewPagerAdapter.setClassifiedNews(enumMap);
     }
-
 }
