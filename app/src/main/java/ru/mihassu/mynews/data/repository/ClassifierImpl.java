@@ -7,6 +7,7 @@ import java.util.Map;
 
 import ru.mihassu.mynews.domain.channel.Classifier;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
+import ru.mihassu.mynews.domain.entity.CategoryDictionary;
 
 import static ru.mihassu.mynews.Utils.logIt;
 import static ru.mihassu.mynews.domain.entity.ArticleCategory.NEWS;

@@ -1,10 +1,8 @@
-package ru.mihassu.mynews.data.repository;
+package ru.mihassu.mynews.domain.entity;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import ru.mihassu.mynews.domain.entity.ArticleCategory;
 
 import static ru.mihassu.mynews.domain.entity.ArticleCategory.*;
 
@@ -31,14 +29,14 @@ public class CategoryDictionary {
     private CategoryDictionary() {
         dictionary = new HashMap<>();
 
-        dictionary.put(POLITICS, Arrays.asList("политика", "в мире", "россия", "мир", "бывший ссср"));
+        dictionary.put(POLITICS, Arrays.asList("политика", "в мире", "мир", "бывший ссср"));
         dictionary.put(ECONOMICS, Arrays.asList("экономика", "бизнес", "Недвижимость", "Оборона", "безопасность", "Нацпроекты"));
-        dictionary.put(SOCIETY, Arrays.asList("общество", "дом", "из жизни", "москва", "петербург", "в россии"));
-        dictionary.put(SPORT, Arrays.asList("спорт", "олимпиада"));
+        dictionary.put(SOCIETY, Arrays.asList("россия", "общество", "дом", "из жизни", "москва", "петербург", "в россии"));
+        dictionary.put(SPORT, Arrays.asList("спорт", "футбол","хоккей","кхл","бокс","мма","фигурное","биатлон","нхл","чемпионат","олимпиада","кубок","теннис","фомула","гонки","валейбол","баскетбол","прыжки","атлетика","лига"));
         dictionary.put(CULTURE, Arrays.asList("культура", "ценности"));
         dictionary.put(CRIME, Arrays.asList("силовые структуры", "криминал", "происшествия"));
-        dictionary.put(IT, Arrays.asList("смартфон", "ios", "android"));
-        dictionary.put(SCIENCE, Arrays.asList("наука и техника"));
+        dictionary.put(IT, Arrays.asList("смартфон", "ios", "android", "новости рынка", "новости ит"));
+        dictionary.put(SCIENCE, Arrays.asList("наука", "техника", "космос"));
         dictionary.put(CELEBRITY, Arrays.asList("стиль", "мода"));
         dictionary.put(TRAVEL, Arrays.asList("путешествия", "туризм"));
         dictionary.put(NEWS, Arrays.asList("сми", "интернет"));
@@ -47,10 +45,4 @@ public class CategoryDictionary {
     public HashMap<ArticleCategory, List<String>> getDictionary() {
         return dictionary;
     }
-
-    //Получить строковое значение категории (взять первое значение из объединенной категории)
-//    public String getCategory(ArticleCategory category) {
-//        if (category == NEWS) {return "Новости";}
-//        return dictionary.get(category).get(0);
-//    }
 }

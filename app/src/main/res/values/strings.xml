@@ -9,4 +9,17 @@
     <string name="menu_group_main">Main</string>
     <string name="menu_group_settings_and_features">Settings and Features</string>
     <string name="mynews_logo" translatable="false">MyNews logo</string>
+
+    <!--    Tab Titles-->
+    <string name="title_politics">politics</string>
+    <string name="title_economics">economics</string>
+    <string name="title_society">society</string>
+    <string name="title_sport">sport</string>
+    <string name="title_culture">culture</string>
+    <string name="title_crime">crime</string>
+    <string name="title_it">it</string>
+    <string name="title_science">science</string>
+    <string name="title_celebrity">celebrity</string>
+    <string name="title_travel">travel</string>
+    <string name="title_news">news</string>
 </resources>

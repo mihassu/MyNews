@@ -5,7 +5,7 @@ import android.app.Application;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
-import ru.mihassu.mynews.data.repository.CategoryDictionary;
+import ru.mihassu.mynews.domain.entity.CategoryDictionary;
 import ru.mihassu.mynews.data.repository.ChannelCollectorImpl;
 import ru.mihassu.mynews.data.repository.ChannelRepositoryImpl;
 import ru.mihassu.mynews.data.repository.ClassifierImpl;
