@@ -12,9 +12,11 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
@@ -61,11 +63,25 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
      */
     class NewsViewHolder extends RecyclerView.ViewHolder {
 
+        private SwipeRefreshLayout refreshLayout;
         private RecyclerView rv;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
             rv = itemView.findViewById(R.id.news_recyclerview);
+            refreshLayout = itemView.findViewById(R.id.swipe_refresh);
+            refreshLayout.setColorSchemeResources(
+                    android.R.color.holo_blue_bright,
+                    android.R.color.holo_green_light,
+                    android.R.color.holo_orange_light,
+                    android.R.color.holo_red_light
+            );
+
+            // Эмитация обновления
+            refreshLayout.setOnRefreshListener( () -> {
+                Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
+                refreshLayout.setRefreshing(false);
+            });
         }
 
         public void bind(List<MyArticle> articles) {

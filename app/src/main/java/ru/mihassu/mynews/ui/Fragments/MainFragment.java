@@ -39,7 +39,6 @@ public class MainFragment extends Fragment {
     private NewsPageAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
 
-
     // 1.
     public View onCreateView(
             @NonNull LayoutInflater inflater,
@@ -84,8 +83,6 @@ public class MainFragment extends Fragment {
         viewModel = ViewModelProviders.of(this, new MainViewModelFactory(repository))
                 .get(MainViewModel.class);
     }
-
-    //
 
     /**
      * Запускаем процесс получения данных
