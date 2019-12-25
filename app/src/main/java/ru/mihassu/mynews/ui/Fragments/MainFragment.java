@@ -58,10 +58,9 @@ public class MainFragment extends Fragment {
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
                 //Установка заголовка таба
-                tab.setText(ArticleCategory.values()[position].getDescription()))
+                tab.setText(view.getContext().getString(ArticleCategory.values()[position].getTextId())))
                 .attach();
     }
-
 
     // 3.
     @Override
