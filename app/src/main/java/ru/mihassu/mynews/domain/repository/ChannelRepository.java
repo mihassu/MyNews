@@ -7,4 +7,5 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface ChannelRepository {
     Observable<List<MyArticle>> getChannel();
+    Observable<List<MyArticle>> updateChannel();
 }

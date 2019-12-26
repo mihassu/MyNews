@@ -18,7 +18,7 @@ public class RawChannelRepositoryImpl implements RawChannelRepository {
     }
 
     @Override
-    public Single<Response> create() {
+    public Single<Response> sendRequest() {
 
         return Single.fromCallable(new Callable<Response>() {
             @Override

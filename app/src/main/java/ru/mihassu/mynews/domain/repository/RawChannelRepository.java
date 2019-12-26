@@ -4,5 +4,5 @@ import io.reactivex.Single;
 import okhttp3.Response;
 
 public interface RawChannelRepository {
-    Single<Response> create();
+    Single<Response> sendRequest();
 }

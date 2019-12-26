@@ -44,7 +44,7 @@ public class App extends Application {
                             UPDATE_INTERVAL_MINUTES));
         }
 
-        collector = new ChannelCollectorImpl(channels);
+        collector = new ChannelCollectorImpl(channels, 1);
     }
 
     public ChannelCollector getCollector() {

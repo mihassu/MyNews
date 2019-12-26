@@ -8,4 +8,6 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface ChannelCollector {
     LiveData<List<MyArticle>> collectChannels();
+    void updateChannels();
+
 }
