@@ -89,6 +89,10 @@ public class MainFragment extends Fragment {
     }
 
     private Completable updateContent() {
+        App app = (App) Objects.requireNonNull(getActivity()).getApplication();
+        app.getCollector().updateChannels();
+
+
         return Completable.complete();
     }
 
@@ -103,21 +107,22 @@ public class MainFragment extends Fragment {
                 .getCollector()
                 .collectChannels()
                 .observe(this,
-                        articleList -> {
-
-                            // Порядок ключей будет совпадать с порядком элементов в ArticleCategory
-                            EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
-
-                            for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
-                                enumMap.put(c, new ArrayList<>());
-                            }
-
-                            for (MyArticle article : articleList) {
-                                Objects.requireNonNull(enumMap.get(article.category)).add(article);
-                            }
-
-                            renderArticles(enumMap);
-                        }
+                        viewPagerAdapter
+//                        articleList -> {
+//
+//                            // Порядок ключей будет совпадать с порядком элементов в ArticleCategory
+//                            EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
+//
+//                            for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
+//                                enumMap.put(c, new ArrayList<>());
+//                            }
+//
+//                            for (MyArticle article : articleList) {
+//                                Objects.requireNonNull(enumMap.get(article.category)).add(article);
+//                            }
+//
+//                            renderArticles(enumMap);
+//                        }
                 );
     }
 

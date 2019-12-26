@@ -11,11 +11,14 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -29,7 +32,29 @@ import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
-public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsViewHolder> {
+public class NewsPageAdapter
+        extends RecyclerView.Adapter<NewsPageAdapter.NewsViewHolder>
+        implements Observer {
+
+    @Override
+    public void onChanged(Object obj) {
+
+        List<MyArticle> list  = (List<MyArticle>)obj;
+
+        // Порядок ключей будет совпадать с порядком элементов в ArticleCategory
+        EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
+
+        for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
+            enumMap.put(c, new ArrayList<>());
+        }
+
+        for (MyArticle article : list) {
+            Objects.requireNonNull(enumMap.get(article.category)).add(article);
+        }
+        classifiedNews = enumMap;
+        notifyDataSetChanged();
+
+    }
 
     // Набор списков новостей по категориям
     private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
@@ -101,7 +126,7 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
             adapter.setDataList(articles);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rv.setAdapter(adapter);
-            if(pb.getVisibility() == View.VISIBLE) {
+            if (pb.getVisibility() == View.VISIBLE) {
                 pb.setVisibility(View.INVISIBLE);
             }
         }
