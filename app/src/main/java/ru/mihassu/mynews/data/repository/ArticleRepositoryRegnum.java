@@ -31,6 +31,4 @@ public class ArticleRepositoryRegnum implements ArticleRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 ;
     }
-
-
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">О нас</string>
+    <string name="action_settings">Настройки</string>
+    <string name="bookmarks">Закладки</string>
+    <string name="menu_group_main">Главное</string>
+    <string name="menu_group_settings_and_features">Настройки и всякое</string>
+    <string name="news">Новости</string>
+    <string name="settings">Настройки</string>
+
+    <!--    Tab Titles-->
+    <string name="title_politics">политика</string>
+    <string name="title_economics">экономика</string>
+    <string name="title_society">общество</string>
+    <string name="title_sport">спорт</string>
+    <string name="title_culture">культура</string>
+    <string name="title_crime">криминал</string>
+    <string name="title_it">интернет</string>
+    <string name="title_science">наука</string>
+    <string name="title_celebrity">стиль</string>
+    <string name="title_travel">путешествия</string>
+    <string name="title_news">новости</string>
+</resources>

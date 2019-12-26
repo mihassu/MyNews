@@ -1,10 +1,11 @@
 package ru.mihassu.mynews.domain.repository;
 
+import androidx.lifecycle.LiveData;
+
 import java.util.List;
 
-import io.reactivex.Single;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface ChannelCollector {
-    Single<List<MyArticle>> collectChannels();
+    LiveData<List<MyArticle>> collectChannels();
 }

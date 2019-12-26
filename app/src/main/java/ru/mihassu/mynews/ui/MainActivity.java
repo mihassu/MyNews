@@ -1,10 +1,8 @@
 package ru.mihassu.mynews.ui;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,8 +12,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.picasso.Picasso;
+
+import java.util.Objects;
 
 import ru.mihassu.mynews.R;
 
@@ -27,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAppTheme();
         setContentView(R.layout.activity_main);
+        showBottomNavigationMenu();
         initToolbar();
         initNavigationDrawer();
         initView();
@@ -49,15 +53,17 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }
 
     private void initView() {
         ProgressBar progressBar = findViewById(R.id.main_progressbar);
-        ImageView toolbarImage = findViewById(R.id.main_toolbar_image);
-        Picasso
-                .get()
-                .load("https://regnum.ru/assets/img/logo_base.png")
-                .into(toolbarImage);
+//        ImageView toolbarImage = findViewById(R.id.main_toolbar_image);
+//        Picasso
+//                .get()
+//                .load("https://regnum.ru/assets/img/logo_base.png")
+//                .into(toolbarImage);
     }
 
     @Override
@@ -66,6 +72,28 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
 
+    }
+
+    private void setAppTheme() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean userTheme = preferences.getBoolean("dark_theme", false);
+        if (userTheme) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppThemePurple);
+        }
+    }
+
+    private void showBottomNavigationMenu() {
+        View bottomNavigationMenu = findViewById(R.id.bottom_navigation);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean navigationMenuEnabled = preferences.getBoolean("show_bottom_navigation", false);
+        if (navigationMenuEnabled) {
+            bottomNavigationMenu.setVisibility(View.VISIBLE);
+        } else {
+            bottomNavigationMenu.setVisibility(View.GONE);
+        }
     }
 
 }

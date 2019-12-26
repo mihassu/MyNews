@@ -1,0 +1,16 @@
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <SwitchPreferenceCompat
+        app:key="dark_theme"
+        app:title="Enable dark theme"/>
+
+    <SwitchPreferenceCompat
+        app:key="show_bottom_navigation"
+        app:title="Show bottom navigation menu"/>
+
+
+</PreferenceScreen>

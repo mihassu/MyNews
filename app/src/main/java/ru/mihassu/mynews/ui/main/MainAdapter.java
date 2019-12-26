@@ -103,11 +103,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             // Ссылку на контент статьи сохр в теге элемента списка
             itemView.setTag(item.link);
             // Заголовок статьи
-            itemTitle.setText(item.title);
+            itemTitle.setText(item.title.trim());
             // Обрезать строку контента
-            String content = item.description;
+            String content = item.description.trim();
             if (content.length() > maxSize) {
-                content = content.trim().substring(0, maxSize) + "...";
+                content = content.substring(0, maxSize) + "...";
             }
             itemContent.setText(content);
 
