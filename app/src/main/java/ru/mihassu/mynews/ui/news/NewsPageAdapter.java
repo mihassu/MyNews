@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
@@ -17,7 +18,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
+import io.reactivex.Completable;
+import io.reactivex.disposables.Disposable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
@@ -32,6 +36,12 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
 
     // Helper для работы с Custom Tabs
     private CustomTabHelper customTabHelper = new CustomTabHelper();
+
+    private Supplier<Completable> requestUpdate;
+
+    public NewsPageAdapter(Supplier<Completable> requestUpdate) {
+        this.requestUpdate = requestUpdate;
+    }
 
     public void setClassifiedNews(EnumMap<ArticleCategory, List<MyArticle>> map) {
         classifiedNews = map;
@@ -65,10 +75,12 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
 
         private SwipeRefreshLayout refreshLayout;
         private RecyclerView rv;
+        private ProgressBar pb;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
             rv = itemView.findViewById(R.id.news_recyclerview);
+            pb = itemView.findViewById(R.id.pbLoading);
             refreshLayout = itemView.findViewById(R.id.swipe_refresh);
             refreshLayout.setColorSchemeResources(
                     android.R.color.holo_blue_bright,
@@ -77,11 +89,11 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
                     android.R.color.holo_red_light
             );
 
-            // Эмитация обновления
-            refreshLayout.setOnRefreshListener( () -> {
-                Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
-                refreshLayout.setRefreshing(false);
-            });
+            // Запрос обновления
+            refreshLayout.setOnRefreshListener(() ->
+                    requestUpdate
+                            .get()
+                            .subscribe(() -> refreshLayout.setRefreshing(false)));
         }
 
         public void bind(List<MyArticle> articles) {
@@ -89,6 +101,9 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
             adapter.setDataList(articles);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rv.setAdapter(adapter);
+            if(pb.getVisibility() == View.VISIBLE) {
+                pb.setVisibility(View.INVISIBLE);
+            }
         }
 
         // Отобразить новость в новой Activity (CustomTabs)

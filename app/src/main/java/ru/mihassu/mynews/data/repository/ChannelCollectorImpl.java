@@ -44,7 +44,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
                 Math::max);
 
         updateTrigger
-                .flatMap(millis ->
+                .switchMap(millis ->
                         Observable.combineLatest(observableList,
                                 (listOfLists) -> {
 

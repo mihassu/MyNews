@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.Completable;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.data.network.RegnumApi;
@@ -55,6 +57,8 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         TabLayout tabLayout = view.findViewById(R.id.news_tabs);
 
+//        tabLayout.removeAllTabs();
+
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
                 //Установка заголовка таба
                 tab.setText(view.getContext().getString(ArticleCategory.values()[position].getTextId())))
@@ -72,7 +76,7 @@ public class MainFragment extends Fragment {
 
     // ViewPager
     private void initViewPager() {
-        viewPagerAdapter = new NewsPageAdapter();
+        viewPagerAdapter = new NewsPageAdapter(this::updateContent);
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
     }
@@ -82,6 +86,10 @@ public class MainFragment extends Fragment {
         ArticleRepository repository = new ArticleRepositoryRegnum(api);
         viewModel = ViewModelProviders.of(this, new MainViewModelFactory(repository))
                 .get(MainViewModel.class);
+    }
+
+    private Completable updateContent() {
+        return Completable.complete();
     }
 
     /**
