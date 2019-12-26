@@ -112,6 +112,7 @@ public class ChannelParser {
         String description = null;
         String author = null;
         String image = null;
+        String categoryOrigin = null;
         ArticleCategory category = null;
         long pubDate = 0;
 
@@ -144,16 +145,22 @@ public class ChannelParser {
                     image = readTag(parser, TAG_ID_ENCLOSURE);
                     break;
                 case TAG_CATEGORY:
-                    category = classifier.classify(readTag(parser, TAG_ID_CATEGORY));
-                    if(category != ArticleCategory.NEWS) {
-                        logIt("Parsed category: " + category);
-                    }
+                    categoryOrigin = readTag(parser, TAG_ID_CATEGORY);
+                    category = classifier.classify(categoryOrigin);
                     break;
                 default:
                     skip(parser);
             }
         }
-        return new MyArticle(title, description, link, pubDate, author, image, category);
+        return new MyArticle(
+                title,
+                description,
+                link,
+                pubDate,
+                author,
+                image,
+                categoryOrigin,
+                category);
     }
 
     /**
@@ -259,7 +266,6 @@ public class ChannelParser {
         long result = System.currentTimeMillis();
 
         try {
-
             result = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH)
                     .parse(date)
                     .getTime();

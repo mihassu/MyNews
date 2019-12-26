@@ -4,6 +4,7 @@
         <item>https://lenta.ru/rss</item>
         <item>https://www.vesti.ru/vesti.rss</item>
         <item>https://www.rosbalt.ru/feed/</item>
-<!--        <item>https://regnum.ru/rss/news</item>-->
+        <item>https://www.sovsport.ru/news_rss</item>
+        <item>https://www.it-world.ru/it-news/it/?rss=Y</item>
     </string-array>
 </resources>

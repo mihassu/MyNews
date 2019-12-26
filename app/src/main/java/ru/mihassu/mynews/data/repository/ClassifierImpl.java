@@ -7,6 +7,7 @@ import java.util.Map;
 
 import ru.mihassu.mynews.domain.channel.Classifier;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
+import ru.mihassu.mynews.domain.entity.CategoryDictionary;
 
 import static ru.mihassu.mynews.Utils.logIt;
 import static ru.mihassu.mynews.domain.entity.ArticleCategory.NEWS;
@@ -30,7 +31,7 @@ public class ClassifierImpl implements Classifier {
             }
         }
 
-        logIt("Unknown category: " + categoryTag);
+        logIt("Unknown category found <" + categoryTag + ">. Parsed as " + NEWS);
         return NEWS;
     }
 }
