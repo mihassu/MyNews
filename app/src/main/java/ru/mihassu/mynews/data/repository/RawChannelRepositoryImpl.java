@@ -3,6 +3,8 @@ package ru.mihassu.mynews.data.repository;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import io.reactivex.Single;
 import okhttp3.OkHttpClient;
@@ -16,10 +18,16 @@ public class RawChannelRepositoryImpl implements RawChannelRepository {
 
     private OkHttpClient client;
     private String channelUrl;
+    private byte[] errorCode;
 
     public RawChannelRepositoryImpl(OkHttpClient client, String channelUrl) {
         this.client = client;
         this.channelUrl = channelUrl;
+        errorCode = ByteBuffer
+                .allocate(Integer.SIZE / Byte.SIZE)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putInt(INVALID_RESPONSE)
+                .array();
     }
 
     @Override
@@ -47,11 +55,11 @@ public class RawChannelRepositoryImpl implements RawChannelRepository {
     @Override
     public Single<InputStream> sendRequestEx() {
 
-        InputStream error = new ByteArrayInputStream(new byte[]{0});
+        InputStream error = new ByteArrayInputStream(errorCode);
 
         return Single.fromCallable(() -> {
 
-            Response response = null;
+            Response response;
 
             try {
                 response = client

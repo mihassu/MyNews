@@ -2,12 +2,9 @@ package ru.mihassu.mynews.data.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.functions.Function;
 import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
@@ -52,9 +49,9 @@ public class ChannelRepositoryImpl implements ChannelRepository {
     public Observable<List<MyArticle>> updateChannelEx() {
         return repo
                 .sendRequestEx()
-                .map(stream -> {
+                .map(byteStream -> {
                     try {
-                        return parser.parse(stream);
+                        return parser.parse(byteStream);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
