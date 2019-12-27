@@ -17,40 +17,12 @@ public class ChannelRepositoryImpl implements ChannelRepository {
 
     private RawChannelRepository repo;
     private ChannelParser parser;
-    private long updateInterval;
 
     public ChannelRepositoryImpl(
             RawChannelRepository repo,
-            ChannelParser parser,
-            long updateInterval) {
+            ChannelParser parser) {
         this.repo = repo;
         this.parser = parser;
-        this.updateInterval = updateInterval;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Observable<List<MyArticle>> getChannel() {
-        return Observable
-                .interval(0, updateInterval, TimeUnit.MINUTES)
-                .flatMap(l ->
-                        repo
-                                .sendRequest()
-                                .map(response -> {
-                                    try {
-                                        return parser.parse(response.body().byteStream());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    return new ArrayList<>();
-                                    // Отфильровать новости без картинок
-                                })
-                                .map(
-                                        list -> ((List<MyArticle>) list)
-                                                .stream()
-                                                .filter(article -> article.image != null)
-                                                .collect(Collectors.toList()))
-                                .toObservable());
     }
 
     @SuppressWarnings("unchecked")
@@ -61,6 +33,28 @@ public class ChannelRepositoryImpl implements ChannelRepository {
                 .map(response -> {
                     try {
                         return parser.parse(response.body().byteStream());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return new ArrayList<>();
+                    // Отфильровать новости без картинок
+                })
+                .map(
+                        list -> ((List<MyArticle>) list)
+                                .stream()
+                                .filter(article -> article.image != null)
+                                .collect(Collectors.toList()))
+                .toObservable();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Observable<List<MyArticle>> updateChannelEx() {
+        return repo
+                .sendRequestEx()
+                .map(stream -> {
+                    try {
+                        return parser.parse(stream);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

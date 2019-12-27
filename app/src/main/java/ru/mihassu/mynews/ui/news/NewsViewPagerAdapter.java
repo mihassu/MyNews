@@ -6,26 +6,21 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.ui.Fragments.UpdateDispatcher;
+import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
@@ -33,20 +28,20 @@ import ru.mihassu.mynews.ui.web.CustomTabHelper;
 import static ru.mihassu.mynews.Utils.logIt;
 
 public class NewsViewPagerAdapter
-        extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder>
-        implements Observer {
+        extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
-    // Набор списков новостей по категориям
+    // Списки новостей по категориям
     private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
 
-    // Helper для работы с Custom Tabs
+    // Helper для работы с Chrome CustomTabs
     private CustomTabHelper customTabHelper = new CustomTabHelper();
 
-    private UpdateDispatcher updateDispatcher;
-    private boolean isUpdateInProgress = true;
+    private UpdateAgent updateAgent;
+    private boolean isUpdateInProgress;
 
-    public NewsViewPagerAdapter(UpdateDispatcher updateDispatcher) {
-        this.updateDispatcher = updateDispatcher;
+    public NewsViewPagerAdapter(UpdateAgent updateAgent) {
+        this.updateAgent = updateAgent;
+        this.isUpdateInProgress = true;
     }
 
     @NonNull
@@ -70,31 +65,9 @@ public class NewsViewPagerAdapter
 //        return ArticleCategory.values().length;
     }
 
-//    public void setClassifiedNews(EnumMap<ArticleCategory, List<MyArticle>> map) {
-//        classifiedNews = map;
-//        notifyDataSetChanged();
-//    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void onChanged(Object obj) {
-        logIt("onChanged");
-
-        List<MyArticle> list = (List<MyArticle>) obj;
-
-        // Порядок ключей будет совпадать с порядком элементов в ArticleCategory
-        EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
-
-        for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
-            enumMap.put(c, new ArrayList<>());
-        }
-
-        for (MyArticle article : list) {
-            Objects.requireNonNull(enumMap.get(article.category)).add(article);
-        }
+    public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
         classifiedNews = enumMap;
         notifyDataSetChanged();
-
         isUpdateInProgress = false;
     }
 
@@ -105,25 +78,19 @@ public class NewsViewPagerAdapter
 
         private SwipeRefreshLayout refreshLayout;
         private RecyclerView rv;
-        private ProgressBar pb;
 
         NewsViewHolder(@NonNull View itemView) {
             super(itemView);
-            logIt("NewsViewHolder");
             rv = itemView.findViewById(R.id.news_recyclerview);
-            pb = itemView.findViewById(R.id.pbLoading);
             initRefreshLayout();
         }
 
         void bind(List<MyArticle> articles) {
             logIt("bind");
-            MainAdapter adapter = new MainAdapter(this::showInBrowser);
+            MainAdapter adapter = new MainAdapter(this::showInChromeCustomTabs);
             adapter.setDataList(articles);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rv.setAdapter(adapter);
-            if (pb.getVisibility() == View.VISIBLE) {
-                pb.setVisibility(View.INVISIBLE);
-            }
             refreshLayout.setRefreshing(false);
         }
 
@@ -143,7 +110,7 @@ public class NewsViewPagerAdapter
                         if (!isUpdateInProgress) {
                             isUpdateInProgress = true;
                             refreshLayout.setRefreshing(true);
-                            updateDispatcher.update();
+                            updateAgent.update();
                         } else {
                             refreshLayout.setRefreshing(false);
                         }
@@ -153,8 +120,8 @@ public class NewsViewPagerAdapter
             refreshLayout.setRefreshing(isUpdateInProgress);
         }
 
-        // Отобразить новость в новой Activity (CustomTabs)
-        private void showInBrowser(String link) {
+        // Отобразить новость в Chrome CustomTabs
+        private void showInChromeCustomTabs(String link) {
 
             int requestCode = 100;
 

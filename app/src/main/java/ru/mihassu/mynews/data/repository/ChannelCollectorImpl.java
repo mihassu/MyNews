@@ -20,10 +20,7 @@ import static ru.mihassu.mynews.Utils.logIt;
 public class ChannelCollectorImpl implements ChannelCollector {
 
     private MutableLiveData<List<MyArticle>> liveData = new MutableLiveData<>();
-
-    private Observable<Long> triggerOnInterval;
     private BehaviorSubject<Long> triggerOnEvent;
-    private Observable<Long> updateTrigger;
 
     @SuppressWarnings("unchecked")
     public ChannelCollectorImpl(List<ChannelRepository> channelRepos, long updateInterval) {
@@ -31,16 +28,16 @@ public class ChannelCollectorImpl implements ChannelCollector {
         List<Observable<List<MyArticle>>> observableList = new ArrayList<>();
 
         for (ChannelRepository channelRepo : channelRepos) {
-            observableList.add(channelRepo.updateChannel());
+            observableList.add(channelRepo.updateChannelEx());
         }
 
-        triggerOnInterval = Observable
+        Observable<Long> triggerOnInterval = Observable
                 .interval(0, updateInterval, TimeUnit.MINUTES)
                 .map(l -> System.currentTimeMillis());
 
         triggerOnEvent = BehaviorSubject.createDefault(System.currentTimeMillis());
 
-        updateTrigger = Observable.combineLatest(
+        Observable<Long> updateTrigger = Observable.combineLatest(
                 triggerOnInterval,
                 triggerOnEvent,
                 Math::max);
