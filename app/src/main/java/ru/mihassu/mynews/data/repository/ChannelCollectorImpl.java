@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.domain.model.MyArticle;
@@ -24,6 +25,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
     private BehaviorSubject<Long> triggerOnEvent;
     private Observable<Long> updateTrigger;
 
+    @SuppressWarnings("unchecked")
     public ChannelCollectorImpl(List<ChannelRepository> channelRepos, long updateInterval) {
 
         List<Observable<List<MyArticle>>> observableList = new ArrayList<>();
@@ -43,7 +45,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
                 triggerOnEvent,
                 Math::max);
 
-        updateTrigger
+        Disposable d = updateTrigger
                 .switchMap(millis ->
                         Observable.combineLatest(observableList,
                                 (listOfLists) -> {
@@ -56,8 +58,6 @@ public class ChannelCollectorImpl implements ChannelCollector {
                                     return combinedList;
                                 })
                                 .subscribeOn(Schedulers.io())
-
-
                 )
                 .doOnNext(list -> logIt("onNext list size = " + list.size()))
                 .doOnComplete(() -> logIt("onComplete"))

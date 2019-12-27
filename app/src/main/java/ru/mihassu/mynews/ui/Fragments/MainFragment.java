@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,9 +14,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,13 +29,13 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
 import ru.mihassu.mynews.ui.main.MainViewModel;
 import ru.mihassu.mynews.ui.main.MainViewModelFactory;
-import ru.mihassu.mynews.ui.news.NewsPageAdapter;
+import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
 public class MainFragment extends Fragment {
     private MainViewModel viewModel;
     private View fragmentView;
 
-    private NewsPageAdapter viewPagerAdapter;
+    private NewsViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
 
     // 1.
@@ -76,7 +73,7 @@ public class MainFragment extends Fragment {
 
     // ViewPager
     private void initViewPager() {
-        viewPagerAdapter = new NewsPageAdapter(this::updateContent);
+        viewPagerAdapter = new NewsViewPagerAdapter(this::updateContent);
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
     }
@@ -88,12 +85,9 @@ public class MainFragment extends Fragment {
                 .get(MainViewModel.class);
     }
 
-    private Completable updateContent() {
+    private void updateContent() {
         App app = (App) Objects.requireNonNull(getActivity()).getApplication();
         app.getCollector().updateChannels();
-
-
-        return Completable.complete();
     }
 
     /**
@@ -130,7 +124,7 @@ public class MainFragment extends Fragment {
      *
      * @param enumMap - списки статей упорядоченные по категориям
      */
-    private void renderArticles(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
-        viewPagerAdapter.setClassifiedNews(enumMap);
-    }
+//    private void renderArticles(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
+//        viewPagerAdapter.setClassifiedNews(enumMap);
+//    }
 }

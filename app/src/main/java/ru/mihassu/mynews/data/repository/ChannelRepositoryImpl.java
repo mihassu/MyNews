@@ -13,8 +13,6 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
 import ru.mihassu.mynews.domain.repository.RawChannelRepository;
 
-import static ru.mihassu.mynews.Utils.logIt;
-
 public class ChannelRepositoryImpl implements ChannelRepository {
 
     private RawChannelRepository repo;
@@ -30,15 +28,13 @@ public class ChannelRepositoryImpl implements ChannelRepository {
         this.updateInterval = updateInterval;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Observable<List<MyArticle>> getChannel() {
-
         return Observable
                 .interval(0, updateInterval, TimeUnit.MINUTES)
-                .flatMap(new Function<Long, ObservableSource<List<MyArticle>>>() {
-                    @Override
-                    public ObservableSource<List<MyArticle>> apply(Long aLong) throws Exception {
-                        return repo
+                .flatMap(l ->
+                        repo
                                 .sendRequest()
                                 .map(response -> {
                                     try {
@@ -54,11 +50,10 @@ public class ChannelRepositoryImpl implements ChannelRepository {
                                                 .stream()
                                                 .filter(article -> article.image != null)
                                                 .collect(Collectors.toList()))
-                                .toObservable();
-                    }
-                });
+                                .toObservable());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Observable<List<MyArticle>> updateChannel() {
         return repo
@@ -72,7 +67,6 @@ public class ChannelRepositoryImpl implements ChannelRepository {
                     return new ArrayList<>();
                     // Отфильровать новости без картинок
                 })
-                .doOnSuccess(list -> logIt("onSuccess"))
                 .map(
                         list -> ((List<MyArticle>) list)
                                 .stream()

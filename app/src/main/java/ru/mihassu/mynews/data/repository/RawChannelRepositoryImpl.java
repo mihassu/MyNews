@@ -1,6 +1,6 @@
 package ru.mihassu.mynews.data.repository;
 
-import java.util.concurrent.Callable;
+import java.io.IOException;
 
 import io.reactivex.Single;
 import okhttp3.OkHttpClient;
@@ -20,17 +20,22 @@ public class RawChannelRepositoryImpl implements RawChannelRepository {
     @Override
     public Single<Response> sendRequest() {
 
-        return Single.fromCallable(new Callable<Response>() {
-            @Override
-            public Response call() throws Exception {
-                Response response = client
+        return Single.fromCallable(() -> {
+
+            Response response = null;
+
+            try {
+                response = client
                         .newCall(new Request.Builder().url(channelUrl).build())
                         .execute();
-                if(!response.isSuccessful()) {
-                    throw new Exception("Channel " + channelUrl + " fetching error");
-                }
-                return response;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+            if (response != null && !response.isSuccessful()) {
+                throw new Exception("Channel " + channelUrl + " fetching error");
+            }
+            return response;
         });
     }
 }
