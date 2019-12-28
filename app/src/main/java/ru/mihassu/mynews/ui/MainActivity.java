@@ -3,7 +3,6 @@ package ru.mihassu.mynews.ui;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,8 +15,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-
-import java.util.Objects;
 
 import ru.mihassu.mynews.R;
 
@@ -34,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         showBottomNavigationMenu();
         initToolbar();
         initNavigationDrawer();
-        initView();
     }
 
     private void initToolbar() {
@@ -55,15 +51,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-    }
-
-    private void initView() {
-        ProgressBar progressBar = findViewById(R.id.main_progressbar);
-//        ImageView toolbarImage = findViewById(R.id.main_toolbar_image);
-//        Picasso
-//                .get()
-//                .load("https://regnum.ru/assets/img/logo_base.png")
-//                .into(toolbarImage);
     }
 
     @Override

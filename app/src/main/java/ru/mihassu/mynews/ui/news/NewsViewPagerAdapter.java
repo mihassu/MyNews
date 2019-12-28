@@ -16,26 +16,30 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Objects;
 
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
-public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsViewHolder> {
+public class NewsViewPagerAdapter
+        extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
-    // Набор списков новостей по категориям
+    // Списки новостей по категориям
     private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
 
-    // Helper для работы с Custom Tabs
+    // Helper для работы с Chrome CustomTabs
     private CustomTabHelper customTabHelper = new CustomTabHelper();
 
-    public void setClassifiedNews(EnumMap<ArticleCategory, List<MyArticle>> map) {
-        classifiedNews = map;
-        notifyDataSetChanged();
+    private UpdateAgent updateAgent;
+    private boolean isUpdateInProgress;
+
+    public NewsViewPagerAdapter(UpdateAgent updateAgent) {
+        this.updateAgent = updateAgent;
+        this.isUpdateInProgress = true;
     }
 
     @NonNull
@@ -55,7 +59,13 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
 
     @Override
     public int getItemCount() {
-        return ArticleCategory.values().length;
+        return classifiedNews != null ? classifiedNews.size() : 0;
+    }
+
+    public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
+        classifiedNews = enumMap;
+        notifyDataSetChanged();
+        isUpdateInProgress = false;
     }
 
     /**
@@ -66,9 +76,22 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
         private SwipeRefreshLayout refreshLayout;
         private RecyclerView rv;
 
-        public NewsViewHolder(@NonNull View itemView) {
+        NewsViewHolder(@NonNull View itemView) {
             super(itemView);
             rv = itemView.findViewById(R.id.news_recyclerview);
+            initSwipeRefreshLayout();
+        }
+
+        void bind(List<MyArticle> articles) {
+            MainAdapter adapter = new MainAdapter(this::showInChromeCustomTabs);
+            adapter.setDataList(articles);
+            rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
+            rv.setAdapter(adapter);
+            refreshLayout.setRefreshing(false);
+        }
+
+        // Настроить работу SwipeRefreshLayout
+        private void initSwipeRefreshLayout() {
             refreshLayout = itemView.findViewById(R.id.swipe_refresh);
             refreshLayout.setColorSchemeResources(
                     android.R.color.holo_blue_bright,
@@ -77,22 +100,22 @@ public class NewsPageAdapter extends RecyclerView.Adapter<NewsPageAdapter.NewsVi
                     android.R.color.holo_red_light
             );
 
-            // Эмитация обновления
-            refreshLayout.setOnRefreshListener( () -> {
-                Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
-                refreshLayout.setRefreshing(false);
-            });
+            // Запросить обновление при Swipe
+            refreshLayout.setOnRefreshListener(() -> {
+
+                        if (!isUpdateInProgress) {
+                            isUpdateInProgress = true;
+                            refreshLayout.setRefreshing(true);
+                            updateAgent.update();
+                        }
+                    }
+            );
+
+            refreshLayout.setRefreshing(isUpdateInProgress);
         }
 
-        public void bind(List<MyArticle> articles) {
-            MainAdapter adapter = new MainAdapter(this::startContentViewer);
-            adapter.setDataList(articles);
-            rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
-            rv.setAdapter(adapter);
-        }
-
-        // Отобразить новость в новой Activity (CustomTabs)
-        private void startContentViewer(String link) {
+        // Отобразить новость в Chrome CustomTabs
+        private void showInChromeCustomTabs(String link) {
 
             int requestCode = 100;
 

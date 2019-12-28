@@ -7,4 +7,9 @@
         <item>https://www.sovsport.ru/news_rss</item>
         <item>https://www.it-world.ru/it-news/it/?rss=Y</item>
     </string-array>
+
+    <string-array name="category_politics">
+        <item>https://lenta.ru/rss</item>
+    </string-array>
+
 </resources>

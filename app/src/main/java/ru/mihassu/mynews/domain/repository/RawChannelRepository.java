@@ -1,8 +1,11 @@
 package ru.mihassu.mynews.domain.repository;
 
+import java.io.InputStream;
+
 import io.reactivex.Single;
-import okhttp3.Response;
 
 public interface RawChannelRepository {
-    Single<Response> create();
+    int INVALID_RESPONSE = -1;
+    int RETRY_COUNT = 3;
+    Single<InputStream> sendRequest();
 }

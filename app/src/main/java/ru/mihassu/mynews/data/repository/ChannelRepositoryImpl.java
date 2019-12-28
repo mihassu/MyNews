@@ -1,13 +1,11 @@
 package ru.mihassu.mynews.data.repository;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.functions.Function;
 import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
@@ -17,43 +15,41 @@ public class ChannelRepositoryImpl implements ChannelRepository {
 
     private RawChannelRepository repo;
     private ChannelParser parser;
-    private long updateInterval;
 
     public ChannelRepositoryImpl(
             RawChannelRepository repo,
-            ChannelParser parser,
-            long updateInterval) {
+            ChannelParser parser) {
         this.repo = repo;
         this.parser = parser;
-        this.updateInterval = updateInterval;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Observable<List<MyArticle>> getChannel() {
+    public Observable<List<MyArticle>> updateChannel() {
+        return repo
+                .sendRequest()
+                .map(this::parseToArticles
+                )
+                .map(this::makeFiltering)
+                .toObservable();
+    }
 
-        return Observable
-                .interval(0, updateInterval, TimeUnit.MINUTES)
-                .flatMap(new Function<Long, ObservableSource<List<MyArticle>>>() {
-                    @Override
-                    public ObservableSource<List<MyArticle>> apply(Long aLong) throws Exception {
-                        return repo
-                                .create()
-                                .map(response -> {
-                                    try {
-                                        return parser.parse(response.body().byteStream());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    return new ArrayList<>();
-                                    // Отфильровать новости без картинок
-                                })
-                                .map(
-                                        list -> ((List<MyArticle>) list)
-                                                .stream()
-                                                .filter(article -> article.image != null)
-                                                .collect(Collectors.toList()))
-                                .toObservable();
-                    }
-                });
+    // Распарсить XML в массив статей
+    private List<MyArticle> parseToArticles(InputStream byteStream) {
+        try {
+            return parser.parse(byteStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    // Отфильтровать ненужный материал
+    private List<MyArticle> makeFiltering(List<MyArticle> articlesList) {
+        return articlesList
+                .stream()
+                // Отфильровать новости без картинок
+                .filter(article -> article.image != null)
+                .collect(Collectors.toList());
     }
 }
