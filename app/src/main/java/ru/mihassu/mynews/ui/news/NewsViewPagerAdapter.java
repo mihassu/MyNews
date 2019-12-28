@@ -25,8 +25,6 @@ import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
-import static ru.mihassu.mynews.Utils.logIt;
-
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
@@ -62,7 +60,6 @@ public class NewsViewPagerAdapter
     @Override
     public int getItemCount() {
         return classifiedNews != null ? classifiedNews.size() : 0;
-//        return ArticleCategory.values().length;
     }
 
     public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
@@ -82,11 +79,10 @@ public class NewsViewPagerAdapter
         NewsViewHolder(@NonNull View itemView) {
             super(itemView);
             rv = itemView.findViewById(R.id.news_recyclerview);
-            initRefreshLayout();
+            initSwipeRefreshLayout();
         }
 
         void bind(List<MyArticle> articles) {
-            logIt("bind");
             MainAdapter adapter = new MainAdapter(this::showInChromeCustomTabs);
             adapter.setDataList(articles);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
@@ -95,7 +91,7 @@ public class NewsViewPagerAdapter
         }
 
         // Настроить работу SwipeRefreshLayout
-        private void initRefreshLayout() {
+        private void initSwipeRefreshLayout() {
             refreshLayout = itemView.findViewById(R.id.swipe_refresh);
             refreshLayout.setColorSchemeResources(
                     android.R.color.holo_blue_bright,
@@ -106,13 +102,11 @@ public class NewsViewPagerAdapter
 
             // Запросить обновление при Swipe
             refreshLayout.setOnRefreshListener(() -> {
-                        logIt("setOnRefreshListener isUpdateInProgress=" + isUpdateInProgress);
+
                         if (!isUpdateInProgress) {
                             isUpdateInProgress = true;
                             refreshLayout.setRefreshing(true);
                             updateAgent.update();
-                        } else {
-                            refreshLayout.setRefreshing(false);
                         }
                     }
             );

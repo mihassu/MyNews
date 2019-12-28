@@ -1,5 +1,6 @@
 package ru.mihassu.mynews.data.repository;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,42 +28,28 @@ public class ChannelRepositoryImpl implements ChannelRepository {
     public Observable<List<MyArticle>> updateChannel() {
         return repo
                 .sendRequest()
-                .map(response -> {
-                    try {
-                        return parser.parse(response.body().byteStream());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return new ArrayList<>();
-                    // Отфильровать новости без картинок
-                })
-                .map(
-                        list -> ((List<MyArticle>) list)
-                                .stream()
-                                .filter(article -> article.image != null)
-                                .collect(Collectors.toList()))
+                .map(this::parseToArticles
+                )
+                .map(this::makeFiltering)
                 .toObservable();
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Observable<List<MyArticle>> updateChannelEx() {
-        return repo
-                .sendRequestEx()
-                .map(byteStream -> {
-                    try {
-                        return parser.parse(byteStream);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return new ArrayList<>();
-                    // Отфильровать новости без картинок
-                })
-                .map(
-                        list -> ((List<MyArticle>) list)
-                                .stream()
-                                .filter(article -> article.image != null)
-                                .collect(Collectors.toList()))
-                .toObservable();
+    // Распарсить XML в массив статей
+    private List<MyArticle> parseToArticles(InputStream byteStream) {
+        try {
+            return parser.parse(byteStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    // Отфильтровать ненужный материал
+    private List<MyArticle> makeFiltering(List<MyArticle> articlesList) {
+        return articlesList
+                .stream()
+                // Отфильровать новости без картинок
+                .filter(article -> article.image != null)
+                .collect(Collectors.toList());
     }
 }
