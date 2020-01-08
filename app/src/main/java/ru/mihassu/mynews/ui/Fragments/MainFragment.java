@@ -89,23 +89,32 @@ public class MainFragment extends Fragment implements Observer {
 
         EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
 
-        for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
-            enumMap.put(c, new ArrayList<>());
-        }
+//        for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
+//            enumMap.put(c, new ArrayList<>());
+//        }
+//
+//        for (MyArticle article : list) {
+//            Objects.requireNonNull(enumMap.get(article.category)).add(article);
+//        }
 
-        for (MyArticle article : list) {
-            Objects.requireNonNull(enumMap.get(article.category)).add(article);
+        for (MyArticle article: list) {
+            if (enumMap.containsKey(article.category)) {
+                Objects.requireNonNull(enumMap.get(article.category)).add(article);
+            } else {
+                enumMap.put(article.category, new ArrayList<>());
+                Objects.requireNonNull(enumMap.get(article.category)).add(article);
+            }
         }
 
         //Исключить пустые категории
-        enumMap.forEach(new BiConsumer<ArticleCategory, List<MyArticle>>() {
-            @Override
-            public void accept(ArticleCategory category, List<MyArticle> myArticles) {
-                if (enumMap.get(category).size() == 0) {
-                    enumMap.remove(category);
-                }
-            }
-        });
+//        enumMap.forEach(new BiConsumer<ArticleCategory, List<MyArticle>>() {
+//            @Override
+//            public void accept(ArticleCategory category, List<MyArticle> myArticles) {
+//                if (enumMap.get(category).size() == 0) {
+//                    enumMap.remove(category);
+//                }
+//            }
+//        });
 
         return enumMap;
     }

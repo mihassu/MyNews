@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import ru.mihassu.mynews.R;
+import ru.mihassu.mynews.Utils;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
@@ -67,6 +68,7 @@ public class NewsViewPagerAdapter
 
     public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
         classifiedNews = enumMap;
+        Utils.logIt("Размер classifiedNews: " + classifiedNews.size());
         notifyDataSetChanged();
         isUpdateInProgress = false;
     }
