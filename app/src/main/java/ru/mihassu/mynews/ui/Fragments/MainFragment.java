@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import ru.mihassu.mynews.App;
@@ -48,6 +49,7 @@ public class MainFragment extends Fragment implements Observer {
     private ViewPager2 viewPager;
     private ProgressBar progressBar;
     private List<MyArticle> articlesList;
+    private EnumMap<ArticleCategory, List<MyArticle>> currentEmumMap;
 
     // 1.
     public View onCreateView(
@@ -115,7 +117,7 @@ public class MainFragment extends Fragment implements Observer {
 //                }
 //            }
 //        });
-
+        currentEmumMap = enumMap;
         return enumMap;
     }
 
@@ -132,10 +134,15 @@ public class MainFragment extends Fragment implements Observer {
         TabLayoutMediator mediator = new TabLayoutMediator(
                 tabLayout,
                 viewPager,
-                (tab, position) ->
-                        tab.setText(fragment
+                (tab, position) -> {
+                    Set<ArticleCategory> currents = currentEmumMap.keySet();
+                    ArticleCategory[] articleCategories = currents.toArray(new ArticleCategory[currents.size()]);
+                    tab.setText(fragment
                                 .getContext()
-                                .getString(ArticleCategory.values()[position].getTextId())));
+                                .getString(articleCategories[position].getTextId()));
+//                                .getString(ArticleCategory.values()[position].getTextId()));
+                        }
+        );
         mediator.attach();
     }
 
