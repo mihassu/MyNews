@@ -2,9 +2,14 @@ package ru.mihassu.mynews.ui.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +26,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
@@ -41,6 +47,7 @@ public class MainFragment extends Fragment implements Observer {
     private NewsViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
     private ProgressBar progressBar;
+    private List<MyArticle> articlesList;
 
     // 1.
     public View onCreateView(
@@ -51,6 +58,7 @@ public class MainFragment extends Fragment implements Observer {
         View viewFragment = inflater.inflate(R.layout.fragment_main, container, false);
         progressBar = viewFragment.findViewById(R.id.load_progress);
         initViewPager(viewFragment);
+        setHasOptionsMenu(true);
         return viewFragment;
     }
 
@@ -71,8 +79,14 @@ public class MainFragment extends Fragment implements Observer {
     @SuppressWarnings("unchecked")
     public void onChanged(Object obj) {
         List<MyArticle> list = (List<MyArticle>) obj;
+        articlesList = list;
+        progressBar.setVisibility(View.INVISIBLE);
+        viewPagerAdapter.updateContent(sortForCategories(list));
+    }
 
-        // Раскидать статьи по категориям
+    // Раскидать статьи по категориям
+    private EnumMap<ArticleCategory, List<MyArticle>> sortForCategories(List<MyArticle> list) {
+
         EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
 
         for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
@@ -83,8 +97,17 @@ public class MainFragment extends Fragment implements Observer {
             Objects.requireNonNull(enumMap.get(article.category)).add(article);
         }
 
-        progressBar.setVisibility(View.INVISIBLE);
-        viewPagerAdapter.updateContent(enumMap);
+        //Исключить пустые категории
+        enumMap.forEach(new BiConsumer<ArticleCategory, List<MyArticle>>() {
+            @Override
+            public void accept(ArticleCategory category, List<MyArticle> myArticles) {
+                if (enumMap.get(category).size() == 0) {
+                    enumMap.remove(category);
+                }
+            }
+        });
+
+        return enumMap;
     }
 
     // Init ViewPager
@@ -134,4 +157,41 @@ public class MainFragment extends Fragment implements Observer {
                 .observe(this,
                         this);
     }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem search = menu.findItem(R.id.action_search);
+
+        SearchView searchView = (SearchView)search.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                String text = s.toLowerCase();
+                List<MyArticle> searchedList = new ArrayList<>();
+                for (MyArticle article: articlesList) {
+                    String title = article.title.toLowerCase();
+                    if (title.contains(text)) {
+                        searchedList.add(article);
+                    }
+                }
+                if (searchedList.size() > 0) {
+                    viewPagerAdapter.updateContent(sortForCategories(searchedList));
+                } else {
+                    Toast.makeText(getActivity(), "Не найдено", Toast.LENGTH_SHORT).show();
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+    }
+
+
 }
