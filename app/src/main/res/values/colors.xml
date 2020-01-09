@@ -3,4 +3,10 @@
     <color name="colorPrimary">#9C27B0</color>
     <color name="colorPrimaryDark">#7B1FA2</color>
     <color name="colorAccent">#7C4DFF</color>
+
+    <color name="spinner_out">@color/colorPrimary</color>
+    <color name="spinner_in">#858585</color>
+    <color name="text_anim">#421c52</color>
+    <color name="splash_background">@android:color/white</color>
+
 </resources>

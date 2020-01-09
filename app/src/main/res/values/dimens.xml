@@ -1,3 +1,6 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="anim_screen_width">308dp</dimen>
+    <dimen name="anim_screen_height">200dp</dimen>
+    <dimen name="anim_screen_margin_bottom">64dp</dimen>
 </resources>

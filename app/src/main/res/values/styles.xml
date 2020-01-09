@@ -11,6 +11,13 @@
         <item name="colorAccent">#7C4DFF</item>
     </style>
 
+    <style name="FullScreenTheme" parent="AppThemePurple" >
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:colorBackground">@color/splash_background</item>
+    </style>
+
     <style name="AppThemeDark" parent="ThemeOverlay.MaterialComponents.Dark">
         <item name="colorPrimary">#9C27B0</item>
         <item name="colorPrimaryDark">#7B1FA2</item>
@@ -22,6 +29,15 @@
 
     <style name="CircularProgress" parent="AppThemePurple">
         <item name="colorAccent">?attr/colorPrimaryDark</item>
+    </style>
+
+    <style name="AnimationDrawableStyle">
+        <item name="android:layout_width">@dimen/anim_screen_width</item>
+        <item name="android:layout_height">@dimen/anim_screen_height</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginBottom">@dimen/anim_screen_margin_bottom</item>
+        <item name="android:contentDescription">@null</item>
+        <item name="android:scaleType">fitCenter</item>
     </style>
 
 </resources>
