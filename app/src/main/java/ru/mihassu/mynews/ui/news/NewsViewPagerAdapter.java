@@ -68,7 +68,6 @@ public class NewsViewPagerAdapter
 
     public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
         classifiedNews = enumMap;
-        Utils.logIt("Размер classifiedNews: " + classifiedNews.size());
         notifyDataSetChanged();
         isUpdateInProgress = false;
     }

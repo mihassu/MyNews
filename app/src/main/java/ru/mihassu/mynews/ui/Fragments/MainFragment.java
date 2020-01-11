@@ -154,6 +154,7 @@ public class MainFragment extends Fragment implements Observer {
                 }
                 if (searchedList.size() > 0) {
                     currentState.setCurrentArticles(searchedList);
+                    viewPager.setCurrentItem(0);
                     viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
                 } else {
                     Toast.makeText(getActivity(), "Не найдено", Toast.LENGTH_SHORT).show();
