@@ -5,9 +5,10 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
 
 public interface ChannelCollector {
-    LiveData<List<MyArticle>> collectChannels();
+    LiveData<MainFragmentState> collectChannels();
     void updateChannels();
 
 }

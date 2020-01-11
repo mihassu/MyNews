@@ -15,12 +15,13 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
+import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
 public class ChannelCollectorImpl implements ChannelCollector {
 
-    private MutableLiveData<List<MyArticle>> liveData = new MutableLiveData<>();
+    private MutableLiveData<MainFragmentState> liveData = new MutableLiveData<>();
     private BehaviorSubject<Long> manualUpdateToggle;
 
     @SuppressWarnings("unchecked")
@@ -67,7 +68,14 @@ public class ChannelCollectorImpl implements ChannelCollector {
     private Observer<List<MyArticle>> observer = new Observer<List<MyArticle>>() {
         @Override
         public void onNext(List<MyArticle> myArticles) {
-            liveData.postValue(myArticles);
+
+            if (liveData.getValue() != null) {
+                MainFragmentState currentState = liveData.getValue();
+                currentState.setCurrentArticles(myArticles);
+                liveData.postValue(currentState);
+            } else {
+                liveData.postValue(new MainFragmentState(myArticles));
+            }
         }
 
         @Override
@@ -85,7 +93,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
     };
 
     @Override
-    public LiveData<List<MyArticle>> collectChannels() {
+    public LiveData<MainFragmentState> collectChannels() {
         return liveData;
     }
 
@@ -93,4 +101,78 @@ public class ChannelCollectorImpl implements ChannelCollector {
     public void updateChannels() {
         manualUpdateToggle.onNext(System.currentTimeMillis());
     }
+
+//    private MutableLiveData<List<MyArticle>> liveData = new MutableLiveData<>();
+//    private BehaviorSubject<Long> manualUpdateToggle;
+//
+//    @SuppressWarnings("unchecked")
+//    public ChannelCollectorImpl(List<ChannelRepository> channelRepos, long updateInterval) {
+//
+//        List<Observable<List<MyArticle>>> observableList = new ArrayList<>();
+//
+//        for (ChannelRepository channelRepo : channelRepos) {
+//            observableList.add(channelRepo.updateChannel());
+//        }
+//
+//        Observable<Long> periodicUpdateToggle = Observable
+//                .interval(0, updateInterval, TimeUnit.MINUTES)
+//                .map(l -> System.currentTimeMillis());
+//
+//        manualUpdateToggle = BehaviorSubject.createDefault(System.currentTimeMillis());
+//
+//        Observable<Long> updateTrigger = Observable.combineLatest(
+//                periodicUpdateToggle,
+//                manualUpdateToggle,
+//                Math::max);
+//
+//        updateTrigger
+//                .switchMap(millis -> collect(observableList))
+//                .subscribe(observer);
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    private Observable<List<MyArticle>> collect(
+//            List<Observable<List<MyArticle>>> observableList) {
+//
+//        return Observable.combineLatest(observableList,
+//                (listOfLists) -> {
+//                    List<MyArticle> combinedList = new ArrayList<>();
+//
+//                    for (Object list : listOfLists) {
+//                        combinedList.addAll((List<MyArticle>) list);
+//                    }
+//                    return combinedList;
+//                })
+//                .subscribeOn(Schedulers.io());
+//    }
+//
+//    private Observer<List<MyArticle>> observer = new Observer<List<MyArticle>>() {
+//        @Override
+//        public void onNext(List<MyArticle> myArticles) {
+//            liveData.postValue(myArticles);
+//        }
+//
+//        @Override
+//        public void onError(Throwable e) {
+//            logIt("Channel Collector error");
+//        }
+//
+//        @Override
+//        public void onSubscribe(Disposable d) {
+//        }
+//
+//        @Override
+//        public void onComplete() {
+//        }
+//    };
+//
+//    @Override
+//    public LiveData<List<MyArticle>> collectChannels() {
+//        return liveData;
+//    }
+//
+//    @Override
+//    public void updateChannels() {
+//        manualUpdateToggle.onNext(System.currentTimeMillis());
+//    }
 }

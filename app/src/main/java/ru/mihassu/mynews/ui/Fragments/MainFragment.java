@@ -23,11 +23,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
@@ -48,8 +46,9 @@ public class MainFragment extends Fragment implements Observer {
     private NewsViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
     private ProgressBar progressBar;
-    private List<MyArticle> articlesList;
-    private EnumMap<ArticleCategory, List<MyArticle>> currentEmumMap;
+//    private List<MyArticle> articlesList;
+//    private EnumMap<ArticleCategory, List<MyArticle>> currentEnumMap;
+    private MainFragmentState currentState;
 
     // 1.
     public View onCreateView(
@@ -80,10 +79,13 @@ public class MainFragment extends Fragment implements Observer {
     @Override
     @SuppressWarnings("unchecked")
     public void onChanged(Object obj) {
-        List<MyArticle> list = (List<MyArticle>) obj;
-        articlesList = list;
+        currentState = (MainFragmentState) obj;
         progressBar.setVisibility(View.INVISIBLE);
-        viewPagerAdapter.updateContent(sortForCategories(list));
+        viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
+//        List<MyArticle> list = (List<MyArticle>) obj;
+//        articlesList = list;
+//        progressBar.setVisibility(View.INVISIBLE);
+//        viewPagerAdapter.updateContent(sortForCategories(list));
     }
 
     // Раскидать статьи по категориям
@@ -117,7 +119,7 @@ public class MainFragment extends Fragment implements Observer {
 //                }
 //            }
 //        });
-        currentEmumMap = enumMap;
+//        currentEnumMap = enumMap;
         return enumMap;
     }
 
@@ -135,11 +137,9 @@ public class MainFragment extends Fragment implements Observer {
                 tabLayout,
                 viewPager,
                 (tab, position) -> {
-                    Set<ArticleCategory> currents = currentEmumMap.keySet();
-                    ArticleCategory[] articleCategories = currents.toArray(new ArticleCategory[currents.size()]);
                     tab.setText(fragment
                                 .getContext()
-                                .getString(articleCategories[position].getTextId()));
+                                .getString(currentState.getCurrentCategories()[position].getTextId()));
 //                                .getString(ArticleCategory.values()[position].getTextId()));
                         }
         );
@@ -186,14 +186,16 @@ public class MainFragment extends Fragment implements Observer {
             public boolean onQueryTextSubmit(String s) {
                 String text = s.toLowerCase();
                 List<MyArticle> searchedList = new ArrayList<>();
-                for (MyArticle article: articlesList) {
+                List<MyArticle> currentList = currentState.getCurrentArticles();
+                for (MyArticle article: currentList) {
                     String title = article.title.toLowerCase();
                     if (title.contains(text)) {
                         searchedList.add(article);
                     }
                 }
                 if (searchedList.size() > 0) {
-                    viewPagerAdapter.updateContent(sortForCategories(searchedList));
+                    currentState.setCurrentArticles(searchedList);
+                    viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
                 } else {
                     Toast.makeText(getActivity(), "Не найдено", Toast.LENGTH_SHORT).show();
                 }
