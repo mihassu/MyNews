@@ -1,0 +1,207 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="200dp"
+            android:height="200dp"
+            android:viewportWidth="200"
+            android:viewportHeight="200">
+
+            <group
+                android:name="groupSpinnerIn"
+                android:translateX="100"
+                android:translateY="100">
+                <path
+                    android:name="pathSpinnerIn"
+                    android:fillColor="@android:color/transparent"
+                    android:pathData="M24,0 A24,24 0 0,0 -24,0 A24,24 0 0,0 24,0"
+                    android:strokeWidth="3"
+                    android:strokeColor="@color/spinner_in"
+                    android:strokeLineCap="square"
+                    android:strokeLineJoin="miter"
+                    android:trimPathStart="0"
+                    android:trimPathEnd="0"
+                    android:trimPathOffset="0" />
+            </group>
+            <group
+                android:name="groupLineIn"
+                android:translateX="100"
+                android:translateY="100">
+                <path
+                    android:name="pathLineIn"
+                    android:fillColor="@android:color/transparent"
+                    android:strokeWidth="8"
+                    android:strokeColor="@color/spinner_in"
+                    android:strokeLineCap="round"
+                    android:strokeLineJoin="miter"
+                    android:valueFrom="M 24 0 C 22.4 0 20.8 0 19.2 0 C 17.561 0 15.922 0 14.283 0 C 12.488 0 10.693 0 8.898 0 C 6.556 0 4.215 0 1.873 0 C -0.156 0 -2.185 0 -4.215 0 C -6.556 0 -8.898 0 -11.239 0 C -13.502 0 -15.766 0 -18.029 0 C -20.02 0 -22.01 0 -24 0" />
+            </group>
+        </vector>
+    </aapt:attr>
+
+    <!-- Перемещение Line по экрану [end: 1000 ms] -->
+    <target android:name="groupLineIn">
+        <aapt:attr name="android:animation">
+            <!-- ENTER: Перемещение справа к центру -->
+            <objectAnimator
+                android:duration="1000"
+                android:propertyName="translateX"
+                android:valueFrom="400"
+                android:valueTo="100" />
+
+        </aapt:attr>
+    </target>
+
+    <!-- Превращение Line в Spinner и уход pathLineIn с экрана [end: 1550 ms] -->
+    <target android:name="pathLineIn">
+        <aapt:attr name="android:animation">
+            <set android:ordering="sequentially">
+                <objectAnimator
+                    android:duration="500"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="pathData"
+                    android:startOffset="1000"
+                    android:valueFrom="M 24 0 C 22.4 0 20.8 0 19.2 0 C 17.561 0 15.922 0 14.283 0 C 12.488 0 10.693 0 8.898 0 C 6.556 0 4.215 0 1.873 0 C -0.156 0 -2.185 0 -4.215 0 C -6.556 0 -8.898 0 -11.239 0 C -13.502 0 -15.766 0 -18.029 0 C -20.02 0 -22.01 0 -24 0"
+                    android:valueTo="M 24 0 C 24 6.363 21.47 12.471 16.971 16.971 C 12.471 21.47 6.363 24 0 24 C -6.363 24 -12.471 21.47 -16.971 16.971 C -21.47 12.471 -24 6.363 -24 0 C -24 -6.363 -21.47 -12.471 -16.971 -16.971 C -12.471 -21.47 -6.363 -24 0 -24 C 6.363 -24 12.471 -21.47 16.971 -16.971 C 21.47 -12.471 24 -6.363 24 0"
+                    android:valueType="pathType" />
+                <objectAnimator
+                    android:duration="50"
+                    android:propertyName="trimPathEnd"
+                    android:valueFrom="1"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <!-- Модификации Spinner'а -->
+    <!-- Дополнительное вращение вначале и превращение в квадрат в конце -->
+    <target android:name="groupSpinnerIn">
+        <aapt:attr name="android:animation">
+            <set android:ordering="sequentially">
+                <!-- Начало вращения [end: 3500 ms]-->
+                <set>
+                    <objectAnimator
+                        android:duration="2000"
+                        android:interpolator="@android:anim/linear_interpolator"
+                        android:propertyName="rotation"
+                        android:startOffset="1500"
+                        android:valueFrom="0"
+                        android:valueTo="270"
+                        android:valueType="floatType" />
+                </set>
+                <!-- EXIT: После превращения в квадрат перемещение от центра (влево-вниз)-->
+                <set android:ordering="together">
+                    <objectAnimator
+                        android:duration="500"
+                        android:propertyName="translateX"
+                        android:startOffset="2200"
+                        android:valueFrom="100"
+                        android:valueTo="80" />
+                    <objectAnimator
+                        android:duration="500"
+                        android:propertyName="translateY"
+                        android:startOffset="2200"
+                        android:valueFrom="100"
+                        android:valueTo="120" />
+                </set>
+            </set>
+        </aapt:attr>
+    </target>
+
+    <!-- Вращение Spinner'a [start: 1500, end: 4500]-->
+    <target android:name="pathSpinnerIn">
+        <aapt:attr name="android:animation">
+            <set android:ordering="sequentially">
+                <!-- Установить path спиннера в исходное положение-->
+                <set>
+                    <objectAnimator
+                        android:duration="50"
+                        android:propertyName="trimPathEnd"
+                        android:startOffset="1450"
+                        android:valueFrom="0.0"
+                        android:valueTo="0.03"
+                        android:valueType="floatType" />
+                </set>
+                <!-- Вращение спиннера -->
+                <set android:ordering="together">
+                    <!-- "Хвост" медленно стартует, а в конце быстро догоняет голову-->
+                    <objectAnimator
+                        android:duration="1000"
+                        android:propertyName="trimPathStart"
+                        android:repeatCount="2"
+                        android:valueFrom="0"
+                        android:valueTo="0.80"
+                        android:valueType="floatType">
+                        <!-- Медленный старт, быстрый финиш -->
+                        <aapt:attr name="android:interpolator">
+                            <pathInterpolator android:pathData="L0.5,0 C 0.7,0 0.6,1 1,1" />
+                        </aapt:attr>
+                    </objectAnimator>
+
+                    <!-- "Голова" стартует быстро и убегает от хвоста -->
+                    <objectAnimator
+                        android:duration="1000"
+                        android:propertyName="trimPathEnd"
+                        android:repeatCount="2"
+                        android:valueFrom="0.03"
+                        android:valueTo="0.83"
+                        android:valueType="floatType">
+                        <!-- Быстрый старт, медленный финиш -->
+                        <aapt:attr name="android:interpolator">
+                            <pathInterpolator android:pathData="C0.2,0 0.1,1 0.5,0.96 C 0.96666666666,0.96 0.99333333333,1 1,1" />
+                        </aapt:attr>
+                    </objectAnimator>
+
+                    <objectAnimator
+                        android:duration="1000"
+                        android:interpolator="@android:anim/linear_interpolator"
+                        android:propertyName="trimPathOffset"
+                        android:repeatCount="2"
+                        android:valueFrom="0"
+                        android:valueTo="0.20"
+                        android:valueType="floatType" />
+                </set>
+                <!-- Остановка вращения, восстановление параметров trim -->
+                <set>
+                    <objectAnimator
+                        android:duration="700"
+                        android:propertyName="trimPathOffset"
+                        android:repeatCount="0"
+                        android:valueFrom="0"
+                        android:valueTo="0"
+                        android:valueType="floatType" />
+                    <objectAnimator
+                        android:duration="700"
+                        android:interpolator="@android:anim/linear_interpolator"
+                        android:propertyName="trimPathEnd"
+                        android:repeatCount="0"
+                        android:valueFrom="0.03"
+                        android:valueTo="1"
+                        android:valueType="floatType" />
+                    <objectAnimator
+                        android:duration="700"
+                        android:interpolator="@android:anim/linear_interpolator"
+                        android:propertyName="trimPathStart"
+                        android:repeatCount="0"
+                        android:valueFrom="0"
+                        android:valueTo="0"
+                        android:valueType="floatType" />
+                </set>
+
+                <!-- Превращение в квадрат -->
+                <set>
+                    <objectAnimator
+                        android:duration="500"
+                        android:interpolator="@android:interpolator/fast_out_slow_in"
+                        android:propertyName="pathData"
+                        android:valueFrom="M 0 -24 C 6.363 -24 12.471 -21.47 16.971 -16.971 C 21.47 -12.471 24 -6.363 24 0 C 24 6.363 21.47 12.471 16.971 16.971 C 12.471 21.47 6.363 24 0 24 C -6.363 24 -12.471 21.47 -16.971 16.971 C -21.47 12.471 -24 6.363 -24 0 C -24 -6.363 -21.47 -12.471 -16.971 -16.971 C -14.871 -19.071 -12.421 -20.741 -9.758 -21.926 C -6.715 -23.28 -3.394 -24 0 -24"
+                        android:valueTo="M 22 -24 C 22 -24 22 -24 22 -24 C 23.104 -24 24 -23.104 24 -22 C 24 -7.333 24 7.333 24 22 C 24 23.104 23.104 24 22 24 C 7.333 24 -7.333 24 -22 24 C -23.104 24 -24 23.104 -24 22 C -24 7.333 -24 -7.333 -24 -22 C -24 -23.104 -23.104 -24 -22 -24 C -7.333 -24 7.333 -24 22 -24"
+                        android:valueType="pathType" />
+                </set>
+            </set>
+        </aapt:attr>
+    </target>
+
+</animated-vector>

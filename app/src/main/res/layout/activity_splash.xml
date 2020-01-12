@@ -1,0 +1,22 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true">
+
+    <ImageView
+        android:id="@+id/animLeft"
+        style="@style/AnimationDrawableStyle"
+        app:srcCompat="@drawable/avd_left" />
+
+    <ImageView
+        android:id="@+id/animRight"
+        style="@style/AnimationDrawableStyle"
+        app:srcCompat="@drawable/avd_right" />
+
+    <ImageView
+        android:id="@+id/animText"
+        style="@style/AnimationDrawableStyle"
+        app:srcCompat="@drawable/avd_writing" />
+</FrameLayout>
