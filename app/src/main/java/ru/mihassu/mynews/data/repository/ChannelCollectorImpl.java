@@ -15,12 +15,13 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
+import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
 public class ChannelCollectorImpl implements ChannelCollector {
 
-    private MutableLiveData<List<MyArticle>> liveData = new MutableLiveData<>();
+    private MutableLiveData<MainFragmentState> liveData = new MutableLiveData<>();
     private BehaviorSubject<Long> manualUpdateToggle;
 
     @SuppressWarnings("unchecked")
@@ -67,7 +68,14 @@ public class ChannelCollectorImpl implements ChannelCollector {
     private Observer<List<MyArticle>> observer = new Observer<List<MyArticle>>() {
         @Override
         public void onNext(List<MyArticle> myArticles) {
-            liveData.postValue(myArticles);
+
+            if (liveData.getValue() != null) {
+                MainFragmentState currentState = liveData.getValue();
+                currentState.setCurrentArticles(myArticles);
+                liveData.postValue(currentState);
+            } else {
+                liveData.postValue(new MainFragmentState(myArticles));
+            }
         }
 
         @Override
@@ -85,7 +93,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
     };
 
     @Override
-    public LiveData<List<MyArticle>> collectChannels() {
+    public LiveData<MainFragmentState> collectChannels() {
         return liveData;
     }
 

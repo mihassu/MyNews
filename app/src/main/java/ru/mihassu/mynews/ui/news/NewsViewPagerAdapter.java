@@ -16,8 +16,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Set;
 
 import ru.mihassu.mynews.R;
+import ru.mihassu.mynews.Utils;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
@@ -53,7 +55,9 @@ public class NewsViewPagerAdapter
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
         if (classifiedNews != null && classifiedNews.size() != 0) {
-            holder.bind(classifiedNews.get(ArticleCategory.values()[position]));
+//            holder.bind(classifiedNews.get(ArticleCategory.values()[position]));
+            Set<ArticleCategory> currents = classifiedNews.keySet();
+            holder.bind(classifiedNews.get(currents.toArray()[position]));
         }
     }
 
