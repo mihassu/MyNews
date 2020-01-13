@@ -2,12 +2,17 @@ package ru.mihassu.mynews.ui.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -17,8 +22,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +30,6 @@ import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.data.network.RegnumApi;
 import ru.mihassu.mynews.data.network.RetrofitInit;
 import ru.mihassu.mynews.data.repository.ArticleRepositoryRegnum;
-import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
 import ru.mihassu.mynews.ui.main.MainViewModel;
@@ -41,6 +43,7 @@ public class MainFragment extends Fragment implements Observer {
     private NewsViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
     private ProgressBar progressBar;
+    private MainFragmentState currentState;
 
     // 1.
     public View onCreateView(
@@ -51,6 +54,7 @@ public class MainFragment extends Fragment implements Observer {
         View viewFragment = inflater.inflate(R.layout.fragment_main, container, false);
         progressBar = viewFragment.findViewById(R.id.load_progress);
         initViewPager(viewFragment);
+        setHasOptionsMenu(true);
         return viewFragment;
     }
 
@@ -70,21 +74,9 @@ public class MainFragment extends Fragment implements Observer {
     @Override
     @SuppressWarnings("unchecked")
     public void onChanged(Object obj) {
-        List<MyArticle> list = (List<MyArticle>) obj;
-
-        // Раскидать статьи по категориям
-        EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
-
-        for (ArticleCategory c : EnumSet.allOf(ArticleCategory.class)) {
-            enumMap.put(c, new ArrayList<>());
-        }
-
-        for (MyArticle article : list) {
-            Objects.requireNonNull(enumMap.get(article.category)).add(article);
-        }
-
+        currentState = (MainFragmentState) obj;
         progressBar.setVisibility(View.INVISIBLE);
-        viewPagerAdapter.updateContent(enumMap);
+        viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
     }
 
     // Init ViewPager
@@ -100,10 +92,13 @@ public class MainFragment extends Fragment implements Observer {
         TabLayoutMediator mediator = new TabLayoutMediator(
                 tabLayout,
                 viewPager,
-                (tab, position) ->
-                        tab.setText(fragment
+                (tab, position) -> {
+                    tab.setText(fragment
                                 .getContext()
-                                .getString(ArticleCategory.values()[position].getTextId())));
+                                .getString(currentState.getCurrentCategories()[position].getTextId()));
+//                                .getString(ArticleCategory.values()[position].getTextId()));
+                        }
+        );
         mediator.attach();
     }
 
@@ -133,5 +128,46 @@ public class MainFragment extends Fragment implements Observer {
                 .collectChannels()
                 .observe(this,
                         this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem search = menu.findItem(R.id.action_search);
+
+        SearchView searchView = (SearchView)search.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                String text = s.toLowerCase();
+                List<MyArticle> searchedList = new ArrayList<>();
+                List<MyArticle> currentList = currentState.getCurrentArticles();
+                for (MyArticle article: currentList) {
+                    String title = article.title.toLowerCase();
+                    if (title.contains(text)) {
+                        searchedList.add(article);
+                    }
+                }
+                if (searchedList.size() > 0) {
+                    currentState.setCurrentArticles(searchedList);
+                    viewPager.setCurrentItem(0);
+                    viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
+                } else {
+                    Toast.makeText(getActivity(), "Не найдено", Toast.LENGTH_SHORT).show();
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
     }
 }
