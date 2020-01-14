@@ -4,18 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/load_progress"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/tv_loading"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/loading_news"
+        android:textColor="@android:color/darker_gray"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@id/iv_moving_points"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9"/>
+
+    <ImageView
+        android:id="@+id/iv_moving_points"
+        android:layout_width="200dp"
+        android:layout_height="24dp"
         android:layout_gravity="center"
-        android:indeterminateOnly="true"
-        android:theme="@style/CircularProgress"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/avd_moving_points"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.3"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/news_tabs"
@@ -36,4 +49,3 @@
         app:layout_constraintVertical_weight="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

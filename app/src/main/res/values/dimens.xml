@@ -1,6 +1,15 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!--    Logo animation -->
     <dimen name="anim_screen_width">308dp</dimen>
     <dimen name="anim_screen_height">200dp</dimen>
     <dimen name="anim_screen_margin_bottom">64dp</dimen>
+
+    <!--Moving points values -->
+    <dimen name="scale_point" format="float" type="dimen">2.0</dimen>
+    <dimen name="pivot_x_point" format="float" type="dimen">0.0</dimen>
+    <dimen name="pivot_y_point" format="float" type="dimen">2.0</dimen>
+    <dimen name="translate_x_point" format="float" type="dimen">0.0</dimen>
+    <dimen name="translate_y_point" format="float" type="dimen">12.0</dimen>
 </resources>

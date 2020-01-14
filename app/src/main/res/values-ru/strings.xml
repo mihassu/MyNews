@@ -22,5 +22,7 @@
     <string name="title_news">новости</string>
 
     <string name="action_search">Поиск</string>
+    <string name="not_found">Не найдено</string>
 
+    <string name="loading_news">Загружаю&#8230;</string>
 </resources>
