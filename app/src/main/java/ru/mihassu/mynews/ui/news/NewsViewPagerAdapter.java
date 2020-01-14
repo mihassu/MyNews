@@ -18,8 +18,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 
+import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.Utils;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
@@ -79,15 +79,28 @@ public class NewsViewPagerAdapter
 
         private SwipeRefreshLayout refreshLayout;
         private RecyclerView rv;
+        private BehaviorSubject<Integer> scrollEventsRelay;
 
         NewsViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            scrollEventsRelay = BehaviorSubject.create();
             rv = itemView.findViewById(R.id.news_recyclerview);
+            rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    if (dy != 0) {
+                        scrollEventsRelay.onNext(dy);
+                    }
+                }
+            });
+
             initSwipeRefreshLayout();
         }
 
         void bind(List<MyArticle> articles) {
-            MainAdapter adapter = new MainAdapter(this::showInChromeCustomTabs);
+            MainAdapter adapter
+                    = new MainAdapter(scrollEventsRelay.hide(), this::showInChromeCustomTabs);
             adapter.setDataList(articles);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rv.setAdapter(adapter);

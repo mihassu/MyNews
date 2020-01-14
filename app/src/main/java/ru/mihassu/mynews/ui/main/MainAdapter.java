@@ -3,30 +3,23 @@ package ru.mihassu.mynews.ui.main;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.ui.Fragments.ViewHolderAnimated;
+import ru.mihassu.mynews.ui.Fragments.ViewHolderBase;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderStatic;
 
-import static ru.mihassu.mynews.Utils.logIt;
-
-public class MainAdapter extends RecyclerView.Adapter<ViewHolderStatic> {
+public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
 
     private static final int ITEM_WITH_PIC = 1;
     private static final int ITEM_NO_PIC = 2;
@@ -37,9 +30,11 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderStatic> {
 
     private List<MyArticle> dataList = new ArrayList<>();
     private Consumer<String> clickHandler;
+    private Observable<Integer> scrollEventsObs;
 
-    public MainAdapter(Consumer<String> clickHandler) {
+    public MainAdapter(Observable<Integer> scrollEventsObs, Consumer<String> clickHandler) {
         this.clickHandler = clickHandler;
+        this.scrollEventsObs = scrollEventsObs;
     }
 
     public void setDataList(List<MyArticle> dataList) {
@@ -49,7 +44,7 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderStatic> {
 
     @NonNull
     @Override
-    public ViewHolderStatic onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolderBase onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         // Рандомно выбрать макет для элемента списка
@@ -60,11 +55,14 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderStatic> {
             clickHandler.accept(view.getTag().toString());
         });
 
-        return new ViewHolderStatic(v);
+        ViewHolderBase holder = itemLayouts[i] == R.layout.item_article_image_top_cl ?
+                new ViewHolderAnimated(v, scrollEventsObs) : new ViewHolderStatic(v);
+
+        return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderStatic holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolderBase holder, int position) {
         holder.bind(dataList.get(position));
     }
 
@@ -77,6 +75,4 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderStatic> {
     public int getItemCount() {
         return dataList.size();
     }
-
-
 }

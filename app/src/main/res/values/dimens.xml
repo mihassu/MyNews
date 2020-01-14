@@ -7,7 +7,7 @@
     <dimen name="anim_screen_margin_bottom">64dp</dimen>
 
     <!--Moving points values -->
-    <dimen name="scale_point" format="float" type="dimen">2.0</dimen>
+    <dimen name="scale_point" format="float" type="dimen">1.6</dimen>
     <dimen name="pivot_x_point" format="float" type="dimen">0.0</dimen>
     <dimen name="pivot_y_point" format="float" type="dimen">2.0</dimen>
     <dimen name="translate_x_point" format="float" type="dimen">0.0</dimen>
