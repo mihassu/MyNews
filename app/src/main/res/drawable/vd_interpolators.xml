@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="1"
+    android:viewportHeight="1"
+    tools:ignore="UnusedResources">
+
+    <!-- "ХВОСТ" поезда-->
+    <path
+        android:name="trimPathStart"
+        android:pathData="L0.5,0 C 0.7,0 0.6,1 1,1"
+        android:strokeWidth="0.005"
+        android:strokeColor="@android:color/holo_red_dark" />
+
+    <!-- "ГОЛОВА поезда "-->
+    <path
+        android:name="trimPathEnd"
+        android:pathData="C0.2,0 0.1,1 0.5,0.96 C 0.96666666666,0.96 0.99333333333,1 1,1"
+        android:strokeWidth="0.005"
+        android:strokeColor="@android:color/holo_blue_dark" />
+
+    <path
+        android:name="pointMoving"
+        android:pathData="M0.0,0.0 C0.33,0.755 0.66,0.135 1,1"
+        android:strokeWidth="0.005"
+        android:strokeColor="@android:color/holo_green_dark" />
+
+
+</vector>

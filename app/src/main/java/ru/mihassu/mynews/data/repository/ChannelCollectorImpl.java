@@ -34,7 +34,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
         }
 
         Observable<Long> periodicUpdateToggle = Observable
-                .interval(0, updateInterval, TimeUnit.MINUTES)
+                .interval(10, updateInterval * 60, TimeUnit.SECONDS)
                 .map(l -> System.currentTimeMillis());
 
         manualUpdateToggle = BehaviorSubject.createDefault(System.currentTimeMillis());

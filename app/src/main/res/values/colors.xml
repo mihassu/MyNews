@@ -4,9 +4,14 @@
     <color name="colorPrimaryDark">#7B1FA2</color>
     <color name="colorAccent">#7C4DFF</color>
 
+    <color name="colorBackgroundLight">#FFFAFAFA</color>
+    <color name="colorBackgroundDark">#FF121212</color>
+
     <color name="spinner_out">@color/colorPrimary</color>
     <color name="spinner_in">#858585</color>
     <color name="text_anim">#421c52</color>
     <color name="splash_background">@android:color/white</color>
+
+    <color name="test">?android:colorBackground</color>
 
 </resources>

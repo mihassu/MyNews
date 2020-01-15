@@ -9,7 +9,7 @@
         <item name="colorPrimary">#9C27B0</item>
         <item name="colorPrimaryDark">#7B1FA2</item>
         <item name="colorAccent">#7C4DFF</item>
-    </style>
+        <item name="colorOnBackground">@color/colorBackgroundLight</item>    </style>
 
     <style name="FullScreenTheme" parent="AppThemePurple" >
         <item name="windowActionBar">false</item>
@@ -22,6 +22,7 @@
         <item name="colorPrimary">#9C27B0</item>
         <item name="colorPrimaryDark">#7B1FA2</item>
         <item name="colorAccent">#7C4DFF</item>
+        <item name="colorOnBackground">@color/colorBackgroundDark</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

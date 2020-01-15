@@ -1,5 +1,7 @@
 package ru.mihassu.mynews.ui.Fragments;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -7,15 +9,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -42,8 +48,11 @@ public class MainFragment extends Fragment implements Observer {
 
     private NewsViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
-    private ProgressBar progressBar;
     private MainFragmentState currentState;
+    private AnimatedVectorDrawableCompat animatedProgressBar;
+    private ImageView progressBarImage;
+    private TextView progressBarText;
+    private ConstraintLayout progressBarContainer;
 
     // 1.
     public View onCreateView(
@@ -52,7 +61,11 @@ public class MainFragment extends Fragment implements Observer {
             Bundle savedInstanceState) {
 
         View viewFragment = inflater.inflate(R.layout.fragment_main, container, false);
-        progressBar = viewFragment.findViewById(R.id.load_progress);
+
+        progressBarContainer = viewFragment.findViewById(R.id.pb_container);
+        progressBarImage = progressBarContainer.findViewById(R.id.iv_moving_points);
+        progressBarText = progressBarContainer.findViewById(R.id.tv_loading);
+
         initViewPager(viewFragment);
         setHasOptionsMenu(true);
         return viewFragment;
@@ -68,6 +81,7 @@ public class MainFragment extends Fragment implements Observer {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initProgressBar(getContext());
         loadChannels();
     }
 
@@ -75,7 +89,14 @@ public class MainFragment extends Fragment implements Observer {
     @SuppressWarnings("unchecked")
     public void onChanged(Object obj) {
         currentState = (MainFragmentState) obj;
-        progressBar.setVisibility(View.INVISIBLE);
+
+        // Убрать ProgressBar
+        progressBarContainer.setVisibility(View.INVISIBLE);
+        if (animatedProgressBar != null) {
+            animatedProgressBar.stop();
+        }
+
+        // Показать новости
         viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
     }
 
@@ -94,12 +115,31 @@ public class MainFragment extends Fragment implements Observer {
                 viewPager,
                 (tab, position) -> {
                     tab.setText(fragment
-                                .getContext()
-                                .getString(currentState.getCurrentCategories()[position].getTextId()));
+                            .getContext()
+                            .getString(currentState.getCurrentCategories()[position].getTextId()));
 //                                .getString(ArticleCategory.values()[position].getTextId()));
-                        }
+                }
         );
         mediator.attach();
+    }
+
+    /**
+     * Запустить кастомный ProgressBar
+     */
+    private void initProgressBar(Context context) {
+        animatedProgressBar =
+                AnimatedVectorDrawableCompat.create(context, R.drawable.avd_moving_points);
+        progressBarImage.setImageDrawable(animatedProgressBar);
+
+        if (animatedProgressBar != null) {
+            animatedProgressBar.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
+                @Override
+                public void onAnimationEnd(Drawable drawable) {
+                    progressBarImage.post(animatedProgressBar::start);
+                }
+            });
+            animatedProgressBar.start();
+        }
     }
 
     private void initViewModel() {
@@ -138,7 +178,7 @@ public class MainFragment extends Fragment implements Observer {
         inflater.inflate(R.menu.menu_search, menu);
         MenuItem search = menu.findItem(R.id.action_search);
 
-        SearchView searchView = (SearchView)search.getActionView();
+        SearchView searchView = (SearchView) search.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -146,7 +186,7 @@ public class MainFragment extends Fragment implements Observer {
                 String text = s.toLowerCase();
                 List<MyArticle> searchedList = new ArrayList<>();
                 List<MyArticle> currentList = currentState.getCurrentArticles();
-                for (MyArticle article: currentList) {
+                for (MyArticle article : currentList) {
                     String title = article.title.toLowerCase();
                     if (title.contains(text)) {
                         searchedList.add(article);
@@ -157,7 +197,7 @@ public class MainFragment extends Fragment implements Observer {
                     viewPager.setCurrentItem(0);
                     viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
                 } else {
-                    Toast.makeText(getActivity(), "Не найдено", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }
 
                 return false;
@@ -168,6 +208,5 @@ public class MainFragment extends Fragment implements Observer {
                 return false;
             }
         });
-
     }
 }
