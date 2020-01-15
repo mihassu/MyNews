@@ -4,31 +4,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_loading"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pb_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/loading_news"
-        android:textColor="@android:color/darker_gray"
-        android:gravity="center_horizontal"
-        app:layout_constraintBottom_toTopOf="@id/iv_moving_points"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9"/>
-
-    <ImageView
-        android:id="@+id/iv_moving_points"
-        android:layout_width="200dp"
-        android:layout_height="24dp"
-        android:layout_gravity="center"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/avd_moving_points"
+        android:layout_height="match_parent"
+        android:background="?attr/colorOnBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_news"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center_horizontal"
+            app:layout_constraintBottom_toTopOf="@id/iv_moving_points"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9"/>
+
+        <ImageView
+            android:id="@+id/iv_moving_points"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/avd_moving_points"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/news_tabs"
