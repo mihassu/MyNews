@@ -48,7 +48,9 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         // Рандомно выбрать макет для элемента списка
-        int i = new Random().nextInt(itemLayouts.length);
+//        int i = new Random().nextInt(itemLayouts.length);
+//        View v = inflater.inflate(itemLayouts[i], parent, false);
+        int i = viewType;
         View v = inflater.inflate(itemLayouts[i], parent, false);
 
         v.setOnClickListener(view -> {
@@ -68,7 +70,8 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
 
     @Override
     public int getItemViewType(int position) {
-        return dataList.get(position).image != null ? ITEM_WITH_PIC : ITEM_NO_PIC;
+        return Math.abs(dataList.get(position).title.hashCode() % itemLayouts.length);
+//        return dataList.get(position).image != null ? ITEM_WITH_PIC : ITEM_NO_PIC;
     }
 
     @Override
