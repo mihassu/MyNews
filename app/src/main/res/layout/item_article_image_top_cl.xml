@@ -15,7 +15,6 @@
         android:id="@+id/motionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
         app:layoutDescription="@xml/motion_scene_news_card">
 
         <ImageView
@@ -43,10 +42,10 @@
             android:id="@+id/item_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:background="?attr/colorOnBackground"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
             app:layout_constraintBottom_toTopOf="@id/footer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
