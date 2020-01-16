@@ -7,6 +7,11 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import ru.mihassu.mynews.di.components.AppComponent;
+import ru.mihassu.mynews.di.components.DaggerAppComponent;
+import ru.mihassu.mynews.di.modules.AppModule;
+import ru.mihassu.mynews.di.modules.NetModule;
+import ru.mihassu.mynews.di.modules.NetworkModule;
 import ru.mihassu.mynews.domain.entity.CategoryDictionary;
 import ru.mihassu.mynews.data.repository.ChannelCollectorImpl;
 import ru.mihassu.mynews.data.repository.ChannelRepositoryImpl;
@@ -20,6 +25,8 @@ import ru.mihassu.mynews.domain.repository.ChannelRepository;
 public class App extends Application {
 
     private static final int UPDATE_INTERVAL_MINUTES = 3;
+
+    private AppComponent appComponent;
 
     OkHttpClient client;
     ChannelCollector collector;
@@ -45,7 +52,12 @@ public class App extends Application {
                             new ChannelParser(classifier)));
         }
 
-        collector = new ChannelCollectorImpl(channels, UPDATE_INTERVAL_MINUTES);
+        collector = new ChannelCollectorImpl(channels, getResources().getInteger(R.integer.update_interval_minutes));
+
+        appComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .netModule(new NetModule(getResources().getInteger(R.integer.update_interval_minutes)))
+                .build();
     }
 
     private OkHttpClient initOkHttpClient() {
@@ -62,5 +74,9 @@ public class App extends Application {
 
     public ChannelCollector getCollector() {
         return collector;
+    }
+
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
 }
