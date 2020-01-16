@@ -7,18 +7,17 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
-import ru.mihassu.mynews.di.components.AppComponent;
-import ru.mihassu.mynews.di.components.DaggerAppComponent;
-import ru.mihassu.mynews.di.modules.AppModule;
-import ru.mihassu.mynews.di.modules.NetModule;
-import ru.mihassu.mynews.di.modules.NetworkModule;
-import ru.mihassu.mynews.domain.entity.CategoryDictionary;
 import ru.mihassu.mynews.data.repository.ChannelCollectorImpl;
 import ru.mihassu.mynews.data.repository.ChannelRepositoryImpl;
 import ru.mihassu.mynews.data.repository.ClassifierImpl;
 import ru.mihassu.mynews.data.repository.RawChannelRepositoryImpl;
+import ru.mihassu.mynews.di.components.AppComponent;
+import ru.mihassu.mynews.di.components.DaggerAppComponent;
+import ru.mihassu.mynews.di.modules.AppModule;
+import ru.mihassu.mynews.di.modules.NetModule;
 import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.channel.Classifier;
+import ru.mihassu.mynews.domain.entity.CategoryDictionary;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
 
