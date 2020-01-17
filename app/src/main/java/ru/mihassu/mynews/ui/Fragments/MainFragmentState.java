@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
@@ -18,10 +17,11 @@ public class MainFragmentState {
     public MainFragmentState(List<MyArticle> currentArticles) {
         this.currentArticles = currentArticles;
         this.currentEnumMap = sortForCategories();
-        this.currentCategories = getCategories();
+        this.currentCategories = getActualCategories();
     }
 
-    // Раскидать статьи по категориям
+    // Раскидать статьи по категориям. При каждом обновлении создается новая
+    // EnumMap со списком актуальных новостных категорий.
     private EnumMap<ArticleCategory, List<MyArticle>> sortForCategories() {
 
         EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
@@ -38,16 +38,17 @@ public class MainFragmentState {
         return enumMap;
     }
 
-    //Получить список категорий
-    private ArticleCategory[] getCategories() {
-        Set<ArticleCategory> currents = currentEnumMap.keySet();
-        return currents.toArray(new ArticleCategory[currents.size()]);
+    //Получить список актуальных категорий
+    private ArticleCategory[] getActualCategories() {
+        ArticleCategory[] actualCategories = new ArticleCategory[currentEnumMap.keySet().size()];
+        currentEnumMap.keySet().toArray(actualCategories);
+        return actualCategories;
     }
 
     public void setCurrentArticles(List<MyArticle> currentArticles) {
         this.currentArticles = currentArticles;
         this.currentEnumMap = sortForCategories();
-        this.currentCategories = getCategories();
+        this.currentCategories = getActualCategories();
     }
 
     public List<MyArticle> getCurrentArticles() {

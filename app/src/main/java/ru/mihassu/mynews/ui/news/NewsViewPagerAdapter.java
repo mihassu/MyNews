@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
@@ -37,11 +39,15 @@ public class NewsViewPagerAdapter
     private CustomTabHelper customTabHelper = new CustomTabHelper();
 
     private UpdateAgent updateAgent;
+    private HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
     private boolean isUpdateInProgress;
 
-    public NewsViewPagerAdapter(UpdateAgent updateAgent) {
+    public NewsViewPagerAdapter(
+            UpdateAgent updateAgent,
+            HashMap<ArticleCategory, ArticlePresenter> articlePresenters) {
         this.updateAgent = updateAgent;
         this.isUpdateInProgress = true;
+        this.articlePresenters = articlePresenters;
     }
 
     @NonNull
@@ -55,9 +61,9 @@ public class NewsViewPagerAdapter
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
         if (classifiedNews != null && classifiedNews.size() != 0) {
-//            holder.bind(classifiedNews.get(ArticleCategory.values()[position]));
-            Set<ArticleCategory> currents = classifiedNews.keySet();
-            holder.bind(classifiedNews.get(currents.toArray()[position]));
+            ArticleCategory[] actualCategories = new ArticleCategory[classifiedNews.keySet().size()];
+            classifiedNews.keySet().toArray(actualCategories);
+            holder.bind(classifiedNews.get(actualCategories[position]));
         }
     }
 
@@ -66,6 +72,7 @@ public class NewsViewPagerAdapter
         return classifiedNews != null ? classifiedNews.size() : 0;
     }
 
+    // Вызывается из MainFragment при обновлении новостей
     public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
         classifiedNews = enumMap;
         notifyDataSetChanged();
