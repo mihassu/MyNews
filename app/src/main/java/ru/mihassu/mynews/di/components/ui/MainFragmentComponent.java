@@ -13,14 +13,8 @@ public interface MainFragmentComponent {
 
     @Component.Builder
     interface Builder {
-
-//        @BindsInstance
-//        Builder bindFragment(MainFragment fragment);
-
         Builder addDependency(AppComponent appComponent);
-
         Builder fragmentModule(MainFragmentModule fragmentModule);
-
         MainFragmentComponent build();
     }
 }

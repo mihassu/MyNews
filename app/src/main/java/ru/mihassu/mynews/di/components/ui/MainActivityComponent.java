@@ -11,17 +11,10 @@ import ru.mihassu.mynews.ui.MainActivity;
 public interface MainActivityComponent {
     void inject(MainActivity activity);
 
-
     @Component.Builder
     interface Builder {
-
-//        @BindsInstance
-//        Builder bindActivity(MainActivity activity);
-
         Builder addDependency(AppComponent appComponent);
-
         Builder activityModule(MainActivityModule activityModule);
-
         MainActivityComponent build();
     }
 }

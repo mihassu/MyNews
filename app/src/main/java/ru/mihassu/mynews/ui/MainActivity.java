@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
                 .builder()
                 .activityModule(new MainActivityModule())
                 .addDependency(((App) getApplication()).getAppComponent())
-//                .bindActivity(this)
                 .build()
                 .inject(this);
 
@@ -58,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_main, R.id.nav_settings)
+                R.id.nav_main,
+                R.id.nav_settings)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

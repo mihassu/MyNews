@@ -25,7 +25,7 @@ public class ViewHolderAnimated extends ViewHolderBase {
         motionListener = itemView.findViewById(R.id.motionLayout);
 
         Disposable d = scrollObservable.subscribe(unused -> {
-            motionListener.setDebugFlag(true);
+            motionListener.setDebugFlag(false);
             motionListener.onOffsetChanged(itemView.getY());
         });
     }

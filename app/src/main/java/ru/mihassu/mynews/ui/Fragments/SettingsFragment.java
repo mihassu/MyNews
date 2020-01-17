@@ -1,22 +1,48 @@
 package ru.mihassu.mynews.ui.Fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
-
-import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
+import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
+import ru.mihassu.mynews.di.components.ui.DaggerSettingsFragmentComponent;
+import ru.mihassu.mynews.di.modules.ui.SettingsFragmentModule;
+
+import static ru.mihassu.mynews.Utils.logIt;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+
+    @Inject
+    SharedPreferences preferences;
+
+    private Context context;
     private Handler handler;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+
+        App app = (App) Objects.requireNonNull(getActivity()).getApplication();
+
+        DaggerSettingsFragmentComponent
+                .builder()
+                .fragmentModule(new SettingsFragmentModule())
+                .addDependency(app.getAppComponent())
+                .build()
+                .inject(this);
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -30,21 +56,25 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             handler = new Handler();
             handler.postDelayed(recreateActivity, 600);
             return true;
-            };
+        };
 
-        Preference themePreference = findPreference("dark_theme");
+        String prefKeyTheme = context.getString(R.string.pref_key_dark_theme);
+        Preference themePreference = findPreference(prefKeyTheme);
+
         if (themePreference != null) {
             themePreference.setOnPreferenceChangeListener(preferenceChangeListener);
         }
     }
 
     private void setBottomNavigationMenu() {
+
+        String prefKeyBottomNav = context.getString(R.string.pref_key_show_bottom_navigation);
+
         Preference.OnPreferenceChangeListener preferenceChangeListener = (preference, value) -> {
             if (getActivity() != null) {
                 View bottomNavigationMenu = getActivity().findViewById(R.id.bottom_navigation);
 
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(Objects.requireNonNull(getContext()));
-                boolean navigationMenuEnabled = preferences.getBoolean("show_bottom_navigation", false);
+                boolean navigationMenuEnabled = preferences.getBoolean(prefKeyBottomNav, false);
                 if (navigationMenuEnabled) {
                     bottomNavigationMenu.setVisibility(View.GONE);
                 } else {
@@ -54,7 +84,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         };
 
-        Preference menuPreference = findPreference("show_bottom_navigation");
+        Preference menuPreference = findPreference(prefKeyBottomNav);
         if (menuPreference != null) {
             menuPreference.setOnPreferenceChangeListener(preferenceChangeListener);
         }

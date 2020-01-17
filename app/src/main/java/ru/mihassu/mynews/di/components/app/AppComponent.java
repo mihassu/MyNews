@@ -2,6 +2,7 @@ package ru.mihassu.mynews.di.components.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
 
@@ -23,4 +24,5 @@ public interface AppComponent {
     Application getApplication();
     RoomRepo getRoomRepo();
     ChannelCollector getChannelCollector();
+    SharedPreferences getSharedPreferences();
 }
