@@ -14,7 +14,7 @@ public class MainActivityModule {
 
     @Provides
     @MainActivityScope
-    SharedPreferences providesSharedPreferences(Application application) {
+    public SharedPreferences providesSharedPreferences(Application application) {
         return PreferenceManager.getDefaultSharedPreferences(application);
     }
 }

@@ -1,6 +1,5 @@
 package ru.mihassu.mynews.di.components.ui;
 
-import dagger.BindsInstance;
 import dagger.Component;
 import ru.mihassu.mynews.di.components.app.AppComponent;
 import ru.mihassu.mynews.di.modules.ui.MainActivityModule;
@@ -16,8 +15,8 @@ public interface MainActivityComponent {
     @Component.Builder
     interface Builder {
 
-        @BindsInstance
-        Builder bindActivity(MainActivity activity);
+//        @BindsInstance
+//        Builder bindActivity(MainActivity activity);
 
         Builder addDependency(AppComponent appComponent);
 

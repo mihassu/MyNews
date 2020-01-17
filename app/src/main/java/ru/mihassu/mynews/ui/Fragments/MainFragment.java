@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +18,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import androidx.viewpager2.widget.ViewPager2;
@@ -31,28 +29,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.data.network.RegnumApi;
-import ru.mihassu.mynews.data.network.RetrofitInit;
-import ru.mihassu.mynews.data.repository.ArticleRepositoryRegnum;
+import ru.mihassu.mynews.di.components.ui.DaggerMainFragmentComponent;
+import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.domain.repository.ArticleRepository;
-import ru.mihassu.mynews.ui.main.MainViewModel;
-import ru.mihassu.mynews.ui.main.MainViewModelFactory;
+import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
 public class MainFragment extends Fragment implements Observer {
-
-    private MainViewModel viewModel;
 
     private NewsViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
     private MainFragmentState currentState;
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private ImageView progressBarImage;
-    private TextView progressBarText;
     private ConstraintLayout progressBarContainer;
+
+    @Inject
+    ChannelCollector collector;
 
     // 1.
     public View onCreateView(
@@ -64,7 +61,7 @@ public class MainFragment extends Fragment implements Observer {
 
         progressBarContainer = viewFragment.findViewById(R.id.pb_container);
         progressBarImage = progressBarContainer.findViewById(R.id.iv_moving_points);
-        progressBarText = progressBarContainer.findViewById(R.id.tv_loading);
+
 
         initViewPager(viewFragment);
         setHasOptionsMenu(true);
@@ -81,6 +78,17 @@ public class MainFragment extends Fragment implements Observer {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        App app = (App) Objects.requireNonNull(getActivity()).getApplication();
+
+        DaggerMainFragmentComponent
+                .builder()
+//                .bindFragment(this)
+                .fragmentModule(new MainFragmentModule())
+                .addDependency(app.getAppComponent())
+                .build()
+                .inject(this);
+
         initProgressBar(getContext());
         loadChannels();
     }
@@ -142,17 +150,9 @@ public class MainFragment extends Fragment implements Observer {
         }
     }
 
-    private void initViewModel() {
-        RegnumApi api = RetrofitInit.newApiInstance();
-        ArticleRepository repository = new ArticleRepositoryRegnum(api);
-        viewModel = ViewModelProviders.of(this, new MainViewModelFactory(repository))
-                .get(MainViewModel.class);
-    }
-
     // UpdateAgent::update()
     private void updateAgentImpl() {
-        App app = (App) Objects.requireNonNull(getActivity()).getApplication();
-        app.getCollector().updateChannels();
+        collector.updateChannels();
     }
 
     /**
@@ -161,11 +161,7 @@ public class MainFragment extends Fragment implements Observer {
      */
     @SuppressWarnings("unchecked")
     private void loadChannels() {
-        App app = (App) Objects.requireNonNull(getActivity()).getApplication();
-
-        app
-                .getCollector()
-                .collectChannels()
+        collector.collectChannels()
                 .observe(this,
                         this);
     }

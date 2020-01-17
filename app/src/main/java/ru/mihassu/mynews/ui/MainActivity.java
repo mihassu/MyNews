@@ -11,7 +11,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -21,9 +20,7 @@ import javax.inject.Inject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.components.ui.DaggerMainActivityComponent;
-import ru.mihassu.mynews.di.components.ui.MainActivityComponent;
 import ru.mihassu.mynews.di.modules.ui.MainActivityModule;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         DaggerMainActivityComponent
                 .builder()
                 .activityModule(new MainActivityModule())
-                .addDependency(((App)getApplication()).getAppComponent())
-                .bindActivity(this)
+                .addDependency(((App) getApplication()).getAppComponent())
+//                .bindActivity(this)
                 .build()
                 .inject(this);
 
@@ -80,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAppTheme() {
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean userTheme =
                 preferences.getBoolean(
                         getString(R.string.pref_key_dark_theme),
@@ -94,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showBottomNavigationMenu() {
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         View bottomNavigationMenu = findViewById(R.id.bottom_navigation);
 
         boolean navigationMenuEnabled =
