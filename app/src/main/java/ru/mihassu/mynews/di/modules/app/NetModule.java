@@ -30,10 +30,9 @@ public class NetModule {
 
 
     // Constructor needs one parameter to instantiate.
-    public NetModule(int updateIntervalInMunutes) {
-        this.updateIntervalInMinutes = updateIntervalInMunutes;
+    public NetModule(int updateIntervalInMinutes) {
+        this.updateIntervalInMinutes = updateIntervalInMinutes;
     }
-
 
     @Provides
     @Singleton
@@ -60,6 +59,10 @@ public class NetModule {
         return new ClassifierImpl(CategoryDictionary.getInstance());
     }
 
+    /**
+     * Вызов этого метода запустит процесс загрузки данных, т.к. ChannelCollectorImpl
+     * в конструктуре инициирует периодический опрос источников.
+     */
     @Provides
     @Singleton
     ChannelCollector provideChannelCollector(

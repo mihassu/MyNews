@@ -27,23 +27,29 @@ public class ChannelCollectorImpl implements ChannelCollector {
     @SuppressWarnings("unchecked")
     public ChannelCollectorImpl(List<ChannelRepository> channelRepos, long updateInterval) {
 
+        // Создать список Observable по всем источникам
         List<Observable<List<MyArticle>>> observableList = new ArrayList<>();
 
         for (ChannelRepository channelRepo : channelRepos) {
             observableList.add(channelRepo.updateChannel());
         }
 
+        // Сигнал периодического обновления
         Observable<Long> periodicUpdateToggle = Observable
                 .interval(10, updateInterval * 60, TimeUnit.SECONDS)
                 .map(l -> System.currentTimeMillis());
 
+        // Сигнал ручного обновления
         manualUpdateToggle = BehaviorSubject.createDefault(System.currentTimeMillis());
 
+        // Прослушиваем оба сигнала и по каждому инициируем процедуру загрузки данных
         Observable<Long> updateTrigger = Observable.combineLatest(
                 periodicUpdateToggle,
                 manualUpdateToggle,
                 Math::max);
 
+        // Запустить процесс. Полученные данные будут передаваться Observer'у,
+        // который передаст их в LiveData.
         updateTrigger
                 .switchMap(millis -> collect(observableList))
                 .subscribe(observer);

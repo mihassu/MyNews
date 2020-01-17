@@ -18,7 +18,11 @@ import com.google.android.material.navigation.NavigationView;
 
 import javax.inject.Inject;
 
+import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
+import ru.mihassu.mynews.di.components.ui.DaggerMainActivityComponent;
+import ru.mihassu.mynews.di.components.ui.MainActivityComponent;
+import ru.mihassu.mynews.di.modules.ui.MainActivityModule;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +35,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DaggerMainActivityComponent
+                .builder()
+                .activityModule(new MainActivityModule())
+                .addDependency(((App)getApplication()).getAppComponent())
+                .bindActivity(this)
+                .build()
+                .inject(this);
+
         setAppTheme();
         setContentView(R.layout.activity_main);
         showBottomNavigationMenu();
@@ -68,7 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void setAppTheme() {
 //        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean userTheme = preferences.getBoolean("dark_theme", false);
+        boolean userTheme =
+                preferences.getBoolean(
+                        getString(R.string.pref_key_dark_theme),
+                        false);
+
         if (userTheme) {
             setTheme(R.style.AppThemeDark);
         } else {
@@ -77,10 +94,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showBottomNavigationMenu() {
+//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         View bottomNavigationMenu = findViewById(R.id.bottom_navigation);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean navigationMenuEnabled = preferences.getBoolean("show_bottom_navigation", false);
+        boolean navigationMenuEnabled =
+                preferences.getBoolean(
+                        getString(R.string.pref_key_show_bottom_navigation),
+                        false);
+
         if (navigationMenuEnabled) {
             bottomNavigationMenu.setVisibility(View.VISIBLE);
         } else {
