@@ -8,11 +8,11 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 public interface RoomRepo {
     Maybe<List<MyArticle>> getArticles();
 
-    Maybe<MyArticle> getArticle();
+    Maybe<MyArticle> getArticle(long id);
 
     void insertArticle(MyArticle article);
 
-    void insertArticles(List<MyArticle> articles);
-
     void deleteArticle(MyArticle article);
+
+    void clearArticles();
 }

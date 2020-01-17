@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.di.modules;
+package ru.mihassu.mynews.di.modules.app;
 
 import android.app.Application;
 import android.content.Context;
@@ -28,5 +28,4 @@ public class AppModule {
     Context provideContext() {
         return application;
     }
-
 }

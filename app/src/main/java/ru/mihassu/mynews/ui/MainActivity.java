@@ -16,10 +16,15 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import javax.inject.Inject;
+
 import ru.mihassu.mynews.R;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    @Inject
+    SharedPreferences preferences;
 
     private AppBarConfiguration appBarConfiguration;
 
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAppTheme() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean userTheme = preferences.getBoolean("dark_theme", false);
         if (userTheme) {
             setTheme(R.style.AppThemeDark);
@@ -82,5 +87,4 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationMenu.setVisibility(View.GONE);
         }
     }
-
 }
