@@ -21,13 +21,14 @@ import static ru.mihassu.mynews.Utils.logIt;
 
 public class ViewHolderBase extends RecyclerView.ViewHolder {
 
+    private static final int contentThreshold = 120;
+
     private View itemView;
     private TextView itemTitle;
     private TextView itemContent;
     private TextView itemSourceStamp;
     private ImageView itemPreview;
     private ImageView itemFavicon;
-    private final int maxSize = 120;
 
     ViewHolderBase(@NonNull View itemView) {
         super(itemView);
@@ -55,6 +56,30 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
 
     }
 
+    // Показать картинку
+    private void itemPreviewSetImage(MyArticle item) {
+        if (item.image != null) {
+            Picasso
+                    .get()
+                    .load(item.image)
+                    .into(itemPreview);
+        } else {
+            Picasso
+                    .get()
+                    .load(R.drawable.news_logo)
+                    .into(itemPreview);
+        }
+    }
+
+    // Основной текст
+    private void itemContentSetText(MyArticle item) {
+        String content = item.description.trim();
+        if (content.length() > contentThreshold) {
+            content = content.substring(0, contentThreshold) + "...";
+        }
+        itemContent.setText(content);
+    }
+
     // Показать favicon.ico и дату новости
     private void itemFooterShow(MyArticle item) {
         try {
@@ -79,30 +104,6 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
             logIt("favicon load error");
             e.printStackTrace();
         }
-    }
-
-    // Показать картинку
-    private void itemPreviewSetImage(MyArticle item) {
-        if (item.image != null) {
-            Picasso
-                    .get()
-                    .load(item.image)
-                    .into(itemPreview);
-        } else {
-            Picasso
-                    .get()
-                    .load(R.drawable.news_logo)
-                    .into(itemPreview);
-        }
-    }
-
-    // Основной текст
-    private void itemContentSetText(MyArticle item) {
-        String content = item.description.trim();
-        if (content.length() > maxSize) {
-            content = content.substring(0, maxSize) + "...";
-        }
-        itemContent.setText(content);
     }
 
     /**
