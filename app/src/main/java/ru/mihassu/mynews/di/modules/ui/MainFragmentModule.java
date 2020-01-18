@@ -23,10 +23,10 @@ public class MainFragmentModule {
 
     @Provides
     @FragmentScope
-    public HashMap<ArticleCategory, ArticlePresenter> provideArticlePresenters() {
+    public HashMap<ArticleCategory, ArticlePresenter> provideArticlePresenters(RoomRepo roomRepo) {
         HashMap<ArticleCategory, ArticlePresenter> map = new HashMap<>();
         for(ArticleCategory category : ArticleCategory.values()) {
-            map.put(category, new ArticlePresenterImpl(category));
+            map.put(category, new ArticlePresenterImpl(category, roomRepo));
         }
 
         return map;

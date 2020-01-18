@@ -11,12 +11,12 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 public class MainFragmentState {
 
     private List<MyArticle> currentArticles;
-    private EnumMap<ArticleCategory, List<MyArticle>> currentEnumMap;
+    private EnumMap<ArticleCategory, List<MyArticle>> currentSortedArticles;
     private ArticleCategory[] currentCategories;
 
     public MainFragmentState(List<MyArticle> currentArticles) {
         this.currentArticles = currentArticles;
-        this.currentEnumMap = sortForCategories();
+        this.currentSortedArticles = sortForCategories();
         this.currentCategories = getActualCategories();
     }
 
@@ -27,27 +27,36 @@ public class MainFragmentState {
         EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
 
         for (MyArticle article: currentArticles) {
-            if (enumMap.containsKey(article.category)) {
-                Objects.requireNonNull(enumMap.get(article.category)).add(article);
-            } else {
+
+            if(!enumMap.containsKey(article.category)) {
                 enumMap.put(article.category, new ArrayList<>());
-                Objects.requireNonNull(enumMap.get(article.category)).add(article);
             }
+            Objects.requireNonNull(enumMap.get(article.category)).add(article);
+
+//            if (enumMap.containsKey(article.category)) {
+//                Objects.requireNonNull(enumMap.get(article.category)).add(article);
+//            } else {
+//                enumMap.put(article.category, new ArrayList<>());
+//                Objects.requireNonNull(enumMap.get(article.category)).add(article);
+//            }
         }
 
         return enumMap;
     }
 
-    //Получить список актуальных категорий
+    // Получить список актуальных категорий для текущего содержимого currentArticles
+    // На выходе получаем упорядоченный массив категорий.
     private ArticleCategory[] getActualCategories() {
-        ArticleCategory[] actualCategories = new ArticleCategory[currentEnumMap.keySet().size()];
-        currentEnumMap.keySet().toArray(actualCategories);
+        ArticleCategory[] actualCategories =
+                new ArticleCategory[currentSortedArticles.keySet().size()];
+
+        currentSortedArticles.keySet().toArray(actualCategories);
         return actualCategories;
     }
 
     public void setCurrentArticles(List<MyArticle> currentArticles) {
         this.currentArticles = currentArticles;
-        this.currentEnumMap = sortForCategories();
+        this.currentSortedArticles = sortForCategories();
         this.currentCategories = getActualCategories();
     }
 
@@ -55,8 +64,8 @@ public class MainFragmentState {
         return currentArticles;
     }
 
-    public EnumMap<ArticleCategory, List<MyArticle>> getCurrentEnumMap() {
-        return currentEnumMap;
+    public EnumMap<ArticleCategory, List<MyArticle>> getCurrentSortedArticles() {
+        return currentSortedArticles;
     }
 
     public ArticleCategory[] getCurrentCategories() {

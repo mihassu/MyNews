@@ -46,37 +46,26 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
         itemView.setTag(item.link);
         // Заголовок статьи
         itemTitle.setText(item.title.trim());
-        // Обрезать строку контента
-        String content = item.description.trim();
-        if (content.length() > maxSize) {
-            content = content.substring(0, maxSize) + "...";
-        }
-        itemContent.setText(content);
+        // Основной текст
+        itemContentSetText(item);
+        // Картинка
+        itemPreviewSetImage(item);
+        // Футер
+        itemFooterShow(item);
 
-        // Показать картинку
-        if (item.image != null) {
-            Picasso
-                    .get()
-                    .load(item.image)
-                    .into(itemPreview);
-        } else {
-            Picasso
-                    .get()
-                    .load(R.drawable.news_logo)
-                    .into(itemPreview);
-        }
+    }
 
-        // Показать favicon.ico и дату новости
+    // Показать favicon.ico и дату новости
+    private void itemFooterShow(MyArticle item) {
         try {
             String host = new URL(item.link).getHost();
             String iconRequest =
                     "https://www.google.com/s2/favicons?domain_url=http%3A%2F%2F" + host + "%2F";
-
             Picasso
                     .get()
                     .load(iconRequest)
                     .into(itemFavicon);
-
+            
             String sourceStamp =
                     String.format(
                             "%s %s %s",
@@ -90,6 +79,30 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
             logIt("favicon load error");
             e.printStackTrace();
         }
+    }
+
+    // Показать картинку
+    private void itemPreviewSetImage(MyArticle item) {
+        if (item.image != null) {
+            Picasso
+                    .get()
+                    .load(item.image)
+                    .into(itemPreview);
+        } else {
+            Picasso
+                    .get()
+                    .load(R.drawable.news_logo)
+                    .into(itemPreview);
+        }
+    }
+
+    // Основной текст
+    private void itemContentSetText(MyArticle item) {
+        String content = item.description.trim();
+        if (content.length() > maxSize) {
+            content = content.substring(0, maxSize) + "...";
+        }
+        itemContent.setText(content);
     }
 
     /**

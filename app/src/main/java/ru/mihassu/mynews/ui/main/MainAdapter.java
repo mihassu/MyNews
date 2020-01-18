@@ -15,31 +15,28 @@ import java.util.function.Consumer;
 import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderAnimated;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderBase;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderStatic;
 
 public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
 
-    private static final int ITEM_WITH_PIC = 1;
-    private static final int ITEM_NO_PIC = 2;
     private static int[] itemLayouts = {
             R.layout.item_article_image_left,
             R.layout.item_article_image_right,
             R.layout.item_article_image_top_cl};
 
-    private List<MyArticle> dataList = new ArrayList<>();
     private Consumer<String> clickHandler;
     private Observable<Integer> scrollEventsObs;
+    private ArticlePresenter articlePresenter;
 
-    public MainAdapter(Observable<Integer> scrollEventsObs, Consumer<String> clickHandler) {
+    public MainAdapter(Observable<Integer> scrollEventsObs,
+                       Consumer<String> clickHandler,
+                       ArticlePresenter articlePresenter) {
         this.clickHandler = clickHandler;
         this.scrollEventsObs = scrollEventsObs;
-    }
-
-    public void setDataList(List<MyArticle> dataList) {
-        this.dataList = dataList;
-        notifyDataSetChanged();
+        this.articlePresenter = articlePresenter;
     }
 
     @NonNull
@@ -53,9 +50,9 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
         int i = viewType;
         View v = inflater.inflate(itemLayouts[i], parent, false);
 
-        v.setOnClickListener(view -> {
-            clickHandler.accept(view.getTag().toString());
-        });
+        v.setOnClickListener(view ->
+            clickHandler.accept(view.getTag().toString())
+        );
 
         ViewHolderBase holder = itemLayouts[i] == R.layout.item_article_image_top_cl ?
                 new ViewHolderAnimated(v, scrollEventsObs) : new ViewHolderStatic(v);
@@ -65,17 +62,26 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderBase holder, int position) {
-        holder.bind(dataList.get(position));
+//        holder.bind(dataList.get(position));
+        holder.bind(getArticle(position));
     }
 
     @Override
     public int getItemViewType(int position) {
-        return Math.abs(dataList.get(position).title.hashCode() % itemLayouts.length);
-//        return dataList.get(position).image != null ? ITEM_WITH_PIC : ITEM_NO_PIC;
+        return Math.abs(articlePresenter
+                .getArticles()
+                .get(position)
+                .title.hashCode() % itemLayouts.length);
     }
 
     @Override
     public int getItemCount() {
-        return dataList.size();
+        return articlePresenter.getArticles().size();
+    }
+
+    // articlePresenter.getArticles().get() wrapper
+    private MyArticle getArticle(int position) {
+        return articlePresenter.getArticles().get(position);
+
     }
 }

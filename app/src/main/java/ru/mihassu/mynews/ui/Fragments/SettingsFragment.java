@@ -34,8 +34,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         super.onAttach(context);
         this.context = context;
 
-        App app = (App) Objects.requireNonNull(getActivity()).getApplication();
-
+        App app = (App) context.getApplicationContext();
         DaggerSettingsFragmentComponent
                 .builder()
                 .fragmentModule(new SettingsFragmentModule())

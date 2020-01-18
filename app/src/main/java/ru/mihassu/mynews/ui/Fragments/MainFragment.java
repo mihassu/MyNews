@@ -28,7 +28,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -50,6 +49,7 @@ public class MainFragment extends Fragment implements Observer {
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private ImageView progressBarImage;
     private ConstraintLayout progressBarContainer;
+    private Context context;
 
     @Inject
     ChannelCollector collector;
@@ -58,6 +58,22 @@ public class MainFragment extends Fragment implements Observer {
     HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
 
     // 1.
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+
+        App app = (App) context.getApplicationContext();
+        DaggerMainFragmentComponent
+                .builder()
+                .fragmentModule(new MainFragmentModule())
+                .addDependency(app.getAppComponent())
+                .build()
+                .inject(this);
+    }
+
+    // 2.
+    @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater,
             ViewGroup container,
@@ -68,35 +84,30 @@ public class MainFragment extends Fragment implements Observer {
         progressBarContainer = viewFragment.findViewById(R.id.pb_container);
         progressBarImage = progressBarContainer.findViewById(R.id.iv_moving_points);
 
-
         initViewPager(viewFragment);
         setHasOptionsMenu(true);
         return viewFragment;
     }
 
-    // 2. Tabs
+    // 3. Tabs
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initTabLayout(view);
     }
 
-    // 3.
+    // 4.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        App app = (App) Objects.requireNonNull(getActivity()).getApplication();
-
-        DaggerMainFragmentComponent
-                .builder()
-//                .bindFragment(this)
-                .fragmentModule(new MainFragmentModule())
-                .addDependency(app.getAppComponent())
-                .build()
-                .inject(this);
-
-        initProgressBar(getContext());
         loadChannels();
+
+        if (currentState == null) {
+            initProgressBar();
+        } else {
+            // Убрать ProgressBar и показать новости
+            hideProgressBar();
+            viewPagerAdapter.updateContent(currentState.getCurrentSortedArticles());
+        }
     }
 
     /**
@@ -107,14 +118,9 @@ public class MainFragment extends Fragment implements Observer {
     public void onChanged(Object obj) {
         currentState = (MainFragmentState) obj;
 
-        // Убрать ProgressBar
-        progressBarContainer.setVisibility(View.INVISIBLE);
-        if (animatedProgressBar != null) {
-            animatedProgressBar.stop();
-        }
-
-        // Показать новости
-        viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
+        // Убрать ProgressBar, показать новости
+        hideProgressBar();
+        viewPagerAdapter.updateContent(currentState.getCurrentSortedArticles());
     }
 
     // Init ViewPager
@@ -124,6 +130,9 @@ public class MainFragment extends Fragment implements Observer {
         viewPager.setAdapter(viewPagerAdapter);
     }
 
+    /**
+     * Порядок Tab'ов соответствует порядку элементов в ArticleCategory[]
+     */
     private void initTabLayout(@NonNull View fragment) {
         TabLayout tabLayout = fragment.findViewById(R.id.news_tabs);
 
@@ -131,10 +140,10 @@ public class MainFragment extends Fragment implements Observer {
                 tabLayout,
                 viewPager,
                 (tab, position) -> {
-                    tab.setText(fragment
-                            .getContext()
-                            .getString(currentState.getCurrentCategories()[position].getTextId()));
-//                                .getString(ArticleCategory.values()[position].getTextId()));
+                    tab.setText(context.getString(
+                            currentState
+                                    .getCurrentCategories()[position]
+                                    .getTextId()));
                 }
         );
         mediator.attach();
@@ -143,7 +152,7 @@ public class MainFragment extends Fragment implements Observer {
     /**
      * Запустить кастомный ProgressBar
      */
-    private void initProgressBar(Context context) {
+    private void initProgressBar() {
         animatedProgressBar =
                 AnimatedVectorDrawableCompat.create(context, R.drawable.avd_moving_points);
         progressBarImage.setImageDrawable(animatedProgressBar);
@@ -156,6 +165,14 @@ public class MainFragment extends Fragment implements Observer {
                 }
             });
             animatedProgressBar.start();
+        }
+    }
+
+    // Убрать ProgressBar
+    private void hideProgressBar() {
+        progressBarContainer.setVisibility(View.INVISIBLE);
+        if (animatedProgressBar != null) {
+            animatedProgressBar.stop();
         }
     }
 
@@ -200,7 +217,7 @@ public class MainFragment extends Fragment implements Observer {
                 if (searchedList.size() > 0) {
                     currentState.setCurrentArticles(searchedList);
                     viewPager.setCurrentItem(0);
-                    viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
+                    viewPagerAdapter.updateContent(currentState.getCurrentSortedArticles());
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }
