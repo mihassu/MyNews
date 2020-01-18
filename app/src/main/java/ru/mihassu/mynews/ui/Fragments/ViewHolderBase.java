@@ -21,15 +21,15 @@ import static ru.mihassu.mynews.Utils.logIt;
 
 public class ViewHolderBase extends RecyclerView.ViewHolder {
 
-    protected View itemView;
-    protected TextView itemTitle;
-    protected TextView itemContent;
-    protected TextView itemSourceStamp;
-    protected ImageView itemPreview;
-    protected ImageView itemFavicon;
-    protected final int maxSize = 120;
+    private View itemView;
+    private TextView itemTitle;
+    private TextView itemContent;
+    private TextView itemSourceStamp;
+    private ImageView itemPreview;
+    private ImageView itemFavicon;
+    private final int maxSize = 120;
 
-    public ViewHolderBase(@NonNull View itemView) {
+    ViewHolderBase(@NonNull View itemView) {
         super(itemView);
         this.itemView = itemView;
 
@@ -65,7 +65,7 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
                     .get()
                     .load(iconRequest)
                     .into(itemFavicon);
-            
+
             String sourceStamp =
                     String.format(
                             "%s %s %s",
@@ -108,7 +108,7 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
     /**
      * Время выхода новости
      */
-    protected String articleTime(long time) {
+    private String articleTime(long time) {
         long current = System.currentTimeMillis();
         long pastHours = (current - time) / (60 * 60 * 1000);
 
