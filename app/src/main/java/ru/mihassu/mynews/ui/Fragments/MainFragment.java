@@ -26,15 +26,19 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.data.network.RegnumApi;
 import ru.mihassu.mynews.data.network.RetrofitInit;
 import ru.mihassu.mynews.data.repository.ArticleRepositoryRegnum;
+import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
 import ru.mihassu.mynews.domain.search.SearchObservable;
 import ru.mihassu.mynews.ui.main.MainViewModel;
@@ -53,6 +57,7 @@ public class MainFragment extends Fragment implements Observer {
     private TextView progressBarText;
     private ConstraintLayout progressBarContainer;
     private Observable<String> searchObservable;
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     // 1.
     public View onCreateView(
@@ -179,10 +184,24 @@ public class MainFragment extends Fragment implements Observer {
         MenuItem search = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) search.getActionView();
         searchObservable = SearchObservable.fromView(searchView);
-        searchObservable.subscribe(text -> {
-            viewPagerAdapter.setSearchText(text);
-        },
-                throwable -> {});
+        disposables.add(searchObservable.subscribe(text -> {
+            List<MyArticle> searchedList = new ArrayList<>();
+                List<MyArticle> currentList = currentState.getCurrentArticles();
+                for (MyArticle article : currentList) {
+                    String title = article.title.toLowerCase();
+                    if (title.contains(text)) {
+                        searchedList.add(article);
+                    }
+                }
+                if (searchedList.size() > 0) {
+                    currentState.setCurrentArticles(searchedList);
+                    viewPager.setCurrentItem(0);
+                    viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
+                    viewPagerAdapter.setSearchText(text);
+                }
+
+                },
+                throwable -> {}));
 
 
 //        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -215,5 +234,11 @@ public class MainFragment extends Fragment implements Observer {
 //        });
 
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.dispose();
     }
 }

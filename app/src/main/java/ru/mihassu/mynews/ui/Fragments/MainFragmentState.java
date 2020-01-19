@@ -16,14 +16,11 @@ public class MainFragmentState {
     private List<MyArticle> currentArticles;
     private EnumMap<ArticleCategory, List<MyArticle>> currentEnumMap;
     private ArticleCategory[] currentCategories;
-    private String searchText;
 
     public MainFragmentState(List<MyArticle> currentArticles) {
         this.currentArticles = currentArticles;
         this.currentEnumMap = sortForCategories();
         this.currentCategories = getCategories();
-
-
     }
 
     // Раскидать статьи по категориям

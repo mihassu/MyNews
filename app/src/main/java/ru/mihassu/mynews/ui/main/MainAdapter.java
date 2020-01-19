@@ -13,7 +13,6 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderAnimated;

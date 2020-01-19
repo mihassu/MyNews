@@ -43,11 +43,9 @@ public class NewsViewPagerAdapter
     private boolean isUpdateInProgress;
     private String searchText;
 
-
     public NewsViewPagerAdapter(UpdateAgent updateAgent) {
         this.updateAgent = updateAgent;
         this.isUpdateInProgress = true;
-
     }
 
     @NonNull

@@ -41,7 +41,6 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
     public ViewHolderBase(@NonNull View itemView) {
         super(itemView);
         this.itemView = itemView;
-
         this.itemTitle = itemView.findViewById(R.id.item_title);
         this.itemContent = itemView.findViewById(R.id.item_content);
         this.itemPreview = itemView.findViewById(R.id.item_preview);
@@ -63,7 +62,6 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
         } else {
             itemTitle.setText(item.title.trim());
         }
-//        itemTitle.setText(item.title.trim());
 
         // Обрезать строку контента
         String content = item.description.trim();
@@ -130,10 +128,6 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
             return String.format(Locale.getDefault(), "%s",
                     new SimpleDateFormat("H:mm", Locale.getDefault()).format(time));
         }
-    }
-
-    interface SearchEventListener {
-        void highlightText(String text);
     }
 
     public void setSearchText(String searchText) {
