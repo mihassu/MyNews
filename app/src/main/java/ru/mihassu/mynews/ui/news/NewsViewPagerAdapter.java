@@ -18,6 +18,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
@@ -38,10 +41,13 @@ public class NewsViewPagerAdapter
 
     private UpdateAgent updateAgent;
     private boolean isUpdateInProgress;
+    private String searchText;
+
 
     public NewsViewPagerAdapter(UpdateAgent updateAgent) {
         this.updateAgent = updateAgent;
         this.isUpdateInProgress = true;
+
     }
 
     @NonNull
@@ -72,6 +78,11 @@ public class NewsViewPagerAdapter
         isUpdateInProgress = false;
     }
 
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+        notifyDataSetChanged();
+    }
+
     /**
      * Holder отдельной ViewGroup внутри ViewPager2
      */
@@ -95,13 +106,14 @@ public class NewsViewPagerAdapter
                 }
             });
 
+
             initSwipeRefreshLayout();
         }
 
         void bind(List<MyArticle> articles) {
             MainAdapter adapter
                     = new MainAdapter(scrollEventsRelay.hide(), this::showInChromeCustomTabs);
-            adapter.setDataList(articles);
+            adapter.setDataList(articles, searchText);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rv.setAdapter(adapter);
             refreshLayout.setRefreshing(false);
