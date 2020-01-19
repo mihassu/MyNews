@@ -202,38 +202,6 @@ public class MainFragment extends Fragment implements Observer {
 
                 },
                 throwable -> {}));
-
-
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String s) {
-//                String text = s.toLowerCase();
-//                List<MyArticle> searchedList = new ArrayList<>();
-//                List<MyArticle> currentList = currentState.getCurrentArticles();
-//                for (MyArticle article : currentList) {
-//                    String title = article.title.toLowerCase();
-//                    if (title.contains(text)) {
-//                        searchedList.add(article);
-//                    }
-//                }
-//                if (searchedList.size() > 0) {
-//                    currentState.setCurrentArticles(searchedList);
-//                    viewPager.setCurrentItem(0);
-//                    viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
-//                } else {
-//                    Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
-//                }
-//
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String s) {
-//                return false;
-//            }
-//        });
-
-
     }
 
     @Override
