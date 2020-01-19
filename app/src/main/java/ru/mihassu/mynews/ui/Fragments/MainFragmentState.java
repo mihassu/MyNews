@@ -11,13 +11,13 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 
 public class MainFragmentState {
 
-    public static final String EMPTY_SEARCH = "";
-
+    private List<MyArticle> articles; //список для поиска
     private List<MyArticle> currentArticles;
     private EnumMap<ArticleCategory, List<MyArticle>> currentEnumMap;
     private ArticleCategory[] currentCategories;
 
     public MainFragmentState(List<MyArticle> currentArticles) {
+        this.articles = currentArticles;
         this.currentArticles = currentArticles;
         this.currentEnumMap = sortForCategories();
         this.currentCategories = getCategories();
@@ -52,6 +52,13 @@ public class MainFragmentState {
         this.currentCategories = getCategories();
     }
 
+    public void setArticles(List<MyArticle> articles) {
+        this.articles = articles;
+        this.currentArticles = articles;
+        this.currentEnumMap = sortForCategories();
+        this.currentCategories = getCategories();
+    }
+
     public List<MyArticle> getCurrentArticles() {
         return currentArticles;
     }
@@ -62,5 +69,9 @@ public class MainFragmentState {
 
     public ArticleCategory[] getCurrentCategories() {
         return currentCategories;
+    }
+
+    public List<MyArticle> getArticles() {
+        return articles;
     }
 }

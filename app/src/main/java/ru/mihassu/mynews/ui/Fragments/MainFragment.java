@@ -186,7 +186,7 @@ public class MainFragment extends Fragment implements Observer {
         searchObservable = SearchObservable.fromView(searchView);
         disposables.add(searchObservable.subscribe(text -> {
             List<MyArticle> searchedList = new ArrayList<>();
-                List<MyArticle> currentList = currentState.getCurrentArticles();
+                List<MyArticle> currentList = currentState.getArticles();
                 for (MyArticle article : currentList) {
                     String title = article.title.toLowerCase();
                     if (title.contains(text)) {
