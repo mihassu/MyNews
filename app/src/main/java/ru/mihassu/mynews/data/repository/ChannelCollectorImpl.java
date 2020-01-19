@@ -36,7 +36,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
 
         // Сигнал периодического обновления
         Observable<Long> periodicUpdateToggle = Observable
-                .interval(10, updateInterval * 60, TimeUnit.SECONDS)
+                .interval(0, updateInterval, TimeUnit.MINUTES)
                 .map(l -> System.currentTimeMillis());
 
         // Сигнал ручного обновления
