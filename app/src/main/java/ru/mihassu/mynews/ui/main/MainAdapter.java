@@ -7,9 +7,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import io.reactivex.Observable;
@@ -20,12 +17,12 @@ import ru.mihassu.mynews.ui.Fragments.ViewHolderAnimated;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderBase;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderStatic;
 
-public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
+public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> implements IMainAdapter {
 
     private static int[] itemLayouts = {
             R.layout.item_article_image_left,
             R.layout.item_article_image_right,
-            R.layout.item_article_image_top_cl};
+            R.layout.item_article_image_top};
 
     private Consumer<String> clickHandler;
     private Observable<Integer> scrollEventsObs;
@@ -37,6 +34,8 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
         this.clickHandler = clickHandler;
         this.scrollEventsObs = scrollEventsObs;
         this.articlePresenter = articlePresenter;
+
+        articlePresenter.setAdapter(this);
     }
 
     @NonNull
@@ -50,19 +49,20 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
         int i = viewType;
         View v = inflater.inflate(itemLayouts[i], parent, false);
 
+        // Вызов браузера при клике на элементе списка
         v.setOnClickListener(view ->
-            clickHandler.accept(view.getTag().toString())
+                clickHandler.accept(view.getTag().toString())
         );
 
-        ViewHolderBase holder = itemLayouts[i] == R.layout.item_article_image_top_cl ?
-                new ViewHolderAnimated(v, scrollEventsObs) : new ViewHolderStatic(v);
-
+        ViewHolderBase holder =
+                itemLayouts[i] == R.layout.item_article_image_top ?
+                        new ViewHolderAnimated(v, articlePresenter, scrollEventsObs) :
+                        new ViewHolderStatic(v, articlePresenter);
         return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderBase holder, int position) {
-//        holder.bind(dataList.get(position));
         holder.bind(getArticle(position));
     }
 
@@ -82,6 +82,10 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
     // articlePresenter.getArticles().get() wrapper
     private MyArticle getArticle(int position) {
         return articlePresenter.getArticles().get(position);
+    }
 
+    @Override
+    public void onItemUpdated(int position) {
+        notifyItemChanged(position);
     }
 }

@@ -26,7 +26,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,10 +34,8 @@ import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.components.ui.DaggerMainFragmentComponent;
 import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
-import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
-import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
 public class MainFragment extends Fragment implements Observer {
@@ -53,9 +50,6 @@ public class MainFragment extends Fragment implements Observer {
 
     @Inject
     ChannelCollector collector;
-
-    @Inject
-    HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
 
     // 1.
     @Override
@@ -125,7 +119,7 @@ public class MainFragment extends Fragment implements Observer {
 
     // Init ViewPager
     private void initViewPager(View fragmentView) {
-        viewPagerAdapter = new NewsViewPagerAdapter(this::updateAgentImpl, articlePresenters);
+        viewPagerAdapter = new NewsViewPagerAdapter(this::updateAgentImpl, context);
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
     }

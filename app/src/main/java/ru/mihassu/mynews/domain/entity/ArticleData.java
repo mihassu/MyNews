@@ -8,7 +8,6 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 @Root(name = "item", strict = false)
 public class ArticleData {
 
-
     @Element(name = "link")
     public String link;
 
@@ -32,7 +31,15 @@ public class ArticleData {
 
     public MyArticle convertToModel() {
         return new MyArticle(
-                title, description, link, pubDate, author, image, categoryOrigin, ArticleCategory.NEWS
+                title,
+                description,
+                link,
+                pubDate,
+                author,
+                image,
+                false,
+                categoryOrigin,
+                ArticleCategory.NEWS
         );
     }
 }

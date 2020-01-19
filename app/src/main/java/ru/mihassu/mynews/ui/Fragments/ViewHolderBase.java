@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -16,10 +18,11 @@ import java.util.Locale;
 
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.presenters.ArticlePresenter;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
-public class ViewHolderBase extends RecyclerView.ViewHolder {
+public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private static final int contentThreshold = 120;
 
@@ -29,31 +32,42 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
     private TextView itemSourceStamp;
     private ImageView itemPreview;
     private ImageView itemFavicon;
+    private ImageView itemBookmark;
+    private ArticlePresenter presenter;
 
-    ViewHolderBase(@NonNull View itemView) {
+    ViewHolderBase(@NonNull View itemView, @NotNull ArticlePresenter presenter) {
         super(itemView);
         this.itemView = itemView;
+        this.presenter = presenter;
 
         this.itemTitle = itemView.findViewById(R.id.item_title);
         this.itemContent = itemView.findViewById(R.id.item_content);
         this.itemPreview = itemView.findViewById(R.id.item_preview);
         this.itemFavicon = itemView.findViewById(R.id.favicon);
         this.itemSourceStamp = itemView.findViewById(R.id.source_stamp);
+        this.itemBookmark = itemView.findViewById(R.id.flag_bookmark);
+        itemBookmark.setOnClickListener(this);
     }
 
-    public void bind(MyArticle item) {
+    @Override
+    public void onClick(View bookmarkImageView) {
+        presenter.onClickBookmark(getAdapterPosition());
+    }
+
+    public void bind(MyArticle article) {
 
         // Ссылку на контент статьи сохр в теге элемента списка
-        itemView.setTag(item.link);
+        itemView.setTag(article.link);
         // Заголовок статьи
-        itemTitle.setText(item.title.trim());
+        itemTitle.setText(article.title.trim());
         // Основной текст
-        itemContentSetText(item);
-        // Картинка
-        itemPreviewSetImage(item);
+        itemContentSetText(article);
+        // Основная картинка
+        itemPreviewSetImage(article);
         // Футер
-        itemFooterShow(item);
-
+        itemFooterShow(article);
+        // Картинка Bookmark
+        itemBookmarkSetImage(article);
     }
 
     // Показать картинку
@@ -104,6 +118,14 @@ public class ViewHolderBase extends RecyclerView.ViewHolder {
             logIt("favicon load error");
             e.printStackTrace();
         }
+    }
+
+    // Картинка Bookmark
+    private void itemBookmarkSetImage(MyArticle article) {
+        itemBookmark.setImageResource(
+                article.isMarked ?
+                        R.drawable.ic_selected :
+                        R.drawable.ic_unselected);
     }
 
     /**

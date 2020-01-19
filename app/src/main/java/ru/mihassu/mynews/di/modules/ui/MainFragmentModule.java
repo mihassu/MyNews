@@ -21,15 +21,14 @@ public class MainFragmentModule {
         return new MainFragmentPresenterImpl(roomRepo);
     }
 
-    @Provides
-    @FragmentScope
-    public HashMap<ArticleCategory, ArticlePresenter> provideArticlePresenters(RoomRepo roomRepo) {
-        HashMap<ArticleCategory, ArticlePresenter> map = new HashMap<>();
-        for(ArticleCategory category : ArticleCategory.values()) {
-            map.put(category, new ArticlePresenterImpl(category, roomRepo));
-        }
-
-        return map;
-    }
-
+//    @Provides
+//    @FragmentScope
+//    public HashMap<ArticleCategory, ArticlePresenter> provideArticlePresenters(RoomRepo roomRepo) {
+//        HashMap<ArticleCategory, ArticlePresenter> map = new HashMap<>();
+//        for(ArticleCategory category : ArticleCategory.values()) {
+//            map.put(category, new ArticlePresenterImpl(category, roomRepo));
+//        }
+//
+//        return map;
+//    }
 }

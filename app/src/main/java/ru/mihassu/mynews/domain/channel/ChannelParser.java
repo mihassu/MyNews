@@ -159,6 +159,7 @@ public class ChannelParser {
                 pubDate,
                 author,
                 image,
+                false,
                 categoryOrigin,
                 category);
     }

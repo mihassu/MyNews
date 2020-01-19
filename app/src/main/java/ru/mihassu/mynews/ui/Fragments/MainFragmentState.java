@@ -32,13 +32,6 @@ public class MainFragmentState {
                 enumMap.put(article.category, new ArrayList<>());
             }
             Objects.requireNonNull(enumMap.get(article.category)).add(article);
-
-//            if (enumMap.containsKey(article.category)) {
-//                Objects.requireNonNull(enumMap.get(article.category)).add(article);
-//            } else {
-//                enumMap.put(article.category, new ArrayList<>());
-//                Objects.requireNonNull(enumMap.get(article.category)).add(article);
-//            }
         }
 
         return enumMap;

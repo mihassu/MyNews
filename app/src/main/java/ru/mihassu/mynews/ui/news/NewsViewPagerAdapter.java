@@ -1,6 +1,7 @@
 package ru.mihassu.mynews.ui.news;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,8 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import io.reactivex.subjects.BehaviorSubject;
+import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
+import ru.mihassu.mynews.di.components.ui.DaggerViewPagerComponent;
+import ru.mihassu.mynews.di.modules.ui.ViewPagerModule;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
@@ -34,6 +39,9 @@ import ru.mihassu.mynews.ui.web.CustomTabHelper;
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
+    @Inject
+    HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
+
     // Списки новостей по категориям
     private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
 
@@ -41,16 +49,22 @@ public class NewsViewPagerAdapter
     private CustomTabHelper customTabHelper = new CustomTabHelper();
 
     private UpdateAgent updateAgent;
-    private HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
     private boolean isUpdateInProgress;
 
     public NewsViewPagerAdapter(
             UpdateAgent updateAgent,
-            HashMap<ArticleCategory, ArticlePresenter> articlePresenters) {
+            Context context) {
 
         this.updateAgent = updateAgent;
         this.isUpdateInProgress = true;
-        this.articlePresenters = articlePresenters;
+
+        App app = (App) context.getApplicationContext();
+        DaggerViewPagerComponent
+                .builder()
+                .fragmentModule(new ViewPagerModule())
+                .addDependency(app.getAppComponent())
+                .build()
+                .inject(this);
     }
 
     @NonNull
@@ -77,31 +91,6 @@ public class NewsViewPagerAdapter
             }
         }
     }
-
-    // v 1.1
-//    @Override
-//    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-//        if (classifiedNews != null && classifiedNews.size() != 0) {
-//
-//            ArrayList<Map.Entry<ArticleCategory, List<MyArticle>>> allArticles =
-//                    new ArrayList<>(classifiedNews.entrySet());
-//            holder.bind(
-//                    allArticles.get(position).getValue(),
-//                    articlePresenters.get(allArticles.get(position).getKey()));
-//        }
-//    }
-
-//      v1.0
-//    @Override
-//    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-//        if (classifiedNews != null && classifiedNews.size() != 0) {
-//            ArticleCategory[] actualCategories = new ArticleCategory[classifiedNews.keySet().size()];
-//            classifiedNews.keySet().toArray(actualCategories);
-//            holder.bind(
-//                    classifiedNews.get(actualCategories[position]),
-//                    articlePresenters.get(actualCategories[position]));
-//        }
-//    }
 
     @Override
     public int getItemCount() {
@@ -150,18 +139,6 @@ public class NewsViewPagerAdapter
             rv.setAdapter(adapter);
             swipeRefreshLayout.setRefreshing(false);
         }
-
-//        void bind(List<MyArticle> articles, ArticlePresenter articlePresenter) {
-//            MainAdapter adapter = new MainAdapter(
-//                    scrollEventsRelay.hide(),
-//                    this::showInChromeCustomTabs,
-//                    articlePresenter);
-//
-//            adapter.setDataList(articles);
-//            rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
-//            rv.setAdapter(adapter);
-//            swipeRefreshLayout.setRefreshing(false);
-//        }
 
         // Настроить работу SwipeRefreshLayout
         private void initSwipeRefreshLayout() {

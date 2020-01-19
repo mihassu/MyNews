@@ -33,6 +33,9 @@ public class MyArticle implements Comparable<MyArticle> {
     public String author;
     public String image;
 
+    @ColumnInfo(name = "marked")
+    public boolean isMarked;
+
     public MyArticle() {
     }
 
@@ -43,6 +46,7 @@ public class MyArticle implements Comparable<MyArticle> {
                      long pubDate,
                      String author,
                      String image,
+                     boolean isMarked,
                      String categoryOrigin,
                      ArticleCategory category) {
         this.id = calculateId(title, pubDate);
@@ -54,6 +58,7 @@ public class MyArticle implements Comparable<MyArticle> {
         this.image = image;
         this.categoryOrigin = categoryOrigin;
         this.category = category;
+        this.isMarked = isMarked;
     }
 
     @NonNull
