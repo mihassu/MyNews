@@ -1,8 +1,5 @@
 package ru.mihassu.mynews.data.repository;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -15,13 +12,11 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
-import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
 public class ChannelCollectorImpl implements ChannelCollector {
 
-    private MutableLiveData<MainFragmentState> liveData = new MutableLiveData<>();
     private BehaviorSubject<Long> manualUpdateToggle;
     private BehaviorSubject<List<MyArticle>> rawArticles = BehaviorSubject.create();
 
@@ -49,11 +44,10 @@ public class ChannelCollectorImpl implements ChannelCollector {
                 manualUpdateToggle,
                 Math::max);
 
-        // Запустить процесс. Полученные данные будут передаваться Observer'у,
-        // который передаст их в LiveData.
+        // Запустить процесс.
         updateTrigger
                 .switchMap(millis -> collect(observableList))
-                .subscribe(observerRx);
+                .subscribe(observer);
     }
 
     @SuppressWarnings("unchecked")
@@ -75,39 +69,12 @@ public class ChannelCollectorImpl implements ChannelCollector {
     private Observer<List<MyArticle>> observer = new Observer<List<MyArticle>>() {
         @Override
         public void onNext(List<MyArticle> myArticles) {
-
-            if (liveData.getValue() != null) {
-                MainFragmentState currentState = liveData.getValue();
-                currentState.setCurrentArticles(myArticles);
-                liveData.postValue(currentState);
-            } else {
-                liveData.postValue(new MainFragmentState(myArticles));
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            logIt("Channel Collector error");
-        }
-
-        @Override
-        public void onSubscribe(Disposable d) {
-        }
-
-        @Override
-        public void onComplete() {
-        }
-    };
-
-    private Observer<List<MyArticle>> observerRx = new Observer<List<MyArticle>>() {
-        @Override
-        public void onNext(List<MyArticle> myArticles) {
             rawArticles.onNext(myArticles);
         }
 
         @Override
         public void onError(Throwable e) {
-            logIt("Channel Collector error");
+            logIt("ChannelCollector error");
         }
 
         @Override
@@ -120,12 +87,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
     };
 
     @Override
-    public LiveData<MainFragmentState> collectChannels() {
-        return liveData;
-    }
-
-    @Override
-    public Observable<List<MyArticle>> collectChannelsRx() {
+    public Observable<List<MyArticle>> collectChannels() {
         return rawArticles.hide();
     }
 

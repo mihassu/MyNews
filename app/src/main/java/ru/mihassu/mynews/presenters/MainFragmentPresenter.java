@@ -6,4 +6,5 @@ import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
 
 public interface MainFragmentPresenter {
     LiveData<MainFragmentState> subscribe();
+    void updateChannels();
 }

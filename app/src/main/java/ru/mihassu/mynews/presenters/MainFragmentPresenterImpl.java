@@ -3,7 +3,6 @@ package ru.mihassu.mynews.presenters;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
@@ -30,37 +29,38 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter {
                                      ChannelCollector collector) {
         this.roomRepoBookmark = roomRepoBookmark;
         this.collector = collector;
+        subscribeToDataSources();
+    }
 
-//        Observable<List<MyArticle>> aaa = Observable.combineLatest(
-//                collector.collectChannelsRx(),
-//                roomRepoBookmark.getArticlesRx(),
-//                new BiFunction<List<MyArticle>, List<MyArticle>, List<MyArticle>>() {
-//                    @Override
-//                    public List<MyArticle> apply(List<MyArticle> myArticles, List<MyArticle> myArticles2) throws Exception {
-//                        return null;
-//                    }
-//                }
-//
-//        );
-
-        Observable<List<MyArticle>> aaa = Observable.combineLatest(
-                collector.collectChannelsRx(),
-                roomRepoBookmark.getArticlesRx(),
+    /**
+     * Подписаться на данные из коллектора и список bookmark'ов из базы
+     */
+    private void subscribeToDataSources() {
+        Observable.combineLatest(
+                collector.collectChannels(),
+                roomRepoBookmark.getArticles(),
                 this::makeBookmark
-        );
+        ).subscribe(new DisposableObserver<List<MyArticle>>() {
+            @Override
+            public void onNext(List<MyArticle> list) {
+                if (liveData.getValue() != null) {
+                    MainFragmentState currentState = liveData.getValue();
+                    currentState.setCurrentArticles(list);
+                    liveData.postValue(currentState);
+                } else {
+                    liveData.postValue(new MainFragmentState(list));
+                }
+            }
 
-        Disposable d = aaa.subscribe((list) -> {
-                    if (liveData.getValue() != null) {
-                        MainFragmentState currentState = liveData.getValue();
-                        currentState.setCurrentArticles(list);
-                        liveData.postValue(currentState);
-                    } else {
-                        liveData.postValue(new MainFragmentState(list));
-                    }
-                },
-                (error) -> {
-                    logIt("ERROR in FragmentPresenter");
-                });
+            @Override
+            public void onError(Throwable e) {
+                logIt("error in subscribeToDataSources method");
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        });
     }
 
     @Override
@@ -68,17 +68,23 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter {
         return liveData;
     }
 
-    // Проставить Bookmark
-    private List<MyArticle> makeBookmark(List<MyArticle> all, List<MyArticle> marked) {
+    @Override
+    public void updateChannels() {
+        collector.updateChannels();
+    }
 
-        // List в synchronized HashMap
+    // Проставить Bookmark
+    private List<MyArticle> makeBookmark(List<MyArticle> allArticles,
+                                         List<MyArticle> markedArticles) {
+
+        // List allArticles в synchronized HashMap
         Map<Long, MyArticle> map =
                 Collections.synchronizedMap(
-                        all
+                        allArticles
                                 .stream()
                                 .collect(Collectors.toMap(a -> a.id, a -> a)));
 
-        for (MyArticle markedArticle : marked) {
+        for (MyArticle markedArticle : markedArticles) {
             long key = markedArticle.id;
 
             if (map.containsKey(key)) {
@@ -90,6 +96,9 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter {
             }
         }
 
-        return new ArrayList<>(map.values());
+        ArrayList<MyArticle> result = new ArrayList<>(map.values());
+        Collections.sort(result);
+
+        return result;
     }
 }
