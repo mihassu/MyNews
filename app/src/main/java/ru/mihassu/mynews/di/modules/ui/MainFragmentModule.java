@@ -7,6 +7,7 @@ import dagger.Provides;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.di.qualifiers.FragmentScope;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
+import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.presenters.ArticlePresenterImpl;
 import ru.mihassu.mynews.presenters.MainFragmentPresenter;
@@ -17,8 +18,10 @@ public class MainFragmentModule {
 
     @Provides
     @FragmentScope
-    public MainFragmentPresenter provideFragmentPresenter(RoomRepoBookmark roomRepoBookmark) {
-        return new MainFragmentPresenterImpl(roomRepoBookmark);
+    public MainFragmentPresenter provideFragmentPresenter(
+            RoomRepoBookmark roomRepoBookmark,
+            ChannelCollector collector) {
+        return new MainFragmentPresenterImpl(roomRepoBookmark, collector);
     }
 
     @Provides

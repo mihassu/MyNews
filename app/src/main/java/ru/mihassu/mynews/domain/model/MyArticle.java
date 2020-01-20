@@ -77,6 +77,10 @@ public class MyArticle implements Comparable<MyArticle> {
         return 0;
     }
 
+    public long getId() {
+        return id;
+    }
+
     // Вычислить Id
     private long calculateId(String title, long date) {
         return Math.abs(title.hashCode()) + date;

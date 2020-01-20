@@ -47,6 +47,6 @@ public class OrmRoomModule {
     @Singleton
     @Provides
     public Observable<List<MyArticle>> provideBookmarkObservable(RoomRepoBookmark roomRepoBookmark) {
-        return roomRepoBookmark.getArticles().toObservable();
+        return roomRepoBookmark.getArticlesRx();
     }
 }

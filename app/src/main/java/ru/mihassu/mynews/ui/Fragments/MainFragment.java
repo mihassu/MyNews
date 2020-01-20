@@ -38,6 +38,7 @@ import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
+import ru.mihassu.mynews.presenters.MainFragmentPresenter;
 import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
 public class MainFragment extends Fragment implements Observer {
@@ -57,6 +58,9 @@ public class MainFragment extends Fragment implements Observer {
 
     @Inject
     HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
+
+    @Inject
+    MainFragmentPresenter fragmentPresenter;
 
     // 1.
     @Override
@@ -186,9 +190,12 @@ public class MainFragment extends Fragment implements Observer {
      */
     @SuppressWarnings("unchecked")
     private void loadChannels() {
-        collector.collectChannels()
-                .observe(this,
-                        this);
+        fragmentPresenter.subscribe().observe(this,
+                this);
+//
+//        collector.collectChannels()
+//                .observe(this,
+//                        this);
     }
 
     @Override

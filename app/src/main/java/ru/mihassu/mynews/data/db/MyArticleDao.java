@@ -10,6 +10,7 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 @Dao
@@ -20,7 +21,7 @@ public interface MyArticleDao {
      * Записей нет - onComplete и пустой список
      */
     @Query("SELECT * FROM articles")
-    Flowable<List<MyArticle>> getAll();
+    Observable<List<MyArticle>> getAll();
 
     /**
      * Запись есть - onSuccess

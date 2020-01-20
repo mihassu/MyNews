@@ -23,6 +23,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
 
     private MutableLiveData<MainFragmentState> liveData = new MutableLiveData<>();
     private BehaviorSubject<Long> manualUpdateToggle;
+    private BehaviorSubject<List<MyArticle>> rawArticles = BehaviorSubject.create();
 
     @SuppressWarnings("unchecked")
     public ChannelCollectorImpl(List<ChannelRepository> channelRepos, long updateInterval) {
@@ -52,7 +53,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
         // который передаст их в LiveData.
         updateTrigger
                 .switchMap(millis -> collect(observableList))
-                .subscribe(observer);
+                .subscribe(observerRx);
     }
 
     @SuppressWarnings("unchecked")
@@ -98,9 +99,34 @@ public class ChannelCollectorImpl implements ChannelCollector {
         }
     };
 
+    private Observer<List<MyArticle>> observerRx = new Observer<List<MyArticle>>() {
+        @Override
+        public void onNext(List<MyArticle> myArticles) {
+            rawArticles.onNext(myArticles);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            logIt("Channel Collector error");
+        }
+
+        @Override
+        public void onSubscribe(Disposable d) {
+        }
+
+        @Override
+        public void onComplete() {
+        }
+    };
+
     @Override
     public LiveData<MainFragmentState> collectChannels() {
         return liveData;
+    }
+
+    @Override
+    public Observable<List<MyArticle>> collectChannelsRx() {
+        return rawArticles.hide();
     }
 
     @Override
