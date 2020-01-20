@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.di.components.ui.DaggerMainActivityComponent;
 import ru.mihassu.mynews.di.modules.ui.MainActivityModule;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,11 +32,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DaggerMainActivityComponent
-                .builder()
-                .activityModule(new MainActivityModule())
-                .addDependency(((App) getApplication()).getAppComponent())
-                .build()
+        App
+                .get()
+                .getAppComponent()
+                .plusMainActivityComponent(new MainActivityModule())
                 .inject(this);
 
         setAppTheme();

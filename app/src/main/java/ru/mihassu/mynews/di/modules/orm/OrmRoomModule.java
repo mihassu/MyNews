@@ -4,14 +4,18 @@ import android.content.Context;
 
 import androidx.room.Room;
 
+import java.util.List;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.Observable;
 import ru.mihassu.mynews.data.db.AppRoomDatabase;
 import ru.mihassu.mynews.data.db.MyArticleDao;
-import ru.mihassu.mynews.data.repository.RoomRepo;
-import ru.mihassu.mynews.data.repository.RoomRepoImpl;
+import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
+import ru.mihassu.mynews.data.repository.RoomRepoBookmarkImpl;
+import ru.mihassu.mynews.domain.model.MyArticle;
 
 @Module
 public class OrmRoomModule {
@@ -36,7 +40,13 @@ public class OrmRoomModule {
 
     @Singleton
     @Provides
-    public RoomRepo provideRoomRepo(MyArticleDao myArticleDao) {
-        return new RoomRepoImpl(myArticleDao);
+    public RoomRepoBookmark provideRoomRepo(MyArticleDao myArticleDao) {
+        return new RoomRepoBookmarkImpl(myArticleDao);
+    }
+
+    @Singleton
+    @Provides
+    public Observable<List<MyArticle>> provideBookmarkObservable(RoomRepoBookmark roomRepoBookmark) {
+        return roomRepoBookmark.getArticles().toObservable();
     }
 }

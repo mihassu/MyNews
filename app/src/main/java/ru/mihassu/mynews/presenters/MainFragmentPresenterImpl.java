@@ -1,12 +1,12 @@
 package ru.mihassu.mynews.presenters;
 
-import ru.mihassu.mynews.data.repository.RoomRepo;
+import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 
 public class MainFragmentPresenterImpl implements MainFragmentPresenter {
 
-    private RoomRepo roomRepo;
+    private RoomRepoBookmark roomRepoBookmark;
 
-    public MainFragmentPresenterImpl(RoomRepo roomRepo) {
-        this.roomRepo = roomRepo;
+    public MainFragmentPresenterImpl(RoomRepoBookmark roomRepoBookmark) {
+        this.roomRepoBookmark = roomRepoBookmark;
     }
 }

@@ -26,16 +26,18 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.di.components.ui.DaggerMainFragmentComponent;
 import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
+import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
+import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
 public class MainFragment extends Fragment implements Observer {
@@ -46,23 +48,26 @@ public class MainFragment extends Fragment implements Observer {
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private ImageView progressBarImage;
     private ConstraintLayout progressBarContainer;
-    private Context context;
+
+    @Inject
+    Context context;
 
     @Inject
     ChannelCollector collector;
 
+    @Inject
+    HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
+
     // 1.
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = context;
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
-        App app = (App) context.getApplicationContext();
-        DaggerMainFragmentComponent
-                .builder()
-                .fragmentModule(new MainFragmentModule())
-                .addDependency(app.getAppComponent())
-                .build()
+        App
+                .get()
+                .getAppComponent()
+                .plusMainFragmentComponent(new MainFragmentModule())
                 .inject(this);
     }
 
@@ -119,7 +124,7 @@ public class MainFragment extends Fragment implements Observer {
 
     // Init ViewPager
     private void initViewPager(View fragmentView) {
-        viewPagerAdapter = new NewsViewPagerAdapter(this::updateAgentImpl, context);
+        viewPagerAdapter = new NewsViewPagerAdapter(this::updateAgentImpl, articlePresenters);
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
     }

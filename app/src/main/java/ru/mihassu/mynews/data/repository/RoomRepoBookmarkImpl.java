@@ -3,21 +3,22 @@ package ru.mihassu.mynews.data.repository;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.schedulers.Schedulers;
 import ru.mihassu.mynews.data.db.MyArticleDao;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
-public class RoomRepoImpl implements RoomRepo {
+public class RoomRepoBookmarkImpl implements RoomRepoBookmark {
 
     private MyArticleDao myArticleDao;
 
-    public RoomRepoImpl(MyArticleDao myArticleDao) {
+    public RoomRepoBookmarkImpl(MyArticleDao myArticleDao) {
         this.myArticleDao = myArticleDao;
     }
 
     @Override
-    public Maybe<List<MyArticle>> getArticles() {
+    public Flowable<List<MyArticle>> getArticles() {
         return myArticleDao.getAll();
     }
 

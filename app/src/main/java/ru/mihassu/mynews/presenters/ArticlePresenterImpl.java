@@ -2,7 +2,7 @@ package ru.mihassu.mynews.presenters;
 
 import java.util.List;
 
-import ru.mihassu.mynews.data.repository.RoomRepo;
+import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.ui.main.IMainAdapter;
@@ -10,12 +10,12 @@ import ru.mihassu.mynews.ui.main.IMainAdapter;
 public class ArticlePresenterImpl implements ArticlePresenter {
     private List<MyArticle> articles;
     private ArticleCategory category;
-    private RoomRepo roomRepo;
+    private RoomRepoBookmark roomRepoBookmark;
     private IMainAdapter adapter;
 
-    public ArticlePresenterImpl(ArticleCategory category, RoomRepo roomRepo) {
+    public ArticlePresenterImpl(ArticleCategory category, RoomRepoBookmark roomRepoBookmark) {
         this.category = category;
-        this.roomRepo = roomRepo;
+        this.roomRepoBookmark = roomRepoBookmark;
     }
 
     @Override
@@ -40,9 +40,9 @@ public class ArticlePresenterImpl implements ArticlePresenter {
         article.isMarked = !article.isMarked;
 
         if(article.isMarked) {
-            roomRepo.insertArticle(article);
+            roomRepoBookmark.insertArticle(article);
         } else {
-            roomRepo.deleteArticle(article);
+            roomRepoBookmark.deleteArticle(article);
         }
         adapter.onItemUpdated(position);
     }

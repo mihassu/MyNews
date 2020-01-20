@@ -16,30 +16,24 @@ import javax.inject.Inject;
 
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.di.components.ui.DaggerSettingsFragmentComponent;
 import ru.mihassu.mynews.di.modules.ui.SettingsFragmentModule;
-
-import static ru.mihassu.mynews.Utils.logIt;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Inject
     SharedPreferences preferences;
 
-    private Context context;
+    @Inject Context context;
+
     private Handler handler;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.context = context;
-
-        App app = (App) context.getApplicationContext();
-        DaggerSettingsFragmentComponent
-                .builder()
-                .fragmentModule(new SettingsFragmentModule())
-                .addDependency(app.getAppComponent())
-                .build()
+        App
+                .get()
+                .getAppComponent()
+                .plusSettingsFragmentComponent(new SettingsFragmentModule())
                 .inject(this);
     }
 

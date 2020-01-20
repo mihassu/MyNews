@@ -1,7 +1,6 @@
 package ru.mihassu.mynews.ui.news;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -21,13 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import io.reactivex.subjects.BehaviorSubject;
-import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.di.components.ui.DaggerViewPagerComponent;
-import ru.mihassu.mynews.di.modules.ui.ViewPagerModule;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
@@ -39,8 +33,7 @@ import ru.mihassu.mynews.ui.web.CustomTabHelper;
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
-    @Inject
-    HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
+    private HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
 
     // Списки новостей по категориям
     private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
@@ -53,18 +46,11 @@ public class NewsViewPagerAdapter
 
     public NewsViewPagerAdapter(
             UpdateAgent updateAgent,
-            Context context) {
+            HashMap<ArticleCategory, ArticlePresenter> articlePresenters) {
 
+        this.articlePresenters = articlePresenters;
         this.updateAgent = updateAgent;
         this.isUpdateInProgress = true;
-
-        App app = (App) context.getApplicationContext();
-        DaggerViewPagerComponent
-                .builder()
-                .fragmentModule(new ViewPagerModule())
-                .addDependency(app.getAppComponent())
-                .build()
-                .inject(this);
     }
 
     @NonNull

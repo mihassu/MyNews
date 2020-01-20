@@ -1,6 +1,5 @@
 package ru.mihassu.mynews.di.modules.app;
 
-import android.app.Application;
 import android.content.Context;
 
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class NetModule {
 
     private int updateIntervalInMinutes;
 
-
     // Constructor needs one parameter to instantiate.
     public NetModule(int updateIntervalInMinutes) {
         this.updateIntervalInMinutes = updateIntervalInMinutes;
@@ -36,9 +34,9 @@ public class NetModule {
 
     @Provides
     @Singleton
-    Cache provideOkHttpCache(Application application) {
+    Cache provideOkHttpCache(Context context) {
         int cacheSize = 3 * 1024 * 1024; // 3 Mb
-        return new Cache(application.getCacheDir(), cacheSize);
+        return new Cache(context.getCacheDir(), cacheSize);
     }
 
     @Provides

@@ -10,32 +10,25 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import ru.mihassu.mynews.di.qualifiers.MainActivityScope;
 
 @Module
 public class AppModule {
 
-    private Application app;
+    private Context context;
 
     public AppModule(Application application) {
-        this.app = application;
-    }
-
-    @Provides
-    @Singleton
-    Application providesApplication() {
-        return app;
+        this.context = application;
     }
 
     @Provides
     @Singleton
     Context provideContext() {
-        return app;
+        return context;
     }
 
     @Provides
     @Singleton
-    public SharedPreferences providesSharedPreferences(Application application) {
-        return PreferenceManager.getDefaultSharedPreferences(application);
+    public SharedPreferences providesSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 }

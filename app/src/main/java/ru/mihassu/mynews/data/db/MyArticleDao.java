@@ -5,18 +5,22 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 @Dao
 public interface MyArticleDao {
 
+    /**
+     * Записи есть - onSuccess
+     * Записей нет - onComplete и пустой список
+     */
     @Query("SELECT * FROM articles")
-    Maybe<List<MyArticle>> getAll();
+    Flowable<List<MyArticle>> getAll();
 
     /**
      * Запись есть - onSuccess

@@ -14,6 +14,11 @@ import ru.mihassu.mynews.domain.repository.ChannelCollector;
 public class App extends Application {
 
     private AppComponent appComponent;
+    private static App instance;
+
+    public static App get() {
+        return instance;
+    }
 
     @Inject
     ChannelCollector collector;
@@ -21,6 +26,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
 
         appComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
@@ -28,7 +34,7 @@ public class App extends Application {
                 .ormRoomModule(new OrmRoomModule(getString(R.string.db_name)))
                 .build();
 
-        // Создание ChannelCollector инициирует загрузку новостей
+        // Создание ChannelCollector в NetModule инициирует загрузку новостей
         appComponent.inject(this);
     }
 
