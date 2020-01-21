@@ -1,6 +1,7 @@
 package ru.mihassu.mynews.di.modules.ui;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import dagger.Module;
 import dagger.Provides;
@@ -26,11 +27,12 @@ public class MainFragmentModule {
 
     @Provides
     @FragmentScope
-    public HashMap<ArticleCategory, ArticlePresenter> provideArticlePresenters(RoomRepoBookmark roomRepoBookmark) {
-        HashMap<ArticleCategory, ArticlePresenter> map = new HashMap<>();
+    public List<ArticlePresenter> provideArticlePresentersList(RoomRepoBookmark roomRepoBookmark) {
+        ArrayList<ArticlePresenter> list = new ArrayList<>();
+
         for(ArticleCategory category : ArticleCategory.values()) {
-            map.put(category, new ArticlePresenterImpl(category, roomRepoBookmark));
+            list.add(new ArticlePresenterImpl(roomRepoBookmark));
         }
-        return map;
+        return list;
     }
 }

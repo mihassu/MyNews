@@ -5,7 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 
 import java.util.function.Consumer;
 
@@ -17,7 +18,11 @@ import ru.mihassu.mynews.ui.Fragments.ViewHolderAnimated;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderBase;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderStatic;
 
-public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> implements IMainAdapter {
+import static ru.mihassu.mynews.Utils.logIt;
+
+public class MainAdapter
+        extends ListAdapter<MyArticle, ViewHolderBase>
+        implements BookmarkChangeListener {
 
     private static int[] itemLayouts = {
             R.layout.item_article_image_left,
@@ -28,14 +33,29 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> implements
     private Observable<Integer> scrollEventsObs;
     private ArticlePresenter articlePresenter;
 
+    private static DiffUtil.ItemCallback<MyArticle> DiffCallback = new DiffUtil.ItemCallback<MyArticle>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull MyArticle oldItem, @NonNull MyArticle newItem) {
+            logIt("areItemsTheSame");
+            return oldItem.id == newItem.id;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull MyArticle oldItem, @NonNull MyArticle newItem) {
+            logIt("areContentsTheSame");
+            return oldItem.equals(newItem);
+        }
+    };
+
     public MainAdapter(Observable<Integer> scrollEventsObs,
                        Consumer<String> clickHandler,
                        ArticlePresenter articlePresenter) {
+        super(DiffCallback);
         this.clickHandler = clickHandler;
         this.scrollEventsObs = scrollEventsObs;
         this.articlePresenter = articlePresenter;
 
-        articlePresenter.setAdapter(this);
+        this.articlePresenter.bindBookmarkChangeListener(this);
     }
 
     @NonNull
@@ -84,6 +104,9 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> implements
         return articlePresenter.getArticles().get(position);
     }
 
+    /**
+     * BookmarkChangeListener::onItemUpdated
+     */
     @Override
     public void onItemUpdated(int position) {
         notifyItemChanged(position);

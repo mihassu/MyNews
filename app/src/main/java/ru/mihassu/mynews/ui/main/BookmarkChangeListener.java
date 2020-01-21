@@ -1,5 +1,5 @@
 package ru.mihassu.mynews.ui.main;
 
-public interface IMainAdapter {
+public interface BookmarkChangeListener {
     void onItemUpdated(int position);
 }

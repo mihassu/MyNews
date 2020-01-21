@@ -26,7 +26,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,7 +33,6 @@ import javax.inject.Inject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
-import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.presenters.MainFragmentPresenter;
@@ -42,12 +40,12 @@ import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
 public class MainFragment extends Fragment implements Observer {
 
-    private NewsViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
-    private MainFragmentState currentState;
-    private AnimatedVectorDrawableCompat animatedProgressBar;
     private ImageView progressBarImage;
+    private MainFragmentState currentState;
+    private NewsViewPagerAdapter viewPagerAdapter;
     private ConstraintLayout progressBarContainer;
+    private AnimatedVectorDrawableCompat animatedProgressBar;
 
     @Inject
     Context context;
@@ -56,7 +54,7 @@ public class MainFragment extends Fragment implements Observer {
     MainFragmentPresenter fragmentPresenter;
 
     @Inject
-    HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
+    List<ArticlePresenter> articlePresenters;
 
     // 1.
     @Override
@@ -124,7 +122,10 @@ public class MainFragment extends Fragment implements Observer {
 
     // Init ViewPager
     private void initViewPager(View fragmentView) {
-        viewPagerAdapter = new NewsViewPagerAdapter(this::updateAgentImpl, articlePresenters);
+        viewPagerAdapter = new NewsViewPagerAdapter(
+                this::updateAgentImpl,
+                articlePresenters
+                );
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
     }

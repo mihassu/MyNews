@@ -16,7 +16,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,58 +26,59 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
 import ru.mihassu.mynews.ui.main.MainAdapter;
-import ru.mihassu.mynews.ui.main.MainAdapterEx;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
-
-import static ru.mihassu.mynews.Utils.logIt;
 
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
-    private HashMap<ArticleCategory, ArticlePresenter> articlePresenters;
+    // Список презенторов для табов
+    private List<ArticlePresenter> articlePresenters;
 
-    // Списки новостей по категориям
+    // Списки новостей по категориям. Обновляются из фрагмента.
     private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
 
     // Helper для работы с Chrome CustomTabs
     private CustomTabHelper customTabHelper = new CustomTabHelper();
 
+    // Интерфейс для ручного обновления
     private UpdateAgent updateAgent;
     private boolean isUpdateInProgress;
 
     public NewsViewPagerAdapter(
             UpdateAgent updateAgent,
-            HashMap<ArticleCategory, ArticlePresenter> articlePresenters) {
+            List<ArticlePresenter> articlePresenters) {
 
         this.articlePresenters = articlePresenters;
         this.updateAgent = updateAgent;
         this.isUpdateInProgress = true;
     }
 
+    /**
+     * Делаем ItemViewType равным его позиции в списке ViewPager и будем использовать в
+     * onCreateViewHolder для выбора презентера. Каждому табу - отдельный презентер.
+     */
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     @NonNull
     @Override
-    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewTypeAkaPosition) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.item_news, parent, false);
-        return new NewsViewHolder(v);
+        return new NewsViewHolder(v, articlePresenters.get(viewTypeAkaPosition));
     }
 
     // v 1.2
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        logIt("onBindViewHolder");
         if (classifiedNews != null && classifiedNews.size() != 0) {
-
             ArrayList<Map.Entry<ArticleCategory, List<MyArticle>>> allArticles =
                     new ArrayList<>(classifiedNews.entrySet());
 
-            ArticlePresenter presenter = articlePresenters.get(allArticles.get(position).getKey());
-
-            if(presenter != null) {
-                presenter.setArticles(allArticles.get(position).getValue());
-                holder.bind(presenter);
-            }
+            holder.bind(allArticles.get(position).getValue());
         }
     }
 
@@ -87,11 +87,13 @@ public class NewsViewPagerAdapter
         return classifiedNews != null ? classifiedNews.size() : 0;
     }
 
-    // Вызывается из MainFragment при обновлении новостей
+    /**
+     * Вызывается из MainFragment при обновлении новостей
+     */
     public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
         classifiedNews = enumMap;
-        notifyDataSetChanged();
         isUpdateInProgress = false;
+        notifyDataSetChanged();
     }
 
     /**
@@ -99,16 +101,21 @@ public class NewsViewPagerAdapter
      */
     class NewsViewHolder extends RecyclerView.ViewHolder {
 
-        private RecyclerView rv;
         private SwipeRefreshLayout swipeRefreshLayout;
         private BehaviorSubject<Integer> scrollEventsRelay;
+        private ArticlePresenter articlePresenter;
 
-        NewsViewHolder(@NonNull View itemView) {
+        /**
+         * Адаптер для списка новостей нужно создавать в этом месте, чтобы он потом
+         * не пересоздавался при каждом обновлении данных.
+         */
+        NewsViewHolder(@NonNull View itemView, @NonNull ArticlePresenter presenter) {
             super(itemView);
-            logIt("NewsViewHolder:constructor");
 
-            scrollEventsRelay = BehaviorSubject.create();
-            rv = itemView.findViewById(R.id.news_recyclerview);
+            this.articlePresenter = presenter;
+            this.scrollEventsRelay = BehaviorSubject.create();
+
+            RecyclerView rv = itemView.findViewById(R.id.news_recyclerview);
             rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -118,17 +125,20 @@ public class NewsViewPagerAdapter
                 }
             });
 
-            initSwipeRefreshLayout();
-        }
-
-        void bind(ArticlePresenter articlePresenter) {
-            logIt("NewsViewHolder:bind");
-            MainAdapterEx adapter = new MainAdapterEx(
+            MainAdapter adapter = new MainAdapter(
                     scrollEventsRelay.hide(),
                     this::showInChromeCustomTabs,
                     articlePresenter);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
+            rv.setHasFixedSize(false);
             rv.setAdapter(adapter);
+
+            initSwipeRefreshLayout();
+        }
+
+        // Передать данные в презентер
+        void bind(List<MyArticle> list) {
+            articlePresenter.setArticles(list);
             swipeRefreshLayout.setRefreshing(false);
         }
 

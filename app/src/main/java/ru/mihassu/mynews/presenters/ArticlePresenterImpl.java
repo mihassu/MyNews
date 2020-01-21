@@ -5,16 +5,14 @@ import java.util.List;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.ui.main.IMainAdapter;
+import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
 
 public class ArticlePresenterImpl implements ArticlePresenter {
     private List<MyArticle> articles;
-    private ArticleCategory category;
     private RoomRepoBookmark roomRepoBookmark;
-    private IMainAdapter adapter;
+    private BookmarkChangeListener listener;
 
-    public ArticlePresenterImpl(ArticleCategory category, RoomRepoBookmark roomRepoBookmark) {
-        this.category = category;
+    public ArticlePresenterImpl(RoomRepoBookmark roomRepoBookmark) {
         this.roomRepoBookmark = roomRepoBookmark;
     }
 
@@ -29,12 +27,6 @@ public class ArticlePresenterImpl implements ArticlePresenter {
     }
 
     @Override
-    public ArticleCategory getCategory() {
-        return category;
-    }
-
-
-    @Override
     public void onClickBookmark(int position) {
         MyArticle article = articles.get(position);
         article.isMarked = !article.isMarked;
@@ -44,11 +36,11 @@ public class ArticlePresenterImpl implements ArticlePresenter {
         } else {
             roomRepoBookmark.deleteArticle(article);
         }
-        adapter.onItemUpdated(position);
+        listener.onItemUpdated(position);
     }
 
     @Override
-    public void setAdapter(IMainAdapter adapter) {
-        this.adapter = adapter;
+    public void bindBookmarkChangeListener(BookmarkChangeListener adapter) {
+        this.listener = adapter;
     }
 }
