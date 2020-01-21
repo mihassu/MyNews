@@ -55,6 +55,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
             List<Observable<List<MyArticle>>> observableList) {
 
         return Observable.combineLatest(observableList,
+                // Список из списков статей конвертируем в плоский список
                 (listOfLists) -> {
                     List<MyArticle> combinedList = new ArrayList<>();
 

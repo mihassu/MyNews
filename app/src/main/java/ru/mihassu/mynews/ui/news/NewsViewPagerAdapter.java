@@ -27,8 +27,11 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
 import ru.mihassu.mynews.ui.main.MainAdapter;
+import ru.mihassu.mynews.ui.main.MainAdapterEx;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
+
+import static ru.mihassu.mynews.Utils.logIt;
 
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
@@ -64,6 +67,7 @@ public class NewsViewPagerAdapter
     // v 1.2
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
+        logIt("onBindViewHolder");
         if (classifiedNews != null && classifiedNews.size() != 0) {
 
             ArrayList<Map.Entry<ArticleCategory, List<MyArticle>>> allArticles =
@@ -101,6 +105,7 @@ public class NewsViewPagerAdapter
 
         NewsViewHolder(@NonNull View itemView) {
             super(itemView);
+            logIt("NewsViewHolder:constructor");
 
             scrollEventsRelay = BehaviorSubject.create();
             rv = itemView.findViewById(R.id.news_recyclerview);
@@ -117,7 +122,8 @@ public class NewsViewPagerAdapter
         }
 
         void bind(ArticlePresenter articlePresenter) {
-            MainAdapter adapter = new MainAdapter(
+            logIt("NewsViewHolder:bind");
+            MainAdapterEx adapter = new MainAdapterEx(
                     scrollEventsRelay.hide(),
                     this::showInChromeCustomTabs,
                     articlePresenter);

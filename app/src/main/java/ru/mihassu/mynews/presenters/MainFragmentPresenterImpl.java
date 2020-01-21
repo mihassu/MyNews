@@ -25,8 +25,10 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter {
     private RoomRepoBookmark roomRepoBookmark;
     private ChannelCollector collector;
 
-    public MainFragmentPresenterImpl(RoomRepoBookmark roomRepoBookmark,
-                                     ChannelCollector collector) {
+    public MainFragmentPresenterImpl(
+            RoomRepoBookmark roomRepoBookmark,
+            ChannelCollector collector) {
+
         this.roomRepoBookmark = roomRepoBookmark;
         this.collector = collector;
         subscribeToDataSources();
@@ -77,7 +79,7 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter {
     private List<MyArticle> makeBookmark(List<MyArticle> allArticles,
                                          List<MyArticle> markedArticles) {
 
-        // List allArticles в synchronized HashMap
+        // Поместить List allArticles в synchronized HashMap
         Map<Long, MyArticle> map =
                 Collections.synchronizedMap(
                         allArticles
@@ -96,6 +98,7 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter {
             }
         }
 
+        // Итоговоый список статей отсортировать по дате
         ArrayList<MyArticle> result = new ArrayList<>(map.values());
         Collections.sort(result);
 
