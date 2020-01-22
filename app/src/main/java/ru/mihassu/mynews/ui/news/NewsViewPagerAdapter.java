@@ -1,6 +1,7 @@
 package ru.mihassu.mynews.ui.news;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -14,29 +15,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
+import ru.mihassu.mynews.ui.Fragments.BrowserLauncher;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
+import static ru.mihassu.mynews.Utils.logIt;
+
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
-    // Список презенторов для табов
-    private List<ArticlePresenter> articlePresenters;
-
-    // Списки новостей по категориям. Обновляются из фрагмента.
-    private EnumMap<ArticleCategory, List<MyArticle>> classifiedNews;
+    // Презентер для элементов ViewPager'а и элементов списка статей
+    private ArticlePresenter articlePresenter;
 
     // Helper для работы с Chrome CustomTabs
     private CustomTabHelper customTabHelper = new CustomTabHelper();
@@ -47,16 +44,17 @@ public class NewsViewPagerAdapter
 
     public NewsViewPagerAdapter(
             UpdateAgent updateAgent,
-            List<ArticlePresenter> articlePresenters) {
+            ArticlePresenter articlePresenter) {
 
-        this.articlePresenters = articlePresenters;
+        this.articlePresenter = articlePresenter;
         this.updateAgent = updateAgent;
         this.isUpdateInProgress = true;
     }
 
     /**
-     * Делаем ItemViewType равным его позиции в списке ViewPager и будем использовать в
-     * onCreateViewHolder для выбора презентера. Каждому табу - отдельный презентер.
+     * Делаем ItemViewType равным его позиции в списке страниц ViewPager'а и будем использовать в
+     * onCreateViewHolder чтобы сообщить ему номер таба. Это связывает таб с соотв категорией
+     * статей (и списком статей).
      */
     @Override
     public int getItemViewType(int position) {
@@ -65,33 +63,27 @@ public class NewsViewPagerAdapter
 
     @NonNull
     @Override
-    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewTypeAkaPosition) {
+    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewTypeAkaTabPosition) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.item_news, parent, false);
-        return new NewsViewHolder(v, articlePresenters.get(viewTypeAkaPosition));
+        return new NewsViewHolder(v, articlePresenter, viewTypeAkaTabPosition);
     }
 
     // v 1.2
     @Override
-    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        if (classifiedNews != null && classifiedNews.size() != 0) {
-            ArrayList<Map.Entry<ArticleCategory, List<MyArticle>>> allArticles =
-                    new ArrayList<>(classifiedNews.entrySet());
-
-            holder.bind(allArticles.get(position).getValue());
-        }
+    public void onBindViewHolder(@NonNull NewsViewHolder holder, int tabPosition) {
+        holder.bind(articlePresenter.getTabArticles(tabPosition));
     }
 
     @Override
     public int getItemCount() {
-        return classifiedNews != null ? classifiedNews.size() : 0;
+        return articlePresenter.getTabCount();
     }
 
     /**
      * Вызывается из MainFragment при обновлении новостей
      */
-    public void updateContent(EnumMap<ArticleCategory, List<MyArticle>> enumMap) {
-        classifiedNews = enumMap;
+    public void updateContent() {
         isUpdateInProgress = false;
         notifyDataSetChanged();
     }
@@ -99,21 +91,23 @@ public class NewsViewPagerAdapter
     /**
      * Holder отдельной ViewGroup внутри ViewPager2
      */
-    class NewsViewHolder extends RecyclerView.ViewHolder {
+    class NewsViewHolder extends RecyclerView.ViewHolder implements BrowserLauncher  {
 
         private SwipeRefreshLayout swipeRefreshLayout;
         private BehaviorSubject<Integer> scrollEventsRelay;
         private ArticlePresenter articlePresenter;
+        private int tabPosition;
 
         /**
          * Адаптер для списка новостей нужно создавать в этом месте, чтобы он потом
          * не пересоздавался при каждом обновлении данных.
          */
-        NewsViewHolder(@NonNull View itemView, @NonNull ArticlePresenter presenter) {
+        NewsViewHolder(@NonNull View itemView, @NonNull ArticlePresenter presenter, int tabPosition) {
             super(itemView);
 
             this.articlePresenter = presenter;
             this.scrollEventsRelay = BehaviorSubject.create();
+            this.tabPosition = tabPosition;
 
             RecyclerView rv = itemView.findViewById(R.id.news_recyclerview);
             rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -125,10 +119,13 @@ public class NewsViewPagerAdapter
                 }
             });
 
+            logIt("NewsViewHolder::tabPosition=" + tabPosition);
+
             MainAdapter adapter = new MainAdapter(
                     scrollEventsRelay.hide(),
-                    this::showInChromeCustomTabs,
-                    articlePresenter);
+                    this,
+                    articlePresenter,
+                    tabPosition);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rv.setHasFixedSize(false);
             rv.setAdapter(adapter);
@@ -138,7 +135,6 @@ public class NewsViewPagerAdapter
 
         // Передать данные в презентер
         void bind(List<MyArticle> list) {
-            articlePresenter.setArticles(list);
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -158,7 +154,7 @@ public class NewsViewPagerAdapter
                         if (!isUpdateInProgress) {
                             isUpdateInProgress = true;
                             swipeRefreshLayout.setRefreshing(true);
-                            updateAgent.update();
+                            updateAgent.launchUpdate();
                         }
                     }
             );
@@ -167,36 +163,40 @@ public class NewsViewPagerAdapter
         }
 
         // Отобразить новость в Chrome CustomTabs
-        private void showInChromeCustomTabs(String link) {
 
+
+        @Override
+        public void showInBrowser(String url) {
+
+            Context context = itemView.getContext();
             int requestCode = 100;
 
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 
-            builder.setToolbarColor(ContextCompat.getColor(itemView.getContext(), android.R.color.white));
+            builder.setToolbarColor(ContextCompat.getColor(context, android.R.color.white));
             builder.addDefaultShareMenuItem();
-            builder.setStartAnimations(itemView.getContext(), android.R.anim.fade_in, android.R.anim.fade_out);
-            builder.setExitAnimations(itemView.getContext(), android.R.anim.fade_in, android.R.anim.fade_out);
+            builder.setStartAnimations(context, android.R.anim.fade_in, android.R.anim.fade_out);
+            builder.setExitAnimations(context, android.R.anim.fade_in, android.R.anim.fade_out);
             builder.setShowTitle(true);
 
             CustomTabsIntent anotherCustomTab = new CustomTabsIntent.Builder().build();
 
             Intent intent = anotherCustomTab.intent;
-            intent.setData(Uri.parse(link));
-            PendingIntent pendingIntent = PendingIntent.getActivity(itemView.getContext(), requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            intent.setData(Uri.parse(url));
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.addMenuItem("Our custom menu", pendingIntent);
 
             CustomTabsIntent customTabsIntent = builder.build();
 
-            String packageName = customTabHelper.getPackageNameToUse(itemView.getContext(), link);
+            String packageName = customTabHelper.getPackageNameToUse(context, url);
 
             if (packageName != null) {
                 customTabsIntent.intent.setPackage(packageName);
-                customTabsIntent.launchUrl(itemView.getContext(), Uri.parse(link));
+                customTabsIntent.launchUrl(context, Uri.parse(url));
             } else {
-                Intent intentOpenUri = new Intent(itemView.getContext(), ArticleActivity.class);
-                intentOpenUri.putExtra(itemView.getResources().getString(R.string.article_url_key), link);
-                itemView.getContext().startActivity(intentOpenUri);
+                Intent intentOpenUri = new Intent(context, ArticleActivity.class);
+                intentOpenUri.putExtra(itemView.getResources().getString(R.string.article_url_key), url);
+                context.startActivity(intentOpenUri);
             }
         }
     }

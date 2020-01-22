@@ -8,6 +8,14 @@ import java.util.Objects;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
+/**
+ * Хранит данные в трех структурах
+ *
+ * @currentArticles - общий текущий список статей
+ * @currentSortedArticles - статьи отсортированы по категориям
+ * @currentCategories - список категорий статей из @currentArticles
+ */
+
 public class MainFragmentState {
 
     private List<MyArticle> currentArticles;
@@ -26,9 +34,9 @@ public class MainFragmentState {
 
         EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
 
-        for (MyArticle article: currentArticles) {
+        for (MyArticle article : currentArticles) {
 
-            if(!enumMap.containsKey(article.category)) {
+            if (!enumMap.containsKey(article.category)) {
                 enumMap.put(article.category, new ArrayList<>());
             }
             Objects.requireNonNull(enumMap.get(article.category)).add(article);

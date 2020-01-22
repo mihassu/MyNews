@@ -25,14 +25,14 @@ public class MainFragmentModule {
         return new MainFragmentPresenterImpl(roomRepoBookmark, collector);
     }
 
-    @Provides
-    @FragmentScope
-    public List<ArticlePresenter> provideArticlePresentersList(RoomRepoBookmark roomRepoBookmark) {
-        ArrayList<ArticlePresenter> list = new ArrayList<>();
-
-        for(ArticleCategory category : ArticleCategory.values()) {
-            list.add(new ArticlePresenterImpl(roomRepoBookmark));
-        }
-        return list;
-    }
+//    @Provides
+//    @FragmentScope
+//    public List<ArticlePresenter> provideArticlePresentersList(RoomRepoBookmark roomRepoBookmark) {
+//        ArrayList<ArticlePresenter> list = new ArrayList<>();
+//
+//        for(ArticleCategory category : ArticleCategory.values()) {
+//            list.add(new ArticlePresenterImpl(roomRepoBookmark));
+//        }
+//        return list;
+//    }
 }

@@ -7,8 +7,11 @@ import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
 
 public interface ArticlePresenter {
 
-    void onClickBookmark(int position);
-    void setArticles(List<MyArticle> articles);
+    int getTabCount();
+    void onClickBookmark(long articleId);
+    void onClickArticle(long articleId);
     void bindBookmarkChangeListener(BookmarkChangeListener listener);
+    List<MyArticle> getTabArticles(int tabPosition);
     List<MyArticle> getArticles();
+    List<MyArticle> getArticle(int listPosition);
 }

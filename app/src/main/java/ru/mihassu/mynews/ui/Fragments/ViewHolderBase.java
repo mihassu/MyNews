@@ -26,6 +26,7 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
 
     private static final int contentThreshold = 120;
 
+    private long articleId;
     private View itemView;
     private TextView itemTitle;
     private TextView itemContent;
@@ -51,10 +52,12 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View bookmarkImageView) {
-        presenter.onClickBookmark(getAdapterPosition());
+        presenter.onClickBookmark( this.articleId);
     }
 
     public void bind(MyArticle article) {
+
+        this.articleId = article.id;
 
         // Ссылку на контент статьи сохр в теге элемента списка
         itemView.setTag(article.link);

@@ -8,17 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
-import java.util.function.Consumer;
-
 import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
+import ru.mihassu.mynews.ui.Fragments.BrowserLauncher;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderAnimated;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderBase;
 import ru.mihassu.mynews.ui.Fragments.ViewHolderStatic;
-
-import static ru.mihassu.mynews.Utils.logIt;
 
 public class MainAdapter
         extends ListAdapter<MyArticle, ViewHolderBase>
@@ -29,33 +26,42 @@ public class MainAdapter
             R.layout.item_article_image_right,
             R.layout.item_article_image_top};
 
-    private Consumer<String> clickHandler;
+    private BrowserLauncher browserLauncher;
     private Observable<Integer> scrollEventsObs;
     private ArticlePresenter articlePresenter;
+    private int tabPosition;
 
     private static DiffUtil.ItemCallback<MyArticle> DiffCallback = new DiffUtil.ItemCallback<MyArticle>() {
         @Override
         public boolean areItemsTheSame(@NonNull MyArticle oldItem, @NonNull MyArticle newItem) {
-            logIt("areItemsTheSame");
             return oldItem.id == newItem.id;
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull MyArticle oldItem, @NonNull MyArticle newItem) {
-            logIt("areContentsTheSame");
             return oldItem.equals(newItem);
         }
     };
 
     public MainAdapter(Observable<Integer> scrollEventsObs,
-                       Consumer<String> clickHandler,
-                       ArticlePresenter articlePresenter) {
+                       BrowserLauncher browserLauncher,
+                       ArticlePresenter articlePresenter,
+                       int tabPosition) {
         super(DiffCallback);
-        this.clickHandler = clickHandler;
+        this.browserLauncher = browserLauncher;
         this.scrollEventsObs = scrollEventsObs;
         this.articlePresenter = articlePresenter;
+        this.tabPosition = tabPosition;
 
         this.articlePresenter.bindBookmarkChangeListener(this);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return Math.abs(articlePresenter
+                .getTabArticles(tabPosition)
+                .get(position)
+                .title.hashCode() % itemLayouts.length);
     }
 
     @NonNull
@@ -63,15 +69,12 @@ public class MainAdapter
     public ViewHolderBase onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        // Рандомно выбрать макет для элемента списка
-//        int i = new Random().nextInt(itemLayouts.length);
-//        View v = inflater.inflate(itemLayouts[i], parent, false);
         int i = viewType;
         View v = inflater.inflate(itemLayouts[i], parent, false);
 
         // Вызов браузера при клике на элементе списка
         v.setOnClickListener(view ->
-                clickHandler.accept(view.getTag().toString())
+                browserLauncher.showInBrowser(view.getTag().toString())
         );
 
         ViewHolderBase holder =
@@ -87,21 +90,13 @@ public class MainAdapter
     }
 
     @Override
-    public int getItemViewType(int position) {
-        return Math.abs(articlePresenter
-                .getArticles()
-                .get(position)
-                .title.hashCode() % itemLayouts.length);
-    }
-
-    @Override
     public int getItemCount() {
-        return articlePresenter.getArticles().size();
+        return articlePresenter.getTabArticles(0).size();
     }
 
-    // articlePresenter.getArticles().get() wrapper
+    // articlePresenter.getTabArticles().get() wrapper
     private MyArticle getArticle(int position) {
-        return articlePresenter.getArticles().get(position);
+        return articlePresenter.getTabArticles(tabPosition).get(position);
     }
 
     /**

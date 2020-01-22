@@ -38,7 +38,7 @@ import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.presenters.MainFragmentPresenter;
 import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
-public class MainFragment extends Fragment implements Observer {
+public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
     private ViewPager2 viewPager;
     private ImageView progressBarImage;
@@ -52,9 +52,6 @@ public class MainFragment extends Fragment implements Observer {
 
     @Inject
     MainFragmentPresenter fragmentPresenter;
-
-    @Inject
-    List<ArticlePresenter> articlePresenters;
 
     // 1.
     @Override
@@ -103,7 +100,7 @@ public class MainFragment extends Fragment implements Observer {
         } else {
             // Убрать ProgressBar и показать новости
             hideProgressBar();
-            viewPagerAdapter.updateContent(currentState.getCurrentSortedArticles());
+            viewPagerAdapter.updateContent();
         }
     }
 
@@ -117,15 +114,14 @@ public class MainFragment extends Fragment implements Observer {
 
         // Убрать ProgressBar, показать новости
         hideProgressBar();
-        viewPagerAdapter.updateContent(currentState.getCurrentSortedArticles());
+        viewPagerAdapter.updateContent();
     }
 
     // Init ViewPager
     private void initViewPager(View fragmentView) {
-        viewPagerAdapter = new NewsViewPagerAdapter(
-                this::updateAgentImpl,
-                articlePresenters
-                );
+        viewPagerAdapter =
+                new NewsViewPagerAdapter(this, (ArticlePresenter) fragmentPresenter);
+
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
     }
@@ -176,8 +172,8 @@ public class MainFragment extends Fragment implements Observer {
         }
     }
 
-    // UpdateAgent::update()
-    private void updateAgentImpl() {
+    @Override
+    public void launchUpdate() {
         fragmentPresenter.updateChannels();
     }
 
@@ -215,7 +211,7 @@ public class MainFragment extends Fragment implements Observer {
                 if (searchedList.size() > 0) {
                     currentState.setCurrentArticles(searchedList);
                     viewPager.setCurrentItem(0);
-                    viewPagerAdapter.updateContent(currentState.getCurrentSortedArticles());
+                    viewPagerAdapter.updateContent();
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }
