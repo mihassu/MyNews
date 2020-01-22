@@ -31,14 +31,16 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
     private List<MyArticle> dataList = new ArrayList<>();
     private Consumer<String> clickHandler;
     private Observable<Integer> scrollEventsObs;
+    private String searchText;
 
     public MainAdapter(Observable<Integer> scrollEventsObs, Consumer<String> clickHandler) {
         this.clickHandler = clickHandler;
         this.scrollEventsObs = scrollEventsObs;
     }
 
-    public void setDataList(List<MyArticle> dataList) {
+    public void setDataList(List<MyArticle> dataList, String searchText) {
         this.dataList = dataList;
+        this.searchText = searchText;
         notifyDataSetChanged();
     }
 
@@ -65,6 +67,7 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderBase holder, int position) {
+        holder.setSearchText(searchText);
         holder.bind(dataList.get(position));
     }
 

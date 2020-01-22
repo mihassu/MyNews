@@ -1,22 +1,42 @@
 package ru.mihassu.mynews.domain.model;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import java.util.Date;
 
+import ru.mihassu.mynews.data.db.CategoryConverter;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 
+@Entity(tableName = "articles")
 public class MyArticle implements Comparable<MyArticle> {
 
-    public final String title;
-    public final String description;
-    public final String link;
-    public final long pubDate;
-    public final String author;
-    public final String image;
-    public final String categoryOrigin;
-    public final ArticleCategory category;
+    @PrimaryKey(autoGenerate = false)
+    public long id;
 
+    @ColumnInfo(name = "pub_date")
+    public long pubDate;
+
+    @TypeConverters(CategoryConverter.class)
+    public ArticleCategory category;
+
+    @ColumnInfo(name = "category_origin")
+    public String categoryOrigin;
+
+    public String title;
+    public String description;
+    public String link;
+    public String author;
+    public String image;
+
+    public MyArticle() {
+    }
+
+    @Ignore
     public MyArticle(String title,
                      String description,
                      String link,
@@ -25,6 +45,7 @@ public class MyArticle implements Comparable<MyArticle> {
                      String image,
                      String categoryOrigin,
                      ArticleCategory category) {
+        this.id = calculateId(title, pubDate);
         this.title = title;
         this.description = description;
         this.link = link;
@@ -49,5 +70,10 @@ public class MyArticle implements Comparable<MyArticle> {
             return 1;
         }
         return 0;
+    }
+
+    // Вычислить Id
+    private long calculateId(String title, long date) {
+        return Math.abs(title.hashCode()) + date;
     }
 }

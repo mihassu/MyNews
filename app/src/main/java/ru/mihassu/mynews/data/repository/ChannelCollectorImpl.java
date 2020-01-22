@@ -71,7 +71,7 @@ public class ChannelCollectorImpl implements ChannelCollector {
 
             if (liveData.getValue() != null) {
                 MainFragmentState currentState = liveData.getValue();
-                currentState.setCurrentArticles(myArticles);
+                currentState.setArticles(myArticles);
                 liveData.postValue(currentState);
             } else {
                 liveData.postValue(new MainFragmentState(myArticles));

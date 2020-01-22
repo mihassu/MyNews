@@ -1,5 +1,7 @@
 package ru.mihassu.mynews.domain.entity;
 
+import java.util.stream.Stream;
+
 import ru.mihassu.mynews.R;
 
 public enum ArticleCategory {
@@ -23,5 +25,9 @@ public enum ArticleCategory {
 
     public int getTextId() {
         return textId;
+    }
+
+    public static Stream<ArticleCategory> toStream() {
+        return Stream.of(ArticleCategory.values());
     }
 }

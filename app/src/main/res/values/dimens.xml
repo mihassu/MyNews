@@ -12,4 +12,6 @@
     <dimen name="pivot_y_point" format="float" type="dimen">2.0</dimen>
     <dimen name="translate_x_point" format="float" type="dimen">0.0</dimen>
     <dimen name="translate_y_point" format="float" type="dimen">12.0</dimen>
+
+    <integer name="update_interval_minutes">3</integer>
 </resources>

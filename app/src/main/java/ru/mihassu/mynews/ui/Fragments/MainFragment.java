@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +29,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.data.network.RegnumApi;
@@ -38,6 +40,7 @@ import ru.mihassu.mynews.data.network.RetrofitInit;
 import ru.mihassu.mynews.data.repository.ArticleRepositoryRegnum;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ArticleRepository;
+import ru.mihassu.mynews.domain.search.SearchObservable;
 import ru.mihassu.mynews.ui.main.MainViewModel;
 import ru.mihassu.mynews.ui.main.MainViewModelFactory;
 import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
@@ -53,6 +56,8 @@ public class MainFragment extends Fragment implements Observer {
     private ImageView progressBarImage;
     private TextView progressBarText;
     private ConstraintLayout progressBarContainer;
+    private Observable<String> searchObservable;
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     // 1.
     public View onCreateView(
@@ -177,15 +182,11 @@ public class MainFragment extends Fragment implements Observer {
 
         inflater.inflate(R.menu.menu_search, menu);
         MenuItem search = menu.findItem(R.id.action_search);
-
         SearchView searchView = (SearchView) search.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                String text = s.toLowerCase();
-                List<MyArticle> searchedList = new ArrayList<>();
-                List<MyArticle> currentList = currentState.getCurrentArticles();
+        searchObservable = SearchObservable.fromView(searchView);
+        disposables.add(searchObservable.subscribe(text -> {
+            List<MyArticle> searchedList = new ArrayList<>();
+                List<MyArticle> currentList = currentState.getArticles();
                 for (MyArticle article : currentList) {
                     String title = article.title.toLowerCase();
                     if (title.contains(text)) {
@@ -196,17 +197,16 @@ public class MainFragment extends Fragment implements Observer {
                     currentState.setCurrentArticles(searchedList);
                     viewPager.setCurrentItem(0);
                     viewPagerAdapter.updateContent(currentState.getCurrentEnumMap());
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
+                    viewPagerAdapter.setSearchText(text);
                 }
 
-                return false;
-            }
+                },
+                throwable -> {}));
+    }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.dispose();
     }
 }
