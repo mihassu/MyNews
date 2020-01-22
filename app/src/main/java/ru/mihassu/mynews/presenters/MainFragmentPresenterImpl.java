@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
@@ -28,6 +29,8 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter, Article
     private RoomRepoBookmark roomRepoBookmark;
     private ChannelCollector collector;
     private BookmarkChangeListener listener;
+
+    private Disposable searchDisposable;
 
     public MainFragmentPresenterImpl(
             RoomRepoBookmark roomRepoBookmark,
@@ -83,6 +86,31 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter, Article
     @Override
     public void updateChannels() {
         collector.updateChannels();
+    }
+
+
+    @Override
+    public void fragmentConnected(Observable<List<MyArticle>> searchObservable) {
+        searchDisposable = searchObservable
+                .doOnNext(list -> logIt("searchObserver got list=" + list.size()))
+                .subscribe(
+                        list -> {
+                            if (liveData.getValue() != null) {
+                                MainFragmentState currentState = liveData.getValue();
+                                currentState.setCurrentArticles(list);
+                                liveData.postValue(currentState);
+                            } else {
+                                liveData.postValue(new MainFragmentState(list));
+                            }
+                        }
+                );
+    }
+
+    @Override
+    public void fragmentDisconnected() {
+        if (searchDisposable != null && !searchDisposable.isDisposed()) {
+            searchDisposable.dispose();
+        }
     }
 
     // Проставить Bookmark
@@ -153,7 +181,6 @@ public class MainFragmentPresenterImpl implements MainFragmentPresenter, Article
 
     @Override
     public void onClickArticle(long articleId) {
-
     }
 
     @Override

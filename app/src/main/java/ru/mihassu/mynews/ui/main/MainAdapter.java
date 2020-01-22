@@ -91,7 +91,7 @@ public class MainAdapter
 
     @Override
     public int getItemCount() {
-        return articlePresenter.getTabArticles(0).size();
+        return articlePresenter.getTabArticles(tabPosition).size();
     }
 
     // articlePresenter.getTabArticles().get() wrapper

@@ -15,19 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import java.util.List;
-
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.ui.Fragments.BrowserLauncher;
 import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
 import ru.mihassu.mynews.ui.main.MainAdapter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
-
-import static ru.mihassu.mynews.Utils.logIt;
 
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
@@ -72,9 +67,12 @@ public class NewsViewPagerAdapter
     // v 1.2
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int tabPosition) {
-        holder.bind(articlePresenter.getTabArticles(tabPosition));
+        holder.bind();
     }
 
+    /**
+     * Определяет количество табов по количеству категорий текущего набора данных
+     */
     @Override
     public int getItemCount() {
         return articlePresenter.getTabCount();
@@ -91,7 +89,7 @@ public class NewsViewPagerAdapter
     /**
      * Holder отдельной ViewGroup внутри ViewPager2
      */
-    class NewsViewHolder extends RecyclerView.ViewHolder implements BrowserLauncher  {
+    class NewsViewHolder extends RecyclerView.ViewHolder implements BrowserLauncher {
 
         private SwipeRefreshLayout swipeRefreshLayout;
         private BehaviorSubject<Integer> scrollEventsRelay;
@@ -119,8 +117,6 @@ public class NewsViewPagerAdapter
                 }
             });
 
-            logIt("NewsViewHolder::tabPosition=" + tabPosition);
-
             MainAdapter adapter = new MainAdapter(
                     scrollEventsRelay.hide(),
                     this,
@@ -133,8 +129,9 @@ public class NewsViewPagerAdapter
             initSwipeRefreshLayout();
         }
 
-        // Передать данные в презентер
-        void bind(List<MyArticle> list) {
+        // Данные предоставляет презентер, поэтому тут нечего биндить.
+        // Просто отключить progressbar обновления.
+        void bind() {
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -163,8 +160,6 @@ public class NewsViewPagerAdapter
         }
 
         // Отобразить новость в Chrome CustomTabs
-
-
         @Override
         public void showInBrowser(String url) {
 

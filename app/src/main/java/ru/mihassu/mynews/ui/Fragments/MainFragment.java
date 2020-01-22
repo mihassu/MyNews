@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
@@ -53,6 +54,9 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     @Inject
     MainFragmentPresenter fragmentPresenter;
 
+    @Inject
+    BehaviorSubject<List<MyArticle>> searchResult;
+
     // 1.
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +68,8 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                 .getAppComponent()
                 .plusMainFragmentComponent(new MainFragmentModule())
                 .inject(this);
+
+        fragmentPresenter.fragmentConnected(searchResult.hide());
     }
 
     // 2.
@@ -81,6 +87,12 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
         initViewPager(viewFragment);
         setHasOptionsMenu(true);
         return viewFragment;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        fragmentPresenter.fragmentDisconnected();
     }
 
     // 3. Tabs
@@ -208,10 +220,10 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                         searchedList.add(article);
                     }
                 }
+
+                // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
                 if (searchedList.size() > 0) {
-                    currentState.setCurrentArticles(searchedList);
-                    viewPager.setCurrentItem(0);
-                    viewPagerAdapter.updateContent();
+                    searchResult.onNext(searchedList);
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }
