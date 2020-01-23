@@ -13,5 +13,5 @@ public interface ArticlePresenter {
     void bindBookmarkChangeListener(BookmarkChangeListener listener);
     List<MyArticle> getTabArticles(int tabPosition);
     List<MyArticle> getArticles();
-    List<MyArticle> getArticle(int listPosition);
+    MyArticle getArticle(int listPosition);
 }

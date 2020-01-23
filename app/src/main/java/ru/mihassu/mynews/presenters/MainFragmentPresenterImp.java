@@ -16,7 +16,6 @@ import ru.mihassu.mynews.data.ActualDataBus;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
-import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
 
 import static ru.mihassu.mynews.Utils.logIt;
 

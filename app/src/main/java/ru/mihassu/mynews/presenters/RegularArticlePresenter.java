@@ -132,7 +132,7 @@ public class RegularArticlePresenter implements ArticlePresenter {
     }
 
     @Override
-    public List<MyArticle> getArticle(int listPosition) {
+    public MyArticle getArticle(int listPosition) {
         return null;
     }
 

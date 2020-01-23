@@ -162,9 +162,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
         mediator.attach();
     }
 
-    /**
-     * Запустить кастомный ProgressBar
-     */
+    // Запустить кастомный ProgressBar
     private void initProgressBar() {
         animatedProgressBar =
                 AnimatedVectorDrawableCompat.create(context, R.drawable.avd_moving_points);

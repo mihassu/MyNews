@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/nav_bookmarks"
-        android:name="ru.mihassu.mynews.ui.Fragments.BookmarksFragment"
+        android:name="ru.mihassu.mynews.ui.Fragments.bookmark.BookmarksFragment"
         android:label="Bookmsrks"
         tools:layout="@layout/fragment_bookmarks" />
 </navigation>
