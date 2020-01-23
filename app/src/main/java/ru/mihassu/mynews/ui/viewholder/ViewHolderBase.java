@@ -46,6 +46,7 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
         this.itemPreview = itemView.findViewById(R.id.item_preview);
         this.itemFavicon = itemView.findViewById(R.id.favicon);
         this.itemSourceStamp = itemView.findViewById(R.id.source_stamp);
+
         this.itemBookmark = itemView.findViewById(R.id.flag_bookmark);
         itemBookmark.setOnClickListener(this);
     }
@@ -56,6 +57,7 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
     }
 
     public void bind(MyArticle article) {
+
         articleId = article.id;
         // Ссылку на контент статьи сохр в теге элемента списка
         itemView.setTag(article.link);

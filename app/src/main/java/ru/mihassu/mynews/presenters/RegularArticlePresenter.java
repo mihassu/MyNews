@@ -73,6 +73,9 @@ public class RegularArticlePresenter implements ArticlePresenter {
     public void onClickBookmark(long articleId) {
         if (currentState != null) {
             MyArticle article = findArticle(articleId);
+            article.isMarked = !article.isMarked;
+
+            logIt("Bookmark clicked on '" + article.title + "'");
 
             // Обновить базу
             if (article.isMarked) {
@@ -84,7 +87,7 @@ public class RegularArticlePresenter implements ArticlePresenter {
             // Определить положение статьи в RecyclerView
             List<MyArticle> list = currentState.getCurrentSortedArticles().get(article.category);
 
-            if (list != null) {
+            if (list != null && listener != null) {
                 listener.onItemUpdated(list.indexOf(article));
             }
         }
