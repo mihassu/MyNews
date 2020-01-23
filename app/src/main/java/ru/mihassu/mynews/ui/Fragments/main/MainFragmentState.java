@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments;
+package ru.mihassu.mynews.ui.Fragments.main;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

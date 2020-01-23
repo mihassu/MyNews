@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments;
+package ru.mihassu.mynews.ui.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +18,7 @@ import java.util.Locale;
 
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.presenters.ArticlePresenter;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
@@ -52,13 +52,11 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View bookmarkImageView) {
-        presenter.onClickBookmark( this.articleId);
+        presenter.onClickBookmark(this.articleId);
     }
 
     public void bind(MyArticle article) {
-
-        this.articleId = article.id;
-
+        articleId = article.id;
         // Ссылку на контент статьи сохр в теге элемента списка
         itemView.setTag(article.link);
         // Заголовок статьи

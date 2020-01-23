@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.news;
+package ru.mihassu.mynews.ui.custom;
 
 public interface VerticalMotionListener {
     float minStartOffset = 0f;

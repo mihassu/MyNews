@@ -42,8 +42,13 @@ public class ActualDataBusImp implements ActualDataBus {
         collector.updateChannels();
     }
 
+    @Override
+    public void broadcastSearchResult(List<MyArticle> searchResult) {
+        publisher.onNext(searchResult);
+    }
+
     /**
-     * Подписаться на данные из коллектора и список bookmark'ов из базы
+     * Подписаться на данные из коллектора и таблицу bookmark'ов из базы
      */
     private void subscribeToDataSources() {
         Observable.combineLatest(

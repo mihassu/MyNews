@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.news;
+package ru.mihassu.mynews.ui.Fragments.main;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -17,11 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.presenters.ArticlePresenter;
-import ru.mihassu.mynews.ui.Fragments.BrowserLauncher;
-import ru.mihassu.mynews.ui.Fragments.UpdateAgent;
-import ru.mihassu.mynews.ui.main.MainAdapter;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.ui.web.ArticleActivity;
+import ru.mihassu.mynews.ui.web.BrowserLauncher;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
 public class NewsViewPagerAdapter
@@ -29,9 +27,6 @@ public class NewsViewPagerAdapter
 
     // Презентер для элементов ViewPager'а и элементов списка статей
     private ArticlePresenter articlePresenter;
-
-    // Helper для работы с Chrome CustomTabs
-    private CustomTabHelper customTabHelper = new CustomTabHelper();
 
     // Интерфейс для ручного обновления
     private UpdateAgent updateAgent;
@@ -89,7 +84,7 @@ public class NewsViewPagerAdapter
     /**
      * Holder отдельной ViewGroup внутри ViewPager2
      */
-    class NewsViewHolder extends RecyclerView.ViewHolder implements BrowserLauncher {
+    class NewsViewHolder extends RecyclerView.ViewHolder {
 
         private SwipeRefreshLayout swipeRefreshLayout;
         private BehaviorSubject<Integer> scrollEventsRelay;
@@ -119,7 +114,6 @@ public class NewsViewPagerAdapter
 
             MainAdapter adapter = new MainAdapter(
                     scrollEventsRelay.hide(),
-                    this,
                     articlePresenter,
                     tabPosition);
             rv.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
@@ -157,42 +151,6 @@ public class NewsViewPagerAdapter
             );
 
             swipeRefreshLayout.setRefreshing(isUpdateInProgress);
-        }
-
-        // Отобразить новость в Chrome CustomTabs
-        @Override
-        public void showInBrowser(String url) {
-
-            Context context = itemView.getContext();
-            int requestCode = 100;
-
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-
-            builder.setToolbarColor(ContextCompat.getColor(context, android.R.color.white));
-            builder.addDefaultShareMenuItem();
-            builder.setStartAnimations(context, android.R.anim.fade_in, android.R.anim.fade_out);
-            builder.setExitAnimations(context, android.R.anim.fade_in, android.R.anim.fade_out);
-            builder.setShowTitle(true);
-
-            CustomTabsIntent anotherCustomTab = new CustomTabsIntent.Builder().build();
-
-            Intent intent = anotherCustomTab.intent;
-            intent.setData(Uri.parse(url));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.addMenuItem("Our custom menu", pendingIntent);
-
-            CustomTabsIntent customTabsIntent = builder.build();
-
-            String packageName = customTabHelper.getPackageNameToUse(context, url);
-
-            if (packageName != null) {
-                customTabsIntent.intent.setPackage(packageName);
-                customTabsIntent.launchUrl(context, Uri.parse(url));
-            } else {
-                Intent intentOpenUri = new Intent(context, ArticleActivity.class);
-                intentOpenUri.putExtra(itemView.getResources().getString(R.string.article_url_key), url);
-                context.startActivity(intentOpenUri);
-            }
         }
     }
 }

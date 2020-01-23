@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.main;
+package ru.mihassu.mynews.ui.Fragments.main;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +11,12 @@ import androidx.recyclerview.widget.ListAdapter;
 import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.presenters.ArticlePresenter;
-import ru.mihassu.mynews.ui.Fragments.BrowserLauncher;
-import ru.mihassu.mynews.ui.Fragments.ViewHolderAnimated;
-import ru.mihassu.mynews.ui.Fragments.ViewHolderBase;
-import ru.mihassu.mynews.ui.Fragments.ViewHolderStatic;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
+import ru.mihassu.mynews.ui.web.BrowserLauncher;
+import ru.mihassu.mynews.ui.viewholder.ViewHolderAnimated;
+import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
+import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;
 
 public class MainAdapter
         extends ListAdapter<MyArticle, ViewHolderBase>
@@ -44,11 +45,9 @@ public class MainAdapter
     };
 
     public MainAdapter(Observable<Integer> scrollEventsObs,
-                       BrowserLauncher browserLauncher,
                        ArticlePresenter articlePresenter,
                        int tabPosition) {
         super(DiffCallback);
-        this.browserLauncher = browserLauncher;
         this.scrollEventsObs = scrollEventsObs;
         this.articlePresenter = articlePresenter;
         this.tabPosition = tabPosition;
@@ -74,7 +73,7 @@ public class MainAdapter
 
         // Вызов браузера при клике на элементе списка
         v.setOnClickListener(view ->
-                browserLauncher.showInBrowser(view.getTag().toString())
+                articlePresenter.onClickArticle(view.getTag().toString())
         );
 
         ViewHolderBase holder =

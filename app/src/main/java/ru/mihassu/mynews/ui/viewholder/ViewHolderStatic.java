@@ -1,11 +1,11 @@
-package ru.mihassu.mynews.ui.Fragments;
+package ru.mihassu.mynews.ui.viewholder;
 
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.presenters.ArticlePresenter;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 
 /**
  * ViewHolder для элемента списка со статическим контентом

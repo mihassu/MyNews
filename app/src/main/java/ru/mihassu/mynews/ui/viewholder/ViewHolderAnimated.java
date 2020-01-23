@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments;
+package ru.mihassu.mynews.ui.viewholder;
 
 import android.view.View;
 
@@ -8,8 +8,8 @@ import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.presenters.ArticlePresenter;
-import ru.mihassu.mynews.ui.news.VerticalMotionListener;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.ui.custom.VerticalMotionListener;
 
 /**
  * ViewHolder для элемента списка с анимированным контентом

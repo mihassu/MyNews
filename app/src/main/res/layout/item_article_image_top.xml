@@ -11,7 +11,7 @@
     app:cardUseCompatPadding="true"
     card_view:cardCornerRadius="6dp">
 
-    <ru.mihassu.mynews.ui.news.AnimatedNewsCard
+    <ru.mihassu.mynews.ui.custom.AnimatedNewsCard
         android:id="@+id/motionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,6 +53,6 @@
             tools:text="Текст новости" />
 
         <include layout="@layout/layout_footer" />
-    </ru.mihassu.mynews.ui.news.AnimatedNewsCard>
+    </ru.mihassu.mynews.ui.custom.AnimatedNewsCard>
 
 </com.google.android.material.card.MaterialCardView>

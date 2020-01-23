@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.presenters;
+package ru.mihassu.mynews.presenters.i;
 
 import androidx.lifecycle.LiveData;
 
@@ -6,7 +6,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
+import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
 
 public interface MainFragmentPresenter {
     LiveData<MainFragmentState> subscribe();

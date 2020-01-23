@@ -6,17 +6,20 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
+import java.util.List;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
 import ru.mihassu.mynews.data.ActualDataBus;
 import ru.mihassu.mynews.data.ActualDataBusImp;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
+import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
+import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
 @Module
 public class AppModule {
@@ -35,22 +38,29 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public SharedPreferences providesSharedPreferences() {
+    SharedPreferences providesSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @Provides
     @Singleton
-    public BehaviorSubject providesPublisher() {
+    @Named("data_bus_publisher")
+    BehaviorSubject<List<MyArticle>> providesPublisher() {
         return BehaviorSubject.create();
     }
 
     @Provides
     @Singleton
-    public ActualDataBus providesActualDataBus(
+    ActualDataBus providesActualDataBus(
             RoomRepoBookmark repo,
             ChannelCollector collector,
-            BehaviorSubject publisher) {
+            @Named("data_bus_publisher") BehaviorSubject<List<MyArticle>> publisher) {
         return new ActualDataBusImp(repo, collector, publisher);
+    }
+
+    @Provides
+    @Singleton
+    CustomTabHelper providesCustomTabHelper() {
+        return new CustomTabHelper();
     }
 }

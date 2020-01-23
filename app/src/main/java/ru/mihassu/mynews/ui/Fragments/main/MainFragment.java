@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments;
+package ru.mihassu.mynews.ui.Fragments.main;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -29,17 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.presenters.ArticlePresenter;
-import ru.mihassu.mynews.presenters.MainFragmentPresenter;
-import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
-
-import static ru.mihassu.mynews.Utils.logIt;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 
 public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
@@ -60,7 +58,8 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     ArticlePresenter articlePresenter;
 
     @Inject
-    BehaviorSubject<List<MyArticle>> searchResult;
+    @Named("search_result_publisher")
+    BehaviorSubject<List<MyArticle>> searchResultPublisher;
 
     // 1.
     @Override
@@ -71,10 +70,10 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
         App
                 .get()
                 .getAppComponent()
-                .plusMainFragmentComponent(new MainFragmentModule())
+                .plusMainFragmentComponent(new MainFragmentModule(this))
                 .inject(this);
 
-        fragmentPresenter.onFragmentConnected(searchResult.hide());
+        fragmentPresenter.onFragmentConnected(searchResultPublisher.hide());
     }
 
     // 2.
@@ -127,7 +126,6 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     @Override
     @SuppressWarnings("unchecked")
     public void onChanged(Object obj) {
-        logIt("MainFragment::OnChanged");
         currentState = (MainFragmentState) obj;
 
         // Убрать ProgressBar, показать новости
@@ -149,18 +147,17 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
      */
     private void initTabLayout(@NonNull View fragment) {
         TabLayout tabLayout = fragment.findViewById(R.id.news_tabs);
-
         TabLayoutMediator mediator = new TabLayoutMediator(
                 tabLayout,
                 viewPager,
                 (tab, position) -> {
-
-                    tab.setText(context.getString(
-                            currentState
-                                    .getCurrentCategories()[position]
-                                    .getTextId()));
+                    if (currentState != null) {
+                        tab.setText(context.getString(
+                                currentState
+                                        .getCurrentCategories()[position]
+                                        .getTextId()));
+                    }
                 }
-
         );
         mediator.attach();
     }
@@ -203,7 +200,9 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
      */
     @SuppressWarnings("unchecked")
     private void loadChannels() {
-        fragmentPresenter.subscribe().observe(this, this);
+        fragmentPresenter
+                .subscribe()
+                .observe(this, this);
     }
 
     @Override
@@ -222,6 +221,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                 String text = s.toLowerCase();
                 List<MyArticle> searchedList = new ArrayList<>();
                 List<MyArticle> currentList = currentState.getCurrentArticles();
+
                 for (MyArticle article : currentList) {
                     String title = article.title.toLowerCase();
                     if (title.contains(text)) {
@@ -231,7 +231,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
                 // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
                 if (searchedList.size() > 0) {
-                    searchResult.onNext(searchedList);
+                    searchResultPublisher.onNext(searchedList);
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }

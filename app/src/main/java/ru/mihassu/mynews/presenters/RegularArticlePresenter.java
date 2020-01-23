@@ -11,31 +11,38 @@ import ru.mihassu.mynews.data.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.ui.web.BrowserLauncher;
+import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
 import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
-public class RegularArticlePresenter extends BasePresenter implements ArticlePresenter {
+public class RegularArticlePresenter implements ArticlePresenter {
 
+    private ActualDataBus dataBus;
     private RoomRepoBookmark repoBookmark;
     private MainFragmentState currentState;
+    private BrowserLauncher browserLauncher;
     private BookmarkChangeListener listener;  // должен быть адаптер списка
 
-    public RegularArticlePresenter(ActualDataBus dataBus, RoomRepoBookmark repoBookmark) {
-        super(dataBus);
+    public RegularArticlePresenter(ActualDataBus dataBus,
+                                   RoomRepoBookmark repoBookmark,
+                                   BrowserLauncher browserLauncher) {
+
+        this.dataBus = dataBus;
         this.repoBookmark = repoBookmark;
+        this.browserLauncher = browserLauncher;
         subscribeToDataSources();
     }
 
-    @Override
-    void subscribeToDataSources() {
+    private void subscribeToDataSources() {
         dataBus
                 .connectToActualData()
                 .subscribe(new DisposableObserver<List<MyArticle>>() {
                     @Override
                     public void onNext(List<MyArticle> list) {
-                        if(currentState != null) {
+                        if (currentState != null) {
                             currentState.setCurrentArticles(list);
                         } else {
                             currentState = new MainFragmentState(list);
@@ -65,14 +72,7 @@ public class RegularArticlePresenter extends BasePresenter implements ArticlePre
     @Override
     public void onClickBookmark(long articleId) {
         if (currentState != null) {
-
-            // Найти статью в общем списке по её ID
-            MyArticle article = currentState
-                    .getCurrentArticles()
-                    .stream()
-                    .filter((a) -> a.id == articleId)
-                    .collect(Collectors.toList())
-                    .get(0);
+            MyArticle article = findArticle(articleId);
 
             // Обновить базу
             if (article.isMarked) {
@@ -91,8 +91,8 @@ public class RegularArticlePresenter extends BasePresenter implements ArticlePre
     }
 
     @Override
-    public void onClickArticle(long articleId) {
-
+    public void onClickArticle(String articleUrl) {
+        browserLauncher.showInBrowser(articleUrl);
     }
 
     @Override
@@ -135,4 +135,15 @@ public class RegularArticlePresenter extends BasePresenter implements ArticlePre
     public List<MyArticle> getArticle(int listPosition) {
         return null;
     }
+
+    // Найти статью в общем списке по её ID
+    private MyArticle findArticle(long articleId) {
+        return currentState
+                .getCurrentArticles()
+                .stream()
+                .filter((a) -> a.id == articleId)
+                .collect(Collectors.toList())
+                .get(0);
+    }
+
 }
