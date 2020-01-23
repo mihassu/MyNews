@@ -58,6 +58,7 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
                     @Override
                     public void onComplete() {
+                        logIt("BookmarkFragmentPresenter: onComplete");
                     }
                 });
     }
@@ -108,7 +109,9 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
     public MyArticle getArticle(int listPosition) {
         if (liveData.getValue() != null) {
             BookmarkFragmentState currentState = liveData.getValue();
-            return currentState.getArticles().get(listPosition);
+            if(listPosition <= currentState.getArticles().size()) {
+                return currentState.getArticles().get(listPosition);
+            }
         }
         return null;
     }
