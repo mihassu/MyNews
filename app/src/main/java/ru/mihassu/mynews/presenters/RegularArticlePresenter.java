@@ -12,9 +12,9 @@ import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 import ru.mihassu.mynews.ui.web.BrowserLauncher;
 import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
-import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
@@ -24,7 +24,6 @@ public class RegularArticlePresenter implements ArticlePresenter {
     private RoomRepoBookmark repoBookmark;
     private MainFragmentState currentState;
     private BrowserLauncher browserLauncher;
-    private BookmarkChangeListener listener;  // должен быть адаптер списка
 
     public RegularArticlePresenter(ActualDataBus dataBus,
                                    RoomRepoBookmark repoBookmark,
@@ -83,13 +82,6 @@ public class RegularArticlePresenter implements ArticlePresenter {
             } else {
                 repoBookmark.deleteArticle(article);
             }
-
-            // Определить положение статьи в RecyclerView
-            List<MyArticle> list = currentState.getCurrentSortedArticles().get(article.category);
-
-            if (list != null && listener != null) {
-                listener.onItemUpdated(list.indexOf(article));
-            }
         }
     }
 
@@ -99,7 +91,7 @@ public class RegularArticlePresenter implements ArticlePresenter {
     }
 
     @Override
-    public void bindBookmarkChangeListener(BookmarkChangeListener listener) {
+    public void bindBookmarkChangeListener(ItemUpdateListener listener) {
 
     }
 

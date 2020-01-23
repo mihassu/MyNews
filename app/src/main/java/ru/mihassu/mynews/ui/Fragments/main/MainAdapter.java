@@ -12,22 +12,20 @@ import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
-import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
-import ru.mihassu.mynews.ui.web.BrowserLauncher;
+import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderAnimated;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;
 
 public class MainAdapter
         extends ListAdapter<MyArticle, ViewHolderBase>
-        implements BookmarkChangeListener {
+        implements ItemUpdateListener {
 
     private static int[] itemLayouts = {
             R.layout.item_article_image_left,
             R.layout.item_article_image_right,
             R.layout.item_article_image_top};
 
-    private BrowserLauncher browserLauncher;
     private Observable<Integer> scrollEventsObs;
     private ArticlePresenter articlePresenter;
     private int tabPosition;
@@ -78,8 +76,8 @@ public class MainAdapter
 
         ViewHolderBase holder =
                 itemLayouts[i] == R.layout.item_article_image_top ?
-                        new ViewHolderAnimated(v, articlePresenter, scrollEventsObs) :
-                        new ViewHolderStatic(v, articlePresenter);
+                        new ViewHolderAnimated(v, articlePresenter, this, scrollEventsObs) :
+                        new ViewHolderStatic(v, articlePresenter, this);
         return holder;
     }
 
@@ -93,13 +91,13 @@ public class MainAdapter
         return articlePresenter.getTabArticles(tabPosition).size();
     }
 
-    // articlePresenter.getTabArticles().get() wrapper
+    // Wrapper articlePresenter.getTabArticles().get()
     private MyArticle getArticle(int position) {
         return articlePresenter.getTabArticles(tabPosition).get(position);
     }
 
     /**
-     * BookmarkChangeListener::onItemUpdated
+     * ItemUpdateListener::onItemUpdated
      */
     @Override
     public void onItemUpdated(int position) {

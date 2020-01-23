@@ -5,20 +5,35 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.data.db.MyArticleDao;
 import ru.mihassu.mynews.domain.model.MyArticle;
+
+import static ru.mihassu.mynews.Utils.logIt;
 
 public class RoomRepoBookmarkImp implements RoomRepoBookmark {
 
     private MyArticleDao myArticleDao;
 
+    private BehaviorSubject<List<MyArticle>> publisher = BehaviorSubject.create();
+
     public RoomRepoBookmarkImp(MyArticleDao myArticleDao) {
         this.myArticleDao = myArticleDao;
+        this.myArticleDao.getAll().subscribe(publisher);
     }
 
     @Override
     public Observable<List<MyArticle>> getArticles() {
-        return myArticleDao.getAll();
+
+        if(publisher.getValue() != null) {
+            logIt("RoomRepoBookmarkImp::getArticles " + publisher.getValue().size());
+        } else {
+            logIt("RoomRepoBookmarkImp::getArticles " + 0);
+        }
+
+//        myArticleDao.getAll().subscribe(publisher);
+//        return myArticleDao.getAll();
+        return publisher.hide();
     }
 
     @Override

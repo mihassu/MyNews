@@ -4,12 +4,15 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.ui.custom.VerticalMotionListener;
+import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 
 /**
  * ViewHolder для элемента списка с анимированным контентом
@@ -18,8 +21,11 @@ public class ViewHolderAnimated extends ViewHolderBase {
 
     private VerticalMotionListener motionListener;
 
-    public ViewHolderAnimated(@NonNull View itemView, ArticlePresenter presenter, Observable<Integer> scrollObservable) {
-        super(itemView, presenter);
+    public ViewHolderAnimated(@NonNull View itemView,
+                              @NotNull ArticlePresenter presenter,
+                              @NotNull ItemUpdateListener itemUpdateListener,
+                              @NotNull Observable<Integer> scrollObservable) {
+        super(itemView, presenter, itemUpdateListener);
 
         motionListener = itemView.findViewById(R.id.motionLayout);
 

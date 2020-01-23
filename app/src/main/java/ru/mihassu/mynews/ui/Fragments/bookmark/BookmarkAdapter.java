@@ -8,18 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
-import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.BookmarkFragmentPresenter;
-import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
-import ru.mihassu.mynews.ui.viewholder.ViewHolderAnimated;
+import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;
-import ru.mihassu.mynews.ui.web.BrowserLauncher;
 
-public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> {
+public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> implements ItemUpdateListener {
 
     private static int[] itemLayouts = {
             R.layout.item_article_image_left,
@@ -64,7 +60,7 @@ public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> {
                 presenter.onClickArticle(view.getTag().toString())
         );
 
-        ViewHolderBase holder = new ViewHolderStatic(v, presenter);
+        ViewHolderBase holder = new ViewHolderStatic(v, presenter, this);
         return holder;
     }
 
@@ -76,6 +72,14 @@ public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> {
     @Override
     public int getItemCount() {
         return presenter.getArticles().size();
+    }
+
+    /**
+     * ItemUpdateListener::onItemUpdated
+     */
+    @Override
+    public void onItemUpdated(int position) {
+        notifyItemChanged(position);
     }
 
     // Wrapper presenter.getArticle(position)

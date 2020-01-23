@@ -5,13 +5,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.BookmarkFragmentPresenter;
 import ru.mihassu.mynews.ui.Fragments.bookmark.BookmarkFragmentState;
-import ru.mihassu.mynews.ui.main.BookmarkChangeListener;
+import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 import ru.mihassu.mynews.ui.web.BrowserLauncher;
 
 import static ru.mihassu.mynews.Utils.logIt;
@@ -40,6 +41,7 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
                 .subscribe(new DisposableObserver<List<MyArticle>>() {
                     @Override
                     public void onNext(List<MyArticle> list) {
+                        logIt("BookmarkPresenter received " + list.size() + " articles");
                         if (liveData.getValue() != null) {
                             BookmarkFragmentState currentState = liveData.getValue();
                             currentState.setArticles(list);
@@ -60,19 +62,6 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
                 });
     }
 
-    /**
-     * BookmarkClickListener::onBookmarkClicked
-     * BookmarkClickListener::onParentViewClicked
-     */
-//    @Override
-//    public void onBookmarkClicked(int position) {
-//        if (liveData.getValue() != null) {
-//            BookmarkFragmentState currentState = liveData.getValue();
-//            MyArticle article = currentState.getArticles().get(position);
-//            roomRepoBookmark.deleteArticle(article);
-//        }
-//    }
-
     @Override
     public int getTabCount() {
         return 0;
@@ -80,19 +69,26 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
     @Override
     public void onClickBookmark(long articleId) {
-//        if (liveData.getValue() != null) {
-//            BookmarkFragmentState currentState = liveData.getValue();
-//            MyArticle article = currentState.getArticles().get(position);
-//            roomRepoBookmark.deleteArticle(article);
-//        }
+        MyArticle article = findArticle(articleId);
 
+        if (article != null) {
+            article.isMarked = !article.isMarked;
+
+            logIt("Bookmark clicked on '" + article.title + "'");
+
+            // Обновить базу
+            if (article.isMarked) {
+                roomRepoBookmark.insertArticle(article);
+            } else {
+                roomRepoBookmark.deleteArticle(article);
+            }
+        }
     }
 
     @Override
     public void onClickArticle(String articleUrl) {
         browserLauncher.showInBrowser(articleUrl);
     }
-
 
     @Override
     public List<MyArticle> getTabArticles(int tabPosition) {
@@ -118,7 +114,21 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
     }
 
     @Override
-    public void bindBookmarkChangeListener(BookmarkChangeListener listener) {
+    public void bindBookmarkChangeListener(ItemUpdateListener listener) {
     }
 
+    // Найти статью в общем списке по её ID
+    private MyArticle findArticle(long articleId) {
+        if (liveData.getValue() != null) {
+            BookmarkFragmentState currentState = liveData.getValue();
+            return currentState
+                    .getArticles()
+                    .stream()
+                    .filter((a) -> a.id == articleId)
+                    .collect(Collectors.toList())
+                    .get(0);
+        }
+
+        return null;
+    }
 }

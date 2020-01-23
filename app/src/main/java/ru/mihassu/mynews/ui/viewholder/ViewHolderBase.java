@@ -19,6 +19,7 @@ import java.util.Locale;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
@@ -35,8 +36,11 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
     private ImageView itemFavicon;
     private ImageView itemBookmark;
     private ArticlePresenter presenter;
+    private ItemUpdateListener itemUpdateListener;
 
-    ViewHolderBase(@NonNull View itemView, @NotNull ArticlePresenter presenter) {
+    ViewHolderBase(@NonNull View itemView,
+                   @NotNull ArticlePresenter presenter,
+                   @NotNull ItemUpdateListener itemUpdateListener) {
         super(itemView);
         this.itemView = itemView;
         this.presenter = presenter;
@@ -46,14 +50,20 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
         this.itemPreview = itemView.findViewById(R.id.item_preview);
         this.itemFavicon = itemView.findViewById(R.id.favicon);
         this.itemSourceStamp = itemView.findViewById(R.id.source_stamp);
+        this.itemUpdateListener = itemUpdateListener;
 
         this.itemBookmark = itemView.findViewById(R.id.flag_bookmark);
         itemBookmark.setOnClickListener(this);
     }
 
+    /**
+     * При клике на bookmark оповестить презентера, чтобы внес изменения в базу
+     * и адаптер, чтобы он обновил элемент в списке.
+     */
     @Override
     public void onClick(View bookmarkImageView) {
         presenter.onClickBookmark(this.articleId);
+        itemUpdateListener.onItemUpdated(getAdapterPosition());
     }
 
     public void bind(MyArticle article) {

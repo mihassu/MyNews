@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,7 +20,7 @@ import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.modules.ui.BookmarkFragmentModule;
 import ru.mihassu.mynews.presenters.i.BookmarkFragmentPresenter;
 
-public class BookmarksFragment extends Fragment {
+public class BookmarksFragment extends Fragment implements Observer {
 
     @Inject
     Context context;
@@ -60,11 +61,15 @@ public class BookmarksFragment extends Fragment {
         initRecyclerView(rv);
     }
 
-    private void initRecyclerView(RecyclerView rv) {
+    @Override
+    public void onChanged(Object o) {
+        adapter.notifyDataSetChanged();
+    }
 
+    private void initRecyclerView(RecyclerView rv) {
+        bookmarkPresenter.subscribe().observe(this, this);
         rv.setLayoutManager(new LinearLayoutManager(context));
         rv.setHasFixedSize(false);
         rv.setAdapter(adapter);
-
     }
 }
