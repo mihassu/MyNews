@@ -5,28 +5,37 @@ import java.util.List;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.subjects.BehaviorSubject;
+import ru.mihassu.mynews.data.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.di.qualifiers.FragmentScope;
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.domain.repository.ChannelCollector;
+import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.presenters.MainFragmentPresenter;
-import ru.mihassu.mynews.presenters.MainFragmentPresenterImpl;
+import ru.mihassu.mynews.presenters.MainFragmentPresenterImp;
+import ru.mihassu.mynews.presenters.RegularArticlePresenter;
 
 @Module
 public class MainFragmentModule {
 
     @Provides
     @FragmentScope
-    public MainFragmentPresenter provideFragmentPresenter(
-            RoomRepoBookmark roomRepoBookmark,
-            ChannelCollector collector) {
-        return new MainFragmentPresenterImpl(roomRepoBookmark, collector);
+    public MainFragmentPresenter provideFragmentPresenter(ActualDataBus dataBus) {
+        return new MainFragmentPresenterImp(dataBus);
     }
 
     @Provides
     @FragmentScope
     public BehaviorSubject<List<MyArticle>> provideBehaviorSubject() {
         return BehaviorSubject.create();
+    }
+
+    @Provides
+    @FragmentScope
+    public ArticlePresenter provideArticlePresenter(ActualDataBus dataBus,
+                                                    RoomRepoBookmark repoBookmark) {
+
+        return new RegularArticlePresenter(dataBus, repoBookmark);
+
     }
 
 //    @Provides

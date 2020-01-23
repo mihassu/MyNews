@@ -39,6 +39,8 @@ import ru.mihassu.mynews.presenters.ArticlePresenter;
 import ru.mihassu.mynews.presenters.MainFragmentPresenter;
 import ru.mihassu.mynews.ui.news.NewsViewPagerAdapter;
 
+import static ru.mihassu.mynews.Utils.logIt;
+
 public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
     private ViewPager2 viewPager;
@@ -55,6 +57,9 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     MainFragmentPresenter fragmentPresenter;
 
     @Inject
+    ArticlePresenter articlePresenter;
+
+    @Inject
     BehaviorSubject<List<MyArticle>> searchResult;
 
     // 1.
@@ -69,7 +74,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                 .plusMainFragmentComponent(new MainFragmentModule())
                 .inject(this);
 
-        fragmentPresenter.fragmentConnected(searchResult.hide());
+        fragmentPresenter.onFragmentConnected(searchResult.hide());
     }
 
     // 2.
@@ -87,12 +92,6 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
         initViewPager(viewFragment);
         setHasOptionsMenu(true);
         return viewFragment;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        fragmentPresenter.fragmentDisconnected();
     }
 
     // 3. Tabs
@@ -116,12 +115,19 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        fragmentPresenter.onFragmentDisconnected();
+    }
+
     /**
      * LiveData Observer Implementation
      */
     @Override
     @SuppressWarnings("unchecked")
     public void onChanged(Object obj) {
+        logIt("MainFragment::OnChanged");
         currentState = (MainFragmentState) obj;
 
         // Убрать ProgressBar, показать новости
@@ -132,7 +138,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     // Init ViewPager
     private void initViewPager(View fragmentView) {
         viewPagerAdapter =
-                new NewsViewPagerAdapter(this, (ArticlePresenter) fragmentPresenter);
+                new NewsViewPagerAdapter(this, articlePresenter);
 
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
@@ -148,11 +154,13 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                 tabLayout,
                 viewPager,
                 (tab, position) -> {
+
                     tab.setText(context.getString(
                             currentState
                                     .getCurrentCategories()[position]
                                     .getTextId()));
                 }
+
         );
         mediator.attach();
     }

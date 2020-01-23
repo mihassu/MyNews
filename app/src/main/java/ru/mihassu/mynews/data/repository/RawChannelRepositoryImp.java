@@ -12,13 +12,13 @@ import okhttp3.Request;
 import okhttp3.Response;
 import ru.mihassu.mynews.domain.repository.RawChannelRepository;
 
-public class RawChannelRepositoryImpl implements RawChannelRepository {
+public class RawChannelRepositoryImp implements RawChannelRepository {
 
     private OkHttpClient client;
     private String channelUrl;
     private byte[] errorCode;
 
-    public RawChannelRepositoryImpl(OkHttpClient client, String channelUrl) {
+    public RawChannelRepositoryImp(OkHttpClient client, String channelUrl) {
         this.client = client;
         this.channelUrl = channelUrl;
         errorCode = ByteBuffer

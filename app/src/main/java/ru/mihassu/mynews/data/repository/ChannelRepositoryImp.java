@@ -11,12 +11,12 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelRepository;
 import ru.mihassu.mynews.domain.repository.RawChannelRepository;
 
-public class ChannelRepositoryImpl implements ChannelRepository {
+public class ChannelRepositoryImp implements ChannelRepository {
 
     private RawChannelRepository repo;
     private ChannelParser parser;
 
-    public ChannelRepositoryImpl(
+    public ChannelRepositoryImp(
             RawChannelRepository repo,
             ChannelParser parser) {
         this.repo = repo;

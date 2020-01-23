@@ -11,6 +11,6 @@ import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
 public interface MainFragmentPresenter {
     LiveData<MainFragmentState> subscribe();
     void updateChannels();
-    void fragmentConnected(Observable<List<MyArticle>> searchObservable);
-    void fragmentDisconnected();
+    void onFragmentConnected(Observable<List<MyArticle>> searchObservable);
+    void onFragmentDisconnected();
 }

@@ -8,11 +8,11 @@ import io.reactivex.schedulers.Schedulers;
 import ru.mihassu.mynews.data.db.MyArticleDao;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
-public class RoomRepoBookmarkImpl implements RoomRepoBookmark {
+public class RoomRepoBookmarkImp implements RoomRepoBookmark {
 
     private MyArticleDao myArticleDao;
 
-    public RoomRepoBookmarkImpl(MyArticleDao myArticleDao) {
+    public RoomRepoBookmarkImp(MyArticleDao myArticleDao) {
         this.myArticleDao = myArticleDao;
     }
 

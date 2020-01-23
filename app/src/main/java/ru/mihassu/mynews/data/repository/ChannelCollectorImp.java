@@ -15,13 +15,13 @@ import ru.mihassu.mynews.domain.repository.ChannelRepository;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
-public class ChannelCollectorImpl implements ChannelCollector {
+public class ChannelCollectorImp implements ChannelCollector {
 
     private BehaviorSubject<Long> manualUpdateToggle;
     private BehaviorSubject<List<MyArticle>> rawArticles = BehaviorSubject.create();
 
     @SuppressWarnings("unchecked")
-    public ChannelCollectorImpl(List<ChannelRepository> channelRepos, long updateInterval) {
+    public ChannelCollectorImp(List<ChannelRepository> channelRepos, long updateInterval) {
 
         // Создать список Observable по всем источникам
         List<Observable<List<MyArticle>>> observableList = new ArrayList<>();
