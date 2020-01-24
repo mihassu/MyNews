@@ -5,8 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
@@ -17,8 +16,7 @@ import ru.mihassu.mynews.ui.viewholder.ViewHolderAnimated;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;
 
-public class MainAdapter
-        extends ListAdapter<MyArticle, ViewHolderBase>
+public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase>
         implements ItemUpdateListener {
 
     private static int[] itemLayouts = {
@@ -30,22 +28,9 @@ public class MainAdapter
     private ArticlePresenter articlePresenter;
     private int tabPosition;
 
-    private static DiffUtil.ItemCallback<MyArticle> DiffCallback = new DiffUtil.ItemCallback<MyArticle>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull MyArticle oldItem, @NonNull MyArticle newItem) {
-            return oldItem.id == newItem.id;
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull MyArticle oldItem, @NonNull MyArticle newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
-
     public MainAdapter(Observable<Integer> scrollEventsObs,
                        ArticlePresenter articlePresenter,
                        int tabPosition) {
-        super(DiffCallback);
         this.scrollEventsObs = scrollEventsObs;
         this.articlePresenter = articlePresenter;
         this.tabPosition = tabPosition;
@@ -53,6 +38,9 @@ public class MainAdapter
         this.articlePresenter.bindBookmarkChangeListener(this);
     }
 
+    /**
+     * itemType - индекс в массиве layout'ов, т.е. возвр индекс ID макета
+     */
     @Override
     public int getItemViewType(int position) {
         return Math.abs(articlePresenter
@@ -61,21 +49,29 @@ public class MainAdapter
                 .title.hashCode() % itemLayouts.length);
     }
 
+    /**
+     * Длина списка статей в категории (в tabPosition)
+     */
+    @Override
+    public int getItemCount() {
+        return articlePresenter.getTabArticles(tabPosition).size();
+    }
+
     @NonNull
     @Override
-    public ViewHolderBase onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolderBase onCreateViewHolder(@NonNull ViewGroup parent, int viewTypeAkaLayoutIndex) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        int i = viewType;
-        View v = inflater.inflate(itemLayouts[i], parent, false);
+        View v = inflater.inflate(itemLayouts[viewTypeAkaLayoutIndex], parent, false);
 
-        // Вызов браузера при клике на элементе списка
+        // Вызов браузера при клике на элементе списка. View элемента списка хранит
+        // в теге url-статьи. Значение тега устанавливается в ViewHolder'е.
         v.setOnClickListener(view ->
                 articlePresenter.onClickArticle(view.getTag().toString())
         );
 
         ViewHolderBase holder =
-                itemLayouts[i] == R.layout.item_article_image_top ?
+                itemLayouts[viewTypeAkaLayoutIndex] == R.layout.item_article_image_top ?
                         new ViewHolderAnimated(v, articlePresenter, this, scrollEventsObs) :
                         new ViewHolderStatic(v, articlePresenter, this);
         return holder;
@@ -84,11 +80,6 @@ public class MainAdapter
     @Override
     public void onBindViewHolder(@NonNull ViewHolderBase holder, int position) {
         holder.bind(getArticle(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return articlePresenter.getTabArticles(tabPosition).size();
     }
 
     // Wrapper articlePresenter.getTabArticles().get()

@@ -12,9 +12,9 @@ import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
 import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 import ru.mihassu.mynews.ui.web.BrowserLauncher;
-import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
@@ -28,7 +28,6 @@ public class RegularArticlePresenter implements ArticlePresenter {
     public RegularArticlePresenter(ActualDataBus dataBus,
                                    RoomRepoBookmark repoBookmark,
                                    BrowserLauncher browserLauncher) {
-
         this.dataBus = dataBus;
         this.repoBookmark = repoBookmark;
         this.browserLauncher = browserLauncher;
@@ -50,7 +49,7 @@ public class RegularArticlePresenter implements ArticlePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        logIt("error in subscribeToDataSources method");
+                        logIt("RAP:: subscribe error\n" + e.getMessage());
                     }
 
                     @Override
@@ -73,8 +72,6 @@ public class RegularArticlePresenter implements ArticlePresenter {
         if (currentState != null) {
             MyArticle article = findArticle(articleId);
             article.isMarked = !article.isMarked;
-
-            logIt("RegularArticlePresenter: Bookmark clicked on '" + article.title + "'");
 
             // Обновить базу
             if (article.isMarked) {

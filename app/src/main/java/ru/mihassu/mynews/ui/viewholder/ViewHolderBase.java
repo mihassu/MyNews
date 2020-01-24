@@ -128,7 +128,7 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
             itemSourceStamp.setText(sourceStamp);
 
         } catch (MalformedURLException e) {
-            logIt("favicon load error");
+            logIt("VHB: favicon load error");
             e.printStackTrace();
         }
     }

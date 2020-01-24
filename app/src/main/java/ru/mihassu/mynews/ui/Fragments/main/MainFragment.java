@@ -39,8 +39,6 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 
-import static ru.mihassu.mynews.Utils.logIt;
-
 public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
     private ViewPager2 viewPager;
@@ -114,6 +112,12 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
             hideProgressBar();
             viewPagerAdapter.updateContent();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewPagerAdapter.updateContent();
     }
 
     @Override

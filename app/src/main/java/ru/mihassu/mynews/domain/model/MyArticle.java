@@ -8,6 +8,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Objects;
 
@@ -81,23 +83,48 @@ public class MyArticle implements Comparable<MyArticle> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, isMarked);
+        return Objects.hash(id, title, isMarked, pubDate);
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if(this == obj) {
-            return true;
-        }
-        if(obj == null || getClass() != obj.getClass()) {
+        if(obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
         final MyArticle other = (MyArticle)obj;
-        return Objects.equals(this.id, other.id);
+        return this.id == other.id &&
+                this.isMarked == other.isMarked &&
+                this.pubDate == other.pubDate;
     }
 
     // Вычислить Id
     private long calculateId(String title, long date) {
         return Math.abs(title.hashCode()) + date;
     }
+
+    public static String md5(final String s) {
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+
+            digest.update(s.getBytes());
+            byte[] messageDigest = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+
+            for (int i = 0; i < messageDigest.length; i++) {
+                String h = Integer.toHexString(0xFF & messageDigest[i]);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 }

@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.MyArticle;
@@ -46,7 +45,7 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
     @Override
     public void onFragmentDisconnected() {
-        if(disposable != null && !disposable.isDisposed()) {
+        if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
 
@@ -65,9 +64,6 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
                             if (liveData.getValue() != null) {
-
-                                logIt("BFP: list received, size=" + list.size());
-
                                 BookmarkFragmentState currentState = liveData.getValue();
                                 currentState.setArticles(list);
                                 liveData.setValue(currentState);
@@ -78,31 +74,6 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
                         error -> {
                             logIt("BFP: error in subscribe\n" + error.getMessage());
                         });
-
-//        dataBus
-//                .connectToBookmarkData()
-//                .subscribe(new DisposableObserver<List<MyArticle>>() {
-//                    @Override
-//                    public void onNext(List<MyArticle> list) {
-//                        if (liveData.getValue() != null) {
-//                            BookmarkFragmentState currentState = liveData.getValue();
-//                            currentState.setArticles(list);
-//                            liveData.postValue(currentState);
-//                        } else {
-//                            liveData.postValue(new BookmarkFragmentState(list));
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        logIt("BookmarkFragmentPresenter: error in subscribeToDataSources method");
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        logIt("BookmarkFragmentPresenter: onComplete");
-//                    }
-//                });
     }
 
     @Override
@@ -112,10 +83,7 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
     @Override
     public void onClickBookmark(long articleId) {
-
         Pair<Integer, MyArticle> foundArticle = findArticle(articleId);
-
-//        MyArticle article = findArticle(articleId);
 
         if (foundArticle != null &&
                 foundArticle.first != null &&
@@ -123,7 +91,6 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
             MyArticle article = foundArticle.second;
             article.isMarked = !article.isMarked;
-            logIt("BFP: Found clicked article: " + article.title);
 
             // Обновить базу
             if (article.isMarked) {
@@ -131,13 +98,7 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
             } else {
                 roomRepoBookmark.deleteArticle(article);
             }
-
-//            if(listener != null) {
-//                listener.onItemUpdated(foundArticle.first);
-//            }
         }
-
-
     }
 
     @Override
@@ -187,12 +148,11 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
                     .collect(Collectors.toList())
                     .get(0);
 
-            if(article != null) {
+            if (article != null) {
                 return new Pair<Integer, MyArticle>(currentState
                         .getArticles().indexOf(article), article);
             }
         }
-
         return null;
     }
 }

@@ -3,11 +3,7 @@ package ru.mihassu.mynews.presenters;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -82,35 +78,5 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
         if (searchDisposable != null && !searchDisposable.isDisposed()) {
             searchDisposable.dispose();
         }
-    }
-
-    // Проставить Bookmark
-    private List<MyArticle> makeBookmark(List<MyArticle> allArticles,
-                                         List<MyArticle> markedArticles) {
-
-        // Поместить List allArticles в synchronized HashMap
-        Map<Long, MyArticle> map =
-                Collections.synchronizedMap(
-                        allArticles
-                                .stream()
-                                .collect(Collectors.toMap(a -> a.id, a -> a)));
-
-        for (MyArticle markedArticle : markedArticles) {
-            long key = markedArticle.id;
-
-            if (map.containsKey(key)) {
-                MyArticle a = map.get(key);
-                if (a != null) {
-                    a.isMarked = true;
-                    map.replace(key, a);
-                }
-            }
-        }
-
-        // Итоговоый список статей отсортировать по дате
-        ArrayList<MyArticle> result = new ArrayList<>(map.values());
-        Collections.sort(result);
-
-        return result;
     }
 }

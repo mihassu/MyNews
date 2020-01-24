@@ -5,11 +5,8 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.data.db.MyArticleDao;
 import ru.mihassu.mynews.domain.model.MyArticle;
-
-import static ru.mihassu.mynews.Utils.logIt;
 
 public class RoomRepoBookmarkImp implements RoomRepoBookmark {
 

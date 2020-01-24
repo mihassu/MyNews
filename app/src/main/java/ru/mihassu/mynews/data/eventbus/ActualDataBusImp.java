@@ -77,7 +77,7 @@ public class ActualDataBusImp implements ActualDataBus {
 
             @Override
             public void onError(Throwable e) {
-                logIt("error in DataBus");
+                logIt("ADB error\n" + e.getMessage());
             }
 
             @Override
@@ -90,12 +90,16 @@ public class ActualDataBusImp implements ActualDataBus {
     private List<MyArticle> setBookmarks(List<MyArticle> allArticles,
                                          List<MyArticle> markedArticles) {
 
-        // Поместить List allArticles в synchronized HashMap
+        // Сделать КОПИЮ оригинального списка и поместить его в synchronized HashMap
         Map<Long, MyArticle> map =
                 Collections.synchronizedMap(
-                        allArticles
+                        (new ArrayList<>(allArticles))
                                 .stream()
-                                .collect(Collectors.toMap(a -> a.id, a -> a)));
+                                .collect(Collectors.toMap(a -> a.id,
+                                        a -> {
+                                            a.isMarked = false;
+                                            return a;
+                                        })));
 
         for (MyArticle markedArticle : markedArticles) {
             long key = markedArticle.id;

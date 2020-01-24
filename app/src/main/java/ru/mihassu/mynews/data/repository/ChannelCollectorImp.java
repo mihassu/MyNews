@@ -75,7 +75,7 @@ public class ChannelCollectorImp implements ChannelCollector {
 
         @Override
         public void onError(Throwable e) {
-            logIt("ChannelCollector error");
+            logIt("CC: error\n" + e.getMessage());
         }
 
         @Override

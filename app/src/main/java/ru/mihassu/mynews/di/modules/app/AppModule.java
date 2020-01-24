@@ -62,7 +62,7 @@ public class AppModule {
             RoomRepoBookmark repo,
             ChannelCollector collector,
             @Named("data_bus_publisher") BehaviorSubject<List<MyArticle>> publisherData,
-            @Named("bookmark_bus_publisher")BehaviorSubject<List<MyArticle>> publisherBookmark) {
+            @Named("bookmark_bus_publisher") BehaviorSubject<List<MyArticle>> publisherBookmark) {
         return new ActualDataBusImp(repo, collector, publisherData, publisherBookmark);
     }
 

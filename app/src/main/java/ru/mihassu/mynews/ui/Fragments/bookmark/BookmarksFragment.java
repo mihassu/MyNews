@@ -20,8 +20,6 @@ import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.modules.ui.BookmarkFragmentModule;
 import ru.mihassu.mynews.presenters.i.BookmarkFragmentPresenter;
 
-import static ru.mihassu.mynews.Utils.logIt;
-
 public class BookmarksFragment extends Fragment implements Observer {
 
     @Inject
@@ -73,7 +71,6 @@ public class BookmarksFragment extends Fragment implements Observer {
 
     @Override
     public void onChanged(Object o) {
-        logIt("BF::onChanged");
         adapter.notifyDataSetChanged();
     }
 

@@ -13,5 +13,5 @@
     <dimen name="translate_x_point" format="float" type="dimen">0.0</dimen>
     <dimen name="translate_y_point" format="float" type="dimen">12.0</dimen>
 
-    <integer name="update_interval_minutes">30</integer>
+    <integer name="update_interval_minutes">20</integer>
 </resources>

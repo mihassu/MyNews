@@ -15,8 +15,6 @@ import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;
 
-import static ru.mihassu.mynews.Utils.logIt;
-
 public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> implements ItemUpdateListener {
 
     private static int[] itemLayouts = {
@@ -45,8 +43,6 @@ public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> impl
 
     @Override
     public int getItemViewType(int position) {
-        logIt("BA: getItemViewType for position=" + position);
-
         return Math.abs(presenter
                 .getArticle(position)
                 .title.hashCode() % itemLayouts.length);
@@ -76,7 +72,6 @@ public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> impl
 
     @Override
     public int getItemCount() {
-        logIt("BA: getItemCount=" + presenter.getArticles().size());
         return presenter.getArticles().size();
     }
 
