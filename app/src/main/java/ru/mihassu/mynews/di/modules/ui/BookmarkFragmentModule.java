@@ -30,7 +30,7 @@ public class BookmarkFragmentModule {
 
     @Provides
     @BookmarkFragmentScope
-    public BookmarkFragmentPresenter provideFragmentPresenter(
+    BookmarkFragmentPresenter provideFragmentPresenter(
             ActualDataBus dataBus,
             RoomRepoBookmark roomRepoBookmark,
             BrowserLauncher browserLauncher) {
@@ -39,7 +39,7 @@ public class BookmarkFragmentModule {
 
     @Provides
     @BookmarkFragmentScope
-    public  BookmarkAdapter provideBookmarkAdapter(BookmarkFragmentPresenter presenter) {
+    BookmarkAdapter provideBookmarkAdapter(BookmarkFragmentPresenter presenter) {
         return new BookmarkAdapter(presenter);
     }
 }

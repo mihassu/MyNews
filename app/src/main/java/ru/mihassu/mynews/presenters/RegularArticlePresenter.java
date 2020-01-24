@@ -74,7 +74,7 @@ public class RegularArticlePresenter implements ArticlePresenter {
             MyArticle article = findArticle(articleId);
             article.isMarked = !article.isMarked;
 
-            logIt("Bookmark clicked on '" + article.title + "'");
+            logIt("RegularArticlePresenter: Bookmark clicked on '" + article.title + "'");
 
             // Обновить базу
             if (article.isMarked) {

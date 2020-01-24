@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
@@ -34,21 +35,22 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
     private void subscribeToDataSources() {
         dataBus
                 .connectToActualData()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableObserver<List<MyArticle>>() {
                     @Override
                     public void onNext(List<MyArticle> list) {
                         if (liveData.getValue() != null) {
                             MainFragmentState currentState = liveData.getValue();
                             currentState.setCurrentArticles(list);
-                            liveData.postValue(currentState);
+                            liveData.setValue(currentState);
                         } else {
-                            liveData.postValue(new MainFragmentState(list));
+                            liveData.setValue(new MainFragmentState(list));
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        logIt("error in subscribeToDataSources method");
+                        logIt("MFP: error in subscribe\n" + e.getMessage());
                     }
 
                     @Override

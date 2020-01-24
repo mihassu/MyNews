@@ -1,5 +1,6 @@
 package ru.mihassu.mynews.presenters;
 
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -7,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
@@ -21,9 +24,11 @@ import static ru.mihassu.mynews.Utils.logIt;
 public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
     private MutableLiveData<BookmarkFragmentState> liveData = new MutableLiveData<>();
+    private ItemUpdateListener listener;
     private BrowserLauncher browserLauncher;
     private RoomRepoBookmark roomRepoBookmark;
     private ActualDataBus dataBus;
+    private Disposable disposable;
 
 
     public BookmarkFragmentPresenterImp(ActualDataBus dataBus,
@@ -32,7 +37,20 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
         this.roomRepoBookmark = roomRepoBookmark;
         this.browserLauncher = browserLauncher;
         this.dataBus = dataBus;
-        connectToRepo();
+    }
+
+    @Override
+    public void onFragmentConnected() {
+        disposable = connectToRepo();
+    }
+
+    @Override
+    public void onFragmentDisconnected() {
+        if(disposable != null && !disposable.isDisposed()) {
+            disposable.dispose();
+        }
+
+        listener = null;
     }
 
     @Override
@@ -40,33 +58,51 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
         return liveData;
     }
 
-    private void connectToRepo() {
+    private Disposable connectToRepo() {
 
-        dataBus
+        return dataBus
                 .connectToBookmarkData()
-                .subscribe(new DisposableObserver<List<MyArticle>>() {
-                    @Override
-                    public void onNext(List<MyArticle> list) {
-                        logIt("BookmarkPresenter received " + list.size() + " articles");
-                        if (liveData.getValue() != null) {
-                            BookmarkFragmentState currentState = liveData.getValue();
-                            currentState.setArticles(list);
-                            liveData.postValue(currentState);
-                        } else {
-                            liveData.postValue(new BookmarkFragmentState(list));
-                        }
-                    }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                            if (liveData.getValue() != null) {
 
-                    @Override
-                    public void onError(Throwable e) {
-                        logIt("BookmarkFragmentPresenter: error in subscribeToDataSources method");
-                    }
+                                logIt("BFP: list received, size=" + list.size());
 
-                    @Override
-                    public void onComplete() {
-                        logIt("BookmarkFragmentPresenter: onComplete");
-                    }
-                });
+                                BookmarkFragmentState currentState = liveData.getValue();
+                                currentState.setArticles(list);
+                                liveData.setValue(currentState);
+                            } else {
+                                liveData.setValue(new BookmarkFragmentState(list));
+                            }
+                        },
+                        error -> {
+                            logIt("BFP: error in subscribe\n" + error.getMessage());
+                        });
+
+//        dataBus
+//                .connectToBookmarkData()
+//                .subscribe(new DisposableObserver<List<MyArticle>>() {
+//                    @Override
+//                    public void onNext(List<MyArticle> list) {
+//                        if (liveData.getValue() != null) {
+//                            BookmarkFragmentState currentState = liveData.getValue();
+//                            currentState.setArticles(list);
+//                            liveData.postValue(currentState);
+//                        } else {
+//                            liveData.postValue(new BookmarkFragmentState(list));
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        logIt("BookmarkFragmentPresenter: error in subscribeToDataSources method");
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                        logIt("BookmarkFragmentPresenter: onComplete");
+//                    }
+//                });
     }
 
     @Override
@@ -76,12 +112,18 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
     @Override
     public void onClickBookmark(long articleId) {
-        MyArticle article = findArticle(articleId);
 
-        if (article != null) {
+        Pair<Integer, MyArticle> foundArticle = findArticle(articleId);
+
+//        MyArticle article = findArticle(articleId);
+
+        if (foundArticle != null &&
+                foundArticle.first != null &&
+                foundArticle.second != null) {
+
+            MyArticle article = foundArticle.second;
             article.isMarked = !article.isMarked;
-
-            logIt("Bookmark clicked on '" + article.title + "'");
+            logIt("BFP: Found clicked article: " + article.title);
 
             // Обновить базу
             if (article.isMarked) {
@@ -89,7 +131,13 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
             } else {
                 roomRepoBookmark.deleteArticle(article);
             }
+
+//            if(listener != null) {
+//                listener.onItemUpdated(foundArticle.first);
+//            }
         }
+
+
     }
 
     @Override
@@ -115,7 +163,7 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
     public MyArticle getArticle(int listPosition) {
         if (liveData.getValue() != null) {
             BookmarkFragmentState currentState = liveData.getValue();
-            if(listPosition <= currentState.getArticles().size()) {
+            if (listPosition <= currentState.getArticles().size()) {
                 return currentState.getArticles().get(listPosition);
             }
         }
@@ -124,18 +172,25 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
     @Override
     public void bindBookmarkChangeListener(ItemUpdateListener listener) {
+        this.listener = listener;
     }
 
     // Найти статью в общем списке по её ID
-    private MyArticle findArticle(long articleId) {
+    private Pair<Integer, MyArticle> findArticle(long articleId) {
         if (liveData.getValue() != null) {
             BookmarkFragmentState currentState = liveData.getValue();
-            return currentState
+
+            MyArticle article = currentState
                     .getArticles()
                     .stream()
                     .filter((a) -> a.id == articleId)
                     .collect(Collectors.toList())
                     .get(0);
+
+            if(article != null) {
+                return new Pair<Integer, MyArticle>(currentState
+                        .getArticles().indexOf(article), article);
+            }
         }
 
         return null;

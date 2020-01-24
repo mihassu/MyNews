@@ -20,7 +20,7 @@ public class ActualDataBusImp implements ActualDataBus {
     private RoomRepoBookmark roomRepoBookmark;
     private ChannelCollector collector;
     private BehaviorSubject<List<MyArticle>> dataPublisher;
-    BehaviorSubject<List<MyArticle>> bookmarkPublisher;
+    private BehaviorSubject<List<MyArticle>> bookmarkPublisher;
 
     public ActualDataBusImp(RoomRepoBookmark roomRepoBookmark,
                             ChannelCollector collector,
