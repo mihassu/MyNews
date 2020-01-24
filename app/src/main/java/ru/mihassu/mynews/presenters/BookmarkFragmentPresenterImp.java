@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.reactivex.observers.DisposableObserver;
+import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.BookmarkFragmentPresenter;
@@ -20,13 +21,17 @@ import static ru.mihassu.mynews.Utils.logIt;
 public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
 
     private MutableLiveData<BookmarkFragmentState> liveData = new MutableLiveData<>();
-    private RoomRepoBookmark roomRepoBookmark;
     private BrowserLauncher browserLauncher;
+    private RoomRepoBookmark roomRepoBookmark;
+    private ActualDataBus dataBus;
 
-    public BookmarkFragmentPresenterImp(RoomRepoBookmark roomRepoBookmark,
+
+    public BookmarkFragmentPresenterImp(ActualDataBus dataBus,
+                                        RoomRepoBookmark roomRepoBookmark,
                                         BrowserLauncher browserLauncher) {
         this.roomRepoBookmark = roomRepoBookmark;
         this.browserLauncher = browserLauncher;
+        this.dataBus = dataBus;
         connectToRepo();
     }
 
@@ -36,8 +41,9 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
     }
 
     private void connectToRepo() {
-        roomRepoBookmark
-                .getArticles()
+
+        dataBus
+                .connectToBookmarkData()
                 .subscribe(new DisposableObserver<List<MyArticle>>() {
                     @Override
                     public void onNext(List<MyArticle> list) {

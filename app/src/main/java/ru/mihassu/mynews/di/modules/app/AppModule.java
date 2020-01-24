@@ -14,8 +14,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.subjects.BehaviorSubject;
-import ru.mihassu.mynews.data.ActualDataBus;
-import ru.mihassu.mynews.data.ActualDataBusImp;
+import ru.mihassu.mynews.data.eventbus.ActualDataBus;
+import ru.mihassu.mynews.data.eventbus.ActualDataBusImp;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
@@ -45,7 +45,14 @@ public class AppModule {
     @Provides
     @Singleton
     @Named("data_bus_publisher")
-    BehaviorSubject<List<MyArticle>> providesPublisher() {
+    BehaviorSubject<List<MyArticle>> providesPublisherData() {
+        return BehaviorSubject.create();
+    }
+
+    @Provides
+    @Singleton
+    @Named("bookmark_bus_publisher")
+    BehaviorSubject<List<MyArticle>> providesPublisherBookmark() {
         return BehaviorSubject.create();
     }
 
@@ -54,8 +61,9 @@ public class AppModule {
     ActualDataBus providesActualDataBus(
             RoomRepoBookmark repo,
             ChannelCollector collector,
-            @Named("data_bus_publisher") BehaviorSubject<List<MyArticle>> publisher) {
-        return new ActualDataBusImp(repo, collector, publisher);
+            @Named("data_bus_publisher") BehaviorSubject<List<MyArticle>> publisherData,
+            @Named("bookmark_bus_publisher")BehaviorSubject<List<MyArticle>> publisherBookmark) {
+        return new ActualDataBusImp(repo, collector, publisherData, publisherBookmark);
     }
 
     @Provides

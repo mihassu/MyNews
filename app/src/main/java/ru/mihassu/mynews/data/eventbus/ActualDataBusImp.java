@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.data;
+package ru.mihassu.mynews.data.eventbus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
@@ -20,21 +19,29 @@ public class ActualDataBusImp implements ActualDataBus {
 
     private RoomRepoBookmark roomRepoBookmark;
     private ChannelCollector collector;
-    private BehaviorSubject<List<MyArticle>> publisher;
+    private BehaviorSubject<List<MyArticle>> dataPublisher;
+    BehaviorSubject<List<MyArticle>> bookmarkPublisher;
 
     public ActualDataBusImp(RoomRepoBookmark roomRepoBookmark,
                             ChannelCollector collector,
-                            BehaviorSubject<List<MyArticle>> publisher) {
+                            BehaviorSubject<List<MyArticle>> dataPublisher,
+                            BehaviorSubject<List<MyArticle>> bookmarkPublisher) {
 
         this.roomRepoBookmark = roomRepoBookmark;
         this.collector = collector;
-        this.publisher = publisher;
+        this.dataPublisher = dataPublisher;
+        this.bookmarkPublisher = bookmarkPublisher;
         subscribeToDataSources();
     }
 
     @Override
     public Observable<List<MyArticle>> connectToActualData() {
-        return publisher.hide();
+        return dataPublisher.hide();
+    }
+
+    @Override
+    public Observable<List<MyArticle>> connectToBookmarkData() {
+        return bookmarkPublisher.hide();
     }
 
     @Override
@@ -44,21 +51,28 @@ public class ActualDataBusImp implements ActualDataBus {
 
     @Override
     public void broadcastSearchResult(List<MyArticle> searchResult) {
-        publisher.onNext(searchResult);
+        dataPublisher.onNext(searchResult);
     }
 
     /**
      * Подписаться на данные из коллектора и таблицу bookmark'ов из базы
      */
     private void subscribeToDataSources() {
+
+        // Bookmarks
+        roomRepoBookmark
+                .getArticles()
+                .subscribe(bookmarkPublisher);
+
+        // Склеить Bookmarks и основные данные
         Observable.combineLatest(
                 collector.collectChannels(),
-                roomRepoBookmark.getArticles(),
+                bookmarkPublisher,
                 this::setBookmarks
         ).subscribe(new DisposableObserver<List<MyArticle>>() {
             @Override
             public void onNext(List<MyArticle> list) {
-                publisher.onNext(list);
+                dataPublisher.onNext(list);
             }
 
             @Override

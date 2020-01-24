@@ -7,7 +7,7 @@ import javax.inject.Named;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.subjects.BehaviorSubject;
-import ru.mihassu.mynews.data.ActualDataBus;
+import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.di.qualifiers.FragmentScope;
 import ru.mihassu.mynews.domain.model.MyArticle;

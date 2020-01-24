@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
-import ru.mihassu.mynews.data.ActualDataBus;
+import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;

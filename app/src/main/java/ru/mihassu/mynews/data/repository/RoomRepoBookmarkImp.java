@@ -15,25 +15,13 @@ public class RoomRepoBookmarkImp implements RoomRepoBookmark {
 
     private MyArticleDao myArticleDao;
 
-    private BehaviorSubject<List<MyArticle>> publisher = BehaviorSubject.create();
-
     public RoomRepoBookmarkImp(MyArticleDao myArticleDao) {
         this.myArticleDao = myArticleDao;
-        this.myArticleDao.getAll().subscribe(publisher);
     }
 
     @Override
     public Observable<List<MyArticle>> getArticles() {
-
-        if(publisher.getValue() != null) {
-            logIt("RoomRepoBookmarkImp::getArticles " + publisher.getValue().size());
-        } else {
-            logIt("RoomRepoBookmarkImp::getArticles " + 0);
-        }
-
-//        myArticleDao.getAll().subscribe(publisher);
-//        return myArticleDao.getAll();
-        return publisher.hide();
+        return myArticleDao.getAll();
     }
 
     @Override
