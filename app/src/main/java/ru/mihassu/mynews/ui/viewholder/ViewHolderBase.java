@@ -1,5 +1,6 @@
 package ru.mihassu.mynews.ui.viewholder;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -168,17 +169,39 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
         long current = System.currentTimeMillis();
         long pastHours = (current - time) / (60 * 60 * 1000);
 
+        Context context = itemView.getContext();
+
         if (pastHours > 24) {
             return new SimpleDateFormat("dd MMM yy", Locale.getDefault()).format(time);
         } else if (pastHours >= 1) {
 
-            String h = pastHours == 1 ? "hour" : "hours";
+            String h = hoursToString(pastHours, context);
 
-            return String.format(Locale.getDefault(), "%d %s ago",
-                    pastHours, h);
+            return String.format(Locale.getDefault(), "%d %s %s",
+                    pastHours, h, context.getString(R.string.time_ago));
         } else {
             return String.format(Locale.getDefault(), "%s",
                     new SimpleDateFormat("H:mm", Locale.getDefault()).format(time));
         }
     }
+
+    private String hoursToString(long hours, Context context) {
+
+        if(hours >= 10 && hours < 21) {
+            return context.getString(R.string.time_hours_5_0);
+        }
+
+        String szHours = Long.toString(hours);
+        int n =  Integer.valueOf(Character.toString(szHours.charAt(szHours.length() - 1)));
+
+        int stringId = R.string.time_hours_5_0;
+        if(n >= 2 && n < 5) {
+            stringId = R.string.time_hours_2_4;
+        } else if(n == 1) {
+            stringId = R.string.time_hour;
+        }
+        return context.getString(stringId);
+    }
+
+
 }
