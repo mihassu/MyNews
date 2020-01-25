@@ -187,21 +187,20 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
 
     private String hoursToString(long hours, Context context) {
 
-        if(hours >= 10 && hours < 21) {
+        if (hours >= 10 && hours < 21) {
             return context.getString(R.string.time_hours_5_0);
         }
 
         String szHours = Long.toString(hours);
-        int n =  Integer.valueOf(Character.toString(szHours.charAt(szHours.length() - 1)));
+        int n = Integer.valueOf(Character.toString(szHours.charAt(szHours.length() - 1)));
 
         int stringId = R.string.time_hours_5_0;
-        if(n >= 2 && n < 5) {
+        if (n >= 2 && n < 5) {
             stringId = R.string.time_hours_2_4;
-        } else if(n == 1) {
+        } else if (n == 1) {
             stringId = R.string.time_hour;
         }
         return context.getString(stringId);
     }
-
 
 }
