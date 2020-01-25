@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -76,8 +77,15 @@ public class BookmarksFragment extends Fragment implements Observer {
 
     private void initRecyclerView(RecyclerView rv) {
         bookmarkPresenter.subscribe().observe(this, this);
+
         rv.setLayoutManager(new LinearLayoutManager(context));
         rv.setHasFixedSize(false);
         rv.setAdapter(adapter);
+
+        // Добавить поддержку удаления элементов через swipe
+        ItemTouchHelper.Callback callback =
+                new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(rv);
     }
 }

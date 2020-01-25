@@ -15,7 +15,8 @@ import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;
 
-public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> implements ItemUpdateListener {
+public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase>
+        implements ItemTouchHelperAdapter, ItemUpdateListener {
 
     private static int[] itemLayouts = {
             R.layout.item_article_image_left,
@@ -81,6 +82,11 @@ public class BookmarkAdapter extends ListAdapter<MyArticle, ViewHolderBase> impl
     @Override
     public void onItemUpdated(int position) {
         notifyItemChanged(position);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        presenter.onClickBookmark(getArticle(position).id);
     }
 
     // Wrapper presenter.getArticle(position)
