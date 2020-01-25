@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import ru.mihassu.mynews.R;
@@ -37,6 +39,16 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
     private ImageView itemBookmark;
     private ArticlePresenter presenter;
     private ItemUpdateListener itemUpdateListener;
+    private boolean isMarked;
+
+    private static final int[] STATE_SET_ON =
+            {R.attr.state_on};
+    private static final int[] STATE_SET_OFF =
+            {R.attr.state_off};
+
+    private static ArrayList<int[]> bookmarkStates = new ArrayList<>(
+            Arrays.asList(STATE_SET_ON, STATE_SET_OFF)
+    );
 
     ViewHolderBase(@NonNull View itemView,
                    @NotNull ArticlePresenter presenter,
@@ -57,16 +69,23 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
     }
 
     /**
-     * При клике на bookmark оповестить презентера, чтобы внес изменения в базу
-     * и адаптер, чтобы он обновил элемент в списке.
+     * При клике на bookmark оповестить презентера, для изменения состояний в базе и адаптере.
      */
     @Override
     public void onClick(View bookmarkImageView) {
         presenter.onClickBookmark(this.articleId);
-        itemUpdateListener.onItemUpdated(getAdapterPosition());
+        this.isMarked = !this.isMarked;
+
+        itemBookmark.setImageState(
+                isMarked ?
+                        bookmarkStates.get(0) :
+                        bookmarkStates.get(1),
+                false);
     }
 
     public void bind(MyArticle article) {
+
+        this.isMarked = article.isMarked;
 
         articleId = article.id;
         // Ссылку на контент статьи сохр в теге элемента списка
@@ -135,10 +154,11 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
 
     // Картинка Bookmark
     private void itemBookmarkSetImage(MyArticle article) {
-        itemBookmark.setImageResource(
+        itemBookmark.setImageState(
                 article.isMarked ?
-                        R.drawable.ic_selected :
-                        R.drawable.ic_unselected);
+                        bookmarkStates.get(0) :
+                        bookmarkStates.get(1),
+                false);
     }
 
     /**

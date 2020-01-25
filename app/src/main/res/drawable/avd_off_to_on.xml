@@ -1,0 +1,16 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/ic_unselected">
+    <target android:name="color_bg">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="@android:integer/config_shortAnimTime"
+                android:interpolator="@android:interpolator/accelerate_cubic"
+                android:propertyName="fillColor"
+                android:repeatCount="0"
+                android:valueFrom="#009C27B0"
+                android:valueTo="#FF9C27B0"
+                android:valueType="intType" />
+        </aapt:attr>
+    </target>
+</animated-vector>

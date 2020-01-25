@@ -70,7 +70,6 @@ public class NewsViewPagerAdapter
      * Вызывается из MainFragment при обновлении новостей
      */
     public void updateContent() {
-        logIt("NVPA::updateContent()");
         isUpdateInProgress = false;
         notifyDataSetChanged();
     }
