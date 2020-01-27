@@ -61,7 +61,7 @@ public class ActualDataBusImp implements ActualDataBus {
 
         // Bookmarks
         roomRepoBookmark
-                .getArticles()
+                .getBookmarkedArticles()
                 .subscribe(bookmarkPublisher);
 
         // Склеить Bookmarks и основные данные
@@ -72,6 +72,7 @@ public class ActualDataBusImp implements ActualDataBus {
         ).subscribe(new DisposableObserver<List<MyArticle>>() {
             @Override
             public void onNext(List<MyArticle> list) {
+
                 dataPublisher.onNext(list);
             }
 

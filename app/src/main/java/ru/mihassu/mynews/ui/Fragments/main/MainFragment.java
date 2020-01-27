@@ -31,6 +31,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
@@ -235,7 +237,8 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
                 // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
                 if (searchedList.size() > 0) {
-                    searchResultPublisher.onNext(searchedList);
+                    // Без этого поиск глючил, т.к. запрос помещался в RX на основном потоке
+                    executeInSeparateThread(() -> searchResultPublisher.onNext(searchedList));
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }
@@ -248,5 +251,11 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                 return false;
             }
         });
+    }
+
+    private void executeInSeparateThread(Runnable runnable) {
+        Completable.fromRunnable(runnable)
+                .subscribeOn(Schedulers.io())
+                .subscribe();
     }
 }

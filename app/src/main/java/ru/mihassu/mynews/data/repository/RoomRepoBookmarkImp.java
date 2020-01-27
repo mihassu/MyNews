@@ -17,7 +17,7 @@ public class RoomRepoBookmarkImp implements RoomRepoBookmark {
     }
 
     @Override
-    public Observable<List<MyArticle>> getArticles() {
+    public Observable<List<MyArticle>> getBookmarkedArticles() {
         return myArticleDao.getAll();
     }
 
