@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ru.mihassu.mynews.ui.MainActivity">
+    tools:activityContext="ru.mihassu.mynews.ui.MainActivity">
         <group android:checkableBehavior="single">
             <item android:title="@string/menu_group_main">
                     <menu>

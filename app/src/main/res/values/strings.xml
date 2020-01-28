@@ -31,4 +31,8 @@
 
     <string name="loading_news">Loading&#8230;</string>
 
+    <string name="time_hour">hour</string>
+    <string name="time_hours_2_4">hours</string>
+    <string name="time_hours_5_0">hours</string>
+    <string name="time_ago">ago</string>
 </resources>

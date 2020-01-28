@@ -14,7 +14,7 @@ import io.reactivex.Observable;
 import ru.mihassu.mynews.data.db.AppRoomDatabase;
 import ru.mihassu.mynews.data.db.MyArticleDao;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
-import ru.mihassu.mynews.data.repository.RoomRepoBookmarkImpl;
+import ru.mihassu.mynews.data.repository.RoomRepoBookmarkImp;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 @Module
@@ -41,12 +41,12 @@ public class OrmRoomModule {
     @Singleton
     @Provides
     public RoomRepoBookmark provideRoomRepo(MyArticleDao myArticleDao) {
-        return new RoomRepoBookmarkImpl(myArticleDao);
+        return new RoomRepoBookmarkImp(myArticleDao);
     }
 
     @Singleton
     @Provides
     public Observable<List<MyArticle>> provideBookmarkObservable(RoomRepoBookmark roomRepoBookmark) {
-        return roomRepoBookmark.getArticles();
+        return roomRepoBookmark.getBookmarkedArticles();
     }
 }
