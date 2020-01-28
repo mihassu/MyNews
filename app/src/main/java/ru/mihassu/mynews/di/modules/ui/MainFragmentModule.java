@@ -1,42 +1,56 @@
 package ru.mihassu.mynews.di.modules.ui;
 
-import java.util.List;
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.subjects.BehaviorSubject;
+import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.di.qualifiers.FragmentScope;
-import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.domain.repository.ChannelCollector;
-import ru.mihassu.mynews.presenters.MainFragmentPresenter;
-import ru.mihassu.mynews.presenters.MainFragmentPresenterImpl;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
+import ru.mihassu.mynews.presenters.i.ArticlePresenter;
+import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
+import ru.mihassu.mynews.presenters.MainFragmentPresenterImp;
+import ru.mihassu.mynews.presenters.RegularArticlePresenter;
+import ru.mihassu.mynews.ui.web.BrowserLauncher;
+import ru.mihassu.mynews.ui.web.BrowserLauncherImp;
+import ru.mihassu.mynews.ui.fragments.main.MainFragment;
+import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
 @Module
 public class MainFragmentModule {
 
-    @Provides
-    @FragmentScope
-    public MainFragmentPresenter provideFragmentPresenter(
-            RoomRepoBookmark roomRepoBookmark,
-            ChannelCollector collector) {
-        return new MainFragmentPresenterImpl(roomRepoBookmark, collector);
+    private MainFragment mainFragment;
+
+    public MainFragmentModule(MainFragment mainFragment) {
+        this.mainFragment = mainFragment;
     }
 
     @Provides
     @FragmentScope
-    public BehaviorSubject<List<MyArticle>> provideBehaviorSubject() {
+    public MainFragmentPresenter provideFragmentPresenter(ActualDataBus dataBus) {
+        return new MainFragmentPresenterImp(dataBus);
+    }
+
+    @Provides
+    @FragmentScope
+    @Named("search_result_publisher")
+    public BehaviorSubject<DataSnapshot> provideBehaviorSubject() {
         return BehaviorSubject.create();
     }
 
-//    @Provides
-//    @FragmentScope
-//    public List<ArticlePresenter> provideArticlePresentersList(RoomRepoBookmark roomRepoBookmark) {
-//        ArrayList<ArticlePresenter> list = new ArrayList<>();
-//
-//        for(ArticleCategory category : ArticleCategory.values()) {
-//            list.add(new ArticlePresenterImpl(roomRepoBookmark));
-//        }
-//        return list;
-//    }
+    @Provides
+    @FragmentScope
+    public ArticlePresenter provideArticlePresenter(ActualDataBus dataBus,
+                                                    RoomRepoBookmark repoBookmark,
+                                                    BrowserLauncher browserLauncher) {
+        return new RegularArticlePresenter(dataBus, repoBookmark, browserLauncher);
+    }
+
+    @Provides
+    @FragmentScope
+    BrowserLauncher providesBrowserLauncher(CustomTabHelper customTabHelper) {
+        return new BrowserLauncherImp(customTabHelper, mainFragment.getContext());
+    }
 }

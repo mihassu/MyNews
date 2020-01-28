@@ -25,4 +25,9 @@
     <string name="not_found">Не найдено</string>
 
     <string name="loading_news">Загружаю&#8230;</string>
+
+    <string name="time_hour">час</string>
+    <string name="time_hours_2_4">часа</string>
+    <string name="time_hours_5_0">часов</string>
+    <string name="time_ago">назад</string>
 </resources>

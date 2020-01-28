@@ -12,10 +12,10 @@ import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import ru.mihassu.mynews.R;
-import ru.mihassu.mynews.data.repository.ChannelCollectorImpl;
-import ru.mihassu.mynews.data.repository.ChannelRepositoryImpl;
+import ru.mihassu.mynews.data.repository.ChannelCollectorImp;
+import ru.mihassu.mynews.data.repository.ChannelRepositoryImp;
 import ru.mihassu.mynews.data.repository.ClassifierImpl;
-import ru.mihassu.mynews.data.repository.RawChannelRepositoryImpl;
+import ru.mihassu.mynews.data.repository.RawChannelRepositoryImp;
 import ru.mihassu.mynews.domain.channel.ChannelParser;
 import ru.mihassu.mynews.domain.channel.Classifier;
 import ru.mihassu.mynews.domain.entity.CategoryDictionary;
@@ -58,7 +58,7 @@ public class NetModule {
     }
 
     /**
-     * Вызов этого метода запустит процесс загрузки данных, т.к. ChannelCollectorImpl
+     * Вызов этого метода запустит процесс загрузки данных, т.к. ChannelCollectorImp
      * в конструктуре инициирует периодический опрос источников.
      */
     @Provides
@@ -76,11 +76,11 @@ public class NetModule {
 
         for (String channel : channelUrls) {
             channels.add(
-                    new ChannelRepositoryImpl(
-                            new RawChannelRepositoryImpl(client, channel),
+                    new ChannelRepositoryImp(
+                            new RawChannelRepositoryImp(client, channel),
                             new ChannelParser(classifier)));
         }
 
-        return new ChannelCollectorImpl(channels, updateIntervalInMinutes);
+        return new ChannelCollectorImp(channels, updateIntervalInMinutes);
     }
 }

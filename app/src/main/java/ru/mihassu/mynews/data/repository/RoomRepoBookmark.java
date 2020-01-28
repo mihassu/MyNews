@@ -7,7 +7,7 @@ import io.reactivex.Observable;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface RoomRepoBookmark {
-    Observable<List<MyArticle>> getArticles();
+    Observable<List<MyArticle>> getBookmarkedArticles();
 
     void insertArticle(MyArticle article);
 

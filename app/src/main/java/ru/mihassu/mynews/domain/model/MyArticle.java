@@ -81,19 +81,18 @@ public class MyArticle implements Comparable<MyArticle> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, isMarked);
+        return Objects.hash(id, title, isMarked, pubDate);
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if(this == obj) {
-            return true;
-        }
-        if(obj == null || getClass() != obj.getClass()) {
+        if(obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
         final MyArticle other = (MyArticle)obj;
-        return Objects.equals(this.id, other.id);
+        return this.id == other.id &&
+                this.isMarked == other.isMarked &&
+                this.pubDate == other.pubDate;
     }
 
     // Вычислить Id
