@@ -42,12 +42,12 @@ import ru.mihassu.mynews.domain.search.SearchObservable;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 
-public class MainFragment extends Fragment implements Observer, UpdateAgent {
+public class MainFragment extends Fragment implements Observer, ru.mihassu.mynews.ui.fragments.main.UpdateAgent {
 
     private ViewPager2 viewPager;
     private ImageView progressBarImage;
-    private MainFragmentState currentState;
-    private NewsViewPagerAdapter viewPagerAdapter;
+    private ru.mihassu.mynews.ui.fragments.main.MainFragmentState currentState;
+    private ru.mihassu.mynews.ui.fragments.main.NewsViewPagerAdapter viewPagerAdapter;
     private ConstraintLayout progressBarContainer;
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private List<String> tabHeaders = new ArrayList<>();
@@ -140,7 +140,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     @Override
     @SuppressWarnings("unchecked")
     public void onChanged(Object obj) {
-        currentState = (MainFragmentState) obj;
+        currentState = (ru.mihassu.mynews.ui.fragments.main.MainFragmentState) obj;
 
         tabHeaders.clear();
         tabHeaders.addAll(currentState.getCategoriesNames(context));
@@ -153,7 +153,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     // Init ViewPager
     private void initViewPager(@NonNull View fragmentView) {
         viewPagerAdapter =
-                new NewsViewPagerAdapter(this, articlePresenter);
+                new ru.mihassu.mynews.ui.fragments.main.NewsViewPagerAdapter(this, articlePresenter);
 
         viewPager = fragmentView.findViewById(R.id.news_viewpager);
         viewPager.setAdapter(viewPagerAdapter);
