@@ -12,7 +12,6 @@ import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.ui.custom.VerticalMotionListener;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 
 /**
  * ViewHolder для элемента списка с анимированным контентом

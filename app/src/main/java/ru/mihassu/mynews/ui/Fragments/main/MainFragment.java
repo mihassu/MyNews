@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.main;
+package ru.mihassu.mynews.ui.fragments.main;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -31,12 +31,14 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.domain.search.SearchObservable;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 
@@ -49,6 +51,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     private ConstraintLayout progressBarContainer;
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private List<String> tabHeaders = new ArrayList<>();
+    private Disposable searchDisposable;
 
     @Inject
     Context context;
@@ -61,7 +64,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
     @Inject
     @Named("search_result_publisher")
-    BehaviorSubject<DataSnapshort> searchResultPublisher;
+    BehaviorSubject<DataSnapshot> searchResultPublisher;
 
     // 1.
     @Override
@@ -126,6 +129,9 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     public void onDestroy() {
         super.onDestroy();
         fragmentPresenter.onFragmentDisconnected();
+        if(searchDisposable != null && !searchDisposable.isDisposed()) {
+            searchDisposable.dispose();
+        }
     }
 
     /**
@@ -145,7 +151,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     }
 
     // Init ViewPager
-    private void initViewPager(View fragmentView) {
+    private void initViewPager(@NonNull View fragmentView) {
         viewPagerAdapter =
                 new NewsViewPagerAdapter(this, articlePresenter);
 
@@ -208,7 +214,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     private void loadChannels() {
         fragmentPresenter
                 .subscribe()
-                .observe(this, this);
+                .observe(getViewLifecycleOwner(), this);
     }
 
     @Override
@@ -217,38 +223,30 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
         menu.clear();
 
         inflater.inflate(R.menu.menu_search, menu);
-        MenuItem search = menu.findItem(R.id.action_search);
 
+        MenuItem search = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) search.getActionView();
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                String text = query.toLowerCase();
-                List<MyArticle> searchedList = new ArrayList<>();
-                List<MyArticle> currentList = currentState.getCurrentArticles();
+        searchDisposable = SearchObservable
+                .fromView(searchView)
+                .subscribe(query -> {
+                    List<MyArticle> searchedList = new ArrayList<>();
+                    List<MyArticle> currentList = currentState.getCurrentArticles();
 
-                for (MyArticle article : currentList) {
-                    String title = article.title.toLowerCase();
-                    if (title.contains(text)) {
-                        searchedList.add(article);
+                    for (MyArticle article : currentList) {
+                        String title = article.title.toLowerCase();
+                        if (title.contains(query)) {
+                            searchedList.add(article);
+                        }
                     }
-                }
 
-                // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
-                if (searchedList.size() > 0) {
-                    searchResultPublisher.onNext(new DataSnapshort(searchedList, query));
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
-                }
+                    // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
+                    if (searchedList.size() > 0) {
+                        searchResultPublisher.onNext(new DataSnapshot(searchedList, query));
+                    } else {
+                        Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
+                    }
 
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
+                });
     }
 }

@@ -10,11 +10,11 @@ import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
-import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
+import ru.mihassu.mynews.ui.fragments.main.MainFragmentState;
+import ru.mihassu.mynews.ui.viewholder.ItemUpdateListener;
 import ru.mihassu.mynews.ui.web.BrowserLauncher;
 
 import static ru.mihassu.mynews.Utils.logIt;
@@ -38,14 +38,14 @@ public class RegularArticlePresenter implements ArticlePresenter {
     private void subscribeToDataSources() {
         dataBus
                 .connectToActualData()
-                .subscribe(new DisposableObserver<DataSnapshort>() {
+                .subscribe(new DisposableObserver<DataSnapshot>() {
                     @Override
-                    public void onNext(DataSnapshort dataSnapshort) {
+                    public void onNext(DataSnapshot dataSnapshot) {
                         if (currentState != null) {
-                            currentState.setCurrentArticles(dataSnapshort.getArticles());
-                            currentState.setHighlight(dataSnapshort.getHighlight());
+                            currentState.setCurrentArticles(dataSnapshot.getArticles());
+                            currentState.setHighlight(dataSnapshot.getHighlight());
                         } else {
-                            currentState = new MainFragmentState(dataSnapshort);
+                            currentState = new MainFragmentState(dataSnapshot);
                         }
                     }
 

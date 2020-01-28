@@ -25,7 +25,6 @@ import java.util.Locale;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 
 import static ru.mihassu.mynews.Utils.logIt;
 

@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.bookmark;
+package ru.mihassu.mynews.ui.fragments.bookmark;
 
 import java.util.Collections;
 import java.util.List;

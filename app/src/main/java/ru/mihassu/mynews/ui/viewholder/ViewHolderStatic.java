@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
 
 /**
  * ViewHolder для элемента списка со статическим контентом

@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.main;
+package ru.mihassu.mynews.ui.fragments.main;
 
 public interface UpdateAgent {
     void launchUpdate();

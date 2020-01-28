@@ -2,11 +2,11 @@ package ru.mihassu.mynews.domain.model;
 
 import java.util.List;
 
-public class DataSnapshort {
+public class DataSnapshot {
     private List<MyArticle> articles;
     private String highlight;
 
-    public DataSnapshort(List<MyArticle> articles, String highlight) {
+    public DataSnapshot(List<MyArticle> articles, String highlight) {
         this.articles = articles;
         this.highlight = highlight;
     }

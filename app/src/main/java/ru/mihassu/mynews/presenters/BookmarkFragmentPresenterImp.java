@@ -14,8 +14,8 @@ import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.BookmarkFragmentPresenter;
-import ru.mihassu.mynews.ui.Fragments.bookmark.BookmarkFragmentState;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
+import ru.mihassu.mynews.ui.fragments.bookmark.BookmarkFragmentState;
+import ru.mihassu.mynews.ui.viewholder.ItemUpdateListener;
 import ru.mihassu.mynews.ui.web.BrowserLauncher;
 
 import static ru.mihassu.mynews.Utils.logIt;

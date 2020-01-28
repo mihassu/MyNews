@@ -17,7 +17,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.eventbus.ActualDataBusImp;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
@@ -46,7 +46,7 @@ public class AppModule {
     @Provides
     @Singleton
     @Named("data_bus_publisher")
-    BehaviorSubject<DataSnapshort> providesPublisherData() {
+    BehaviorSubject<DataSnapshot> providesPublisherData() {
         return BehaviorSubject.create();
     }
 
@@ -62,7 +62,7 @@ public class AppModule {
     ActualDataBus providesActualDataBus(
             RoomRepoBookmark repo,
             ChannelCollector collector,
-            @Named("data_bus_publisher") BehaviorSubject<DataSnapshort> publisherData,
+            @Named("data_bus_publisher") BehaviorSubject<DataSnapshot> publisherData,
             @Named("bookmark_bus_publisher") BehaviorSubject<List<MyArticle>> publisherBookmark) {
         return new ActualDataBusImp(repo, collector, publisherData, publisherBookmark);
     }

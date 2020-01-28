@@ -3,7 +3,7 @@ package ru.mihassu.mynews.di.components.ui;
 import dagger.Subcomponent;
 import ru.mihassu.mynews.di.modules.ui.BookmarkFragmentModule;
 import ru.mihassu.mynews.di.qualifiers.BookmarkFragmentScope;
-import ru.mihassu.mynews.ui.Fragments.bookmark.BookmarksFragment;
+import ru.mihassu.mynews.ui.fragments.bookmark.BookmarksFragment;
 
 @BookmarkFragmentScope
 @Subcomponent(modules = {BookmarkFragmentModule.class})

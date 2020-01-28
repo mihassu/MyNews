@@ -3,7 +3,7 @@ package ru.mihassu.mynews.presenters.i;
 import java.util.List;
 
 import ru.mihassu.mynews.domain.model.MyArticle;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
+import ru.mihassu.mynews.ui.viewholder.ItemUpdateListener;
 
 public interface ArticlePresenter {
 

@@ -3,12 +3,12 @@ package ru.mihassu.mynews.data.eventbus;
 import java.util.List;
 
 import io.reactivex.Observable;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface ActualDataBus {
     // Точка подключения клиентов к отформатированным данным
-    Observable<DataSnapshort> connectToActualData();
+    Observable<DataSnapshot> connectToActualData();
 
     Observable<List<MyArticle>> connectToBookmarkData();
 
@@ -16,5 +16,5 @@ public interface ActualDataBus {
     void updateActualData();
 
     // Клиент просит объявить по "шине" результаты поиска
-    void broadcastSearchResult(DataSnapshort dataSnapshort);
+    void broadcastSearchResult(DataSnapshot dataSnapshot);
 }

@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.main;
+package ru.mihassu.mynews.ui.fragments.main;
 
 import android.view.LayoutInflater;
 import android.view.View;

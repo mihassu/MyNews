@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.bookmark;
+package ru.mihassu.mynews.ui.fragments.bookmark;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;

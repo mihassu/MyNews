@@ -8,9 +8,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
-import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
+import ru.mihassu.mynews.ui.fragments.main.MainFragmentState;
 
 import static ru.mihassu.mynews.Utils.logIt;
 
@@ -30,16 +30,16 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
         dataBus
                 .connectToActualData()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<DataSnapshort>() {
+                .subscribe(new DisposableObserver<DataSnapshot>() {
                     @Override
-                    public void onNext(DataSnapshort dataSnapshort) {
+                    public void onNext(DataSnapshot dataSnapshot) {
                         if (liveData.getValue() != null) {
                             MainFragmentState currentState = liveData.getValue();
-                            currentState.setCurrentArticles(dataSnapshort.getArticles());
-                            currentState.setHighlight(dataSnapshort.getHighlight());
+                            currentState.setCurrentArticles(dataSnapshot.getArticles());
+                            currentState.setHighlight(dataSnapshot.getHighlight());
                             liveData.setValue(currentState);
                         } else {
-                            liveData.setValue(new MainFragmentState(dataSnapshort));
+                            liveData.setValue(new MainFragmentState(dataSnapshot));
                         }
                     }
 
@@ -65,7 +65,7 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
     }
 
     @Override
-    public void onFragmentConnected(Observable<DataSnapshort> searchObservable) {
+    public void onFragmentConnected(Observable<DataSnapshot> searchObservable) {
         searchDisposable = searchObservable
                 .subscribe(
                         snapshort -> dataBus.broadcastSearchResult(snapshort)

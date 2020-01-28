@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.main;
+package ru.mihassu.mynews.ui.fragments.main;
 
 import android.content.Context;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 /**
@@ -27,11 +27,11 @@ public class MainFragmentState {
     private ArticleCategory[] currentCategories;
     private String highlight;
 
-    public MainFragmentState(DataSnapshort dataSnapshort) {
-        this.currentArticles = new ArrayList<>(dataSnapshort.getArticles());
+    public MainFragmentState(DataSnapshot dataSnapshot) {
+        this.currentArticles = new ArrayList<>(dataSnapshot.getArticles());
         this.currentSortedArticles = sortForCategories();
         this.currentCategories = getActualCategories();
-        this.highlight = dataSnapshort.getHighlight();
+        this.highlight = dataSnapshot.getHighlight();
     }
 
     public MainFragmentState(List<MyArticle> currentArticles) {

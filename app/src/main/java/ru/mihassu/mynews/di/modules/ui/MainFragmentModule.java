@@ -1,7 +1,5 @@
 package ru.mihassu.mynews.di.modules.ui;
 
-import java.util.List;
-
 import javax.inject.Named;
 
 import dagger.Module;
@@ -10,15 +8,14 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.di.qualifiers.FragmentScope;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
-import ru.mihassu.mynews.domain.model.MyArticle;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 import ru.mihassu.mynews.presenters.MainFragmentPresenterImp;
 import ru.mihassu.mynews.presenters.RegularArticlePresenter;
 import ru.mihassu.mynews.ui.web.BrowserLauncher;
 import ru.mihassu.mynews.ui.web.BrowserLauncherImp;
-import ru.mihassu.mynews.ui.Fragments.main.MainFragment;
+import ru.mihassu.mynews.ui.fragments.main.MainFragment;
 import ru.mihassu.mynews.ui.web.CustomTabHelper;
 
 @Module
@@ -39,7 +36,7 @@ public class MainFragmentModule {
     @Provides
     @FragmentScope
     @Named("search_result_publisher")
-    public BehaviorSubject<DataSnapshort> provideBehaviorSubject() {
+    public BehaviorSubject<DataSnapshot> provideBehaviorSubject() {
         return BehaviorSubject.create();
     }
 

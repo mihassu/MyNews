@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.bookmark;
+package ru.mihassu.mynews.ui.fragments.bookmark;
 
 import android.content.Context;
 import android.os.Bundle;

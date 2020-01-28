@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.bookmark;
+package ru.mihassu.mynews.ui.fragments.bookmark;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.BookmarkFragmentPresenter;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
+import ru.mihassu.mynews.ui.viewholder.ItemUpdateListener;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;
 

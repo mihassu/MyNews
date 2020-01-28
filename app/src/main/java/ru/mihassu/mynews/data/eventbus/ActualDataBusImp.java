@@ -10,7 +10,7 @@ import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
-import ru.mihassu.mynews.domain.model.DataSnapshort;
+import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 
@@ -20,12 +20,12 @@ public class ActualDataBusImp implements ActualDataBus {
 
     private RoomRepoBookmark roomRepoBookmark;
     private ChannelCollector collector;
-    private BehaviorSubject<DataSnapshort> dataPublisher;
+    private BehaviorSubject<DataSnapshot> dataPublisher;
     private BehaviorSubject<List<MyArticle>> bookmarkPublisher;
 
     public ActualDataBusImp(RoomRepoBookmark roomRepoBookmark,
                             ChannelCollector collector,
-                            BehaviorSubject<DataSnapshort> dataPublisher,
+                            BehaviorSubject<DataSnapshot> dataPublisher,
                             BehaviorSubject<List<MyArticle>> bookmarkPublisher) {
 
         this.roomRepoBookmark = roomRepoBookmark;
@@ -36,13 +36,7 @@ public class ActualDataBusImp implements ActualDataBus {
     }
 
     @Override
-    public Observable<DataSnapshort> connectToActualData() {
-//        return
-//                dataPublisher
-//                        .hide()
-//                        .flatMap(list -> Observable.fromCallable(() -> list))
-//                        .subscribeOn(Schedulers.single());
-
+    public Observable<DataSnapshot> connectToActualData() {
         return dataPublisher.hide();
     }
 
@@ -57,8 +51,8 @@ public class ActualDataBusImp implements ActualDataBus {
     }
 
     @Override
-    public void broadcastSearchResult(DataSnapshort dataSnapshort) {
-        dataPublisher.onNext(dataSnapshort);
+    public void broadcastSearchResult(DataSnapshot dataSnapshot) {
+        dataPublisher.onNext(dataSnapshot);
     }
 
     /**
@@ -80,7 +74,7 @@ public class ActualDataBusImp implements ActualDataBus {
             @Override
             public void onNext(List<MyArticle> list) {
                 dataPublisher
-                        .onNext(new DataSnapshort(list, ""));
+                        .onNext(new DataSnapshot(list, ""));
             }
 
             @Override

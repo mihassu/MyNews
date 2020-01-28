@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments.main;
+package ru.mihassu.mynews.ui.fragments.main;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,7 @@ import io.reactivex.Observable;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
-import ru.mihassu.mynews.ui.main.ItemUpdateListener;
+import ru.mihassu.mynews.ui.viewholder.ItemUpdateListener;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderAnimated;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderBase;
 import ru.mihassu.mynews.ui.viewholder.ViewHolderStatic;

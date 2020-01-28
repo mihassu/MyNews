@@ -7,24 +7,24 @@
 
     <fragment
         android:id="@+id/nav_main"
-        android:name="ru.mihassu.mynews.ui.Fragments.main.MainFragment"
+        android:name="ru.mihassu.mynews.ui.fragments.main.MainFragment"
         android:label="My News"
         tools:layout="@layout/fragment_main" />
 
     <fragment
         android:id="@+id/nav_settings"
-        android:name="ru.mihassu.mynews.ui.Fragments.SettingsFragment"
+        android:name="ru.mihassu.mynews.ui.fragments.SettingsFragment"
         android:label="Settings"/>
 
     <fragment
         android:id="@+id/nav_about"
-        android:name="ru.mihassu.mynews.ui.Fragments.AboutFragment"
+        android:name="ru.mihassu.mynews.ui.fragments.AboutFragment"
         android:label="About"
         tools:layout="@layout/fragment_about" />
 
     <fragment
         android:id="@+id/nav_bookmarks"
-        android:name="ru.mihassu.mynews.ui.Fragments.bookmark.BookmarksFragment"
+        android:name="ru.mihassu.mynews.ui.fragments.bookmark.BookmarksFragment"
         android:label="Bookmsrks"
         tools:layout="@layout/fragment_bookmarks" />
 </navigation>

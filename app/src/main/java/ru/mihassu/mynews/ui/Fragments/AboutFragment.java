@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments;
+package ru.mihassu.mynews.ui.fragments;
 
 import androidx.fragment.app.Fragment;
 

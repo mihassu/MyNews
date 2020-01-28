@@ -1,4 +1,4 @@
-package ru.mihassu.mynews.ui.Fragments;
+package ru.mihassu.mynews.ui.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
