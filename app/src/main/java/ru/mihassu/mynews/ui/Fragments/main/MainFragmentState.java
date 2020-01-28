@@ -23,7 +23,7 @@ public class MainFragmentState {
     private ArticleCategory[] currentCategories;
 
     public MainFragmentState(List<MyArticle> currentArticles) {
-        this.currentArticles = currentArticles;
+        this.currentArticles = new ArrayList<>(currentArticles);
         this.currentSortedArticles = sortForCategories();
         this.currentCategories = getActualCategories();
     }
@@ -56,7 +56,7 @@ public class MainFragmentState {
     }
 
     public void setCurrentArticles(List<MyArticle> currentArticles) {
-        this.currentArticles = currentArticles;
+        this.currentArticles = new ArrayList<>(currentArticles);
         this.currentSortedArticles = sortForCategories();
         this.currentCategories = getActualCategories();
     }

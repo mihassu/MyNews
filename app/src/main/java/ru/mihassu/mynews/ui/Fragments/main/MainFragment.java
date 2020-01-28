@@ -237,6 +237,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
                 // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
                 if (searchedList.size() > 0) {
+
                     // Без этого поиск глючил, т.к. запрос помещался в RX на основном потоке
                     executeInSeparateThread(() -> searchResultPublisher.onNext(searchedList));
                 } else {
