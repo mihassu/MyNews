@@ -42,12 +42,6 @@ public class BrowserLauncherImp implements BrowserLauncher {
         Intent intent = anotherCustomTab.intent;
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setData(Uri.parse(url));
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                activityContext,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.addMenuItem("Our custom menu", pendingIntent);
 
         CustomTabsIntent customTabsIntent = builder.build();
 
