@@ -1,7 +1,6 @@
 package ru.mihassu.mynews.data.eventbus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,12 @@ public class ActualDataBusImp implements ActualDataBus {
 
     @Override
     public Observable<List<MyArticle>> connectToActualData() {
+//        return
+//                dataPublisher
+//                        .hide()
+//                        .flatMap(list -> Observable.fromCallable(() -> list))
+//                        .subscribeOn(Schedulers.single());
+
         return dataPublisher.hide();
     }
 
@@ -66,12 +71,11 @@ public class ActualDataBusImp implements ActualDataBus {
                 .subscribe(bookmarkPublisher);
 
         // Склеить Bookmarks и основные данные
-//        Observable.combineLatest(collector.collectChannels(),
-//                bookmarkPublisher,
-//                this::setBookmarks
-//        )
-
-        collector.collectChannels().subscribe(new DisposableObserver<List<MyArticle>>() {
+        Observable.combineLatest(
+                collector.collectChannels(),
+                bookmarkPublisher,
+                this::setBookmarks
+        ).subscribe(new DisposableObserver<List<MyArticle>>() {
             @Override
             public void onNext(List<MyArticle> list) {
                 dataPublisher.onNext(list);

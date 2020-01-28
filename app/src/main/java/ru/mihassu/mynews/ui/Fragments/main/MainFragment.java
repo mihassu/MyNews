@@ -31,8 +31,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Completable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;

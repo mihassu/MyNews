@@ -13,8 +13,6 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 
-import static ru.mihassu.mynews.Utils.logIt;
-
 public class NewsViewPagerAdapter
         extends RecyclerView.Adapter<NewsViewPagerAdapter.NewsViewHolder> {
 
@@ -81,6 +79,7 @@ public class NewsViewPagerAdapter
 
         private SwipeRefreshLayout swipeRefreshLayout;
         private BehaviorSubject<Integer> scrollEventsRelay;
+        private MainAdapter adapter;
 
         /**
          * Адаптер для списка новостей нужно создавать в этом месте, чтобы он потом
@@ -103,7 +102,7 @@ public class NewsViewPagerAdapter
                         }
                     });
 
-            MainAdapter adapter = new MainAdapter(
+            adapter = new MainAdapter(
                     scrollEventsRelay.hide(),
                     presenter,
                     tabPosition);
@@ -114,9 +113,10 @@ public class NewsViewPagerAdapter
             initSwipeRefreshLayout();
         }
 
-        // Данные предоставляет презентер, поэтому тут нечего биндить.
         // Просто отключить progressbar обновления.
+        // Известить дочерний адаптер (!!! Без этого был косяк с показом результатов поиска)
         void bind() {
+            adapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         }
 

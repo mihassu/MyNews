@@ -79,6 +79,7 @@ public class MainAdapter extends RecyclerView.Adapter<ViewHolderBase>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderBase holder, int position) {
+        MyArticle a = getArticle(position);
         holder.bind(getArticle(position));
     }
 
