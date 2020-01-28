@@ -10,6 +10,7 @@ import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
+import ru.mihassu.mynews.domain.model.DataSnapshort;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.repository.ChannelCollector;
 
@@ -19,12 +20,12 @@ public class ActualDataBusImp implements ActualDataBus {
 
     private RoomRepoBookmark roomRepoBookmark;
     private ChannelCollector collector;
-    private BehaviorSubject<List<MyArticle>> dataPublisher;
+    private BehaviorSubject<DataSnapshort> dataPublisher;
     private BehaviorSubject<List<MyArticle>> bookmarkPublisher;
 
     public ActualDataBusImp(RoomRepoBookmark roomRepoBookmark,
                             ChannelCollector collector,
-                            BehaviorSubject<List<MyArticle>> dataPublisher,
+                            BehaviorSubject<DataSnapshort> dataPublisher,
                             BehaviorSubject<List<MyArticle>> bookmarkPublisher) {
 
         this.roomRepoBookmark = roomRepoBookmark;
@@ -35,7 +36,7 @@ public class ActualDataBusImp implements ActualDataBus {
     }
 
     @Override
-    public Observable<List<MyArticle>> connectToActualData() {
+    public Observable<DataSnapshort> connectToActualData() {
 //        return
 //                dataPublisher
 //                        .hide()
@@ -57,7 +58,7 @@ public class ActualDataBusImp implements ActualDataBus {
 
     @Override
     public void broadcastSearchResult(List<MyArticle> searchResult) {
-        dataPublisher.onNext(searchResult);
+        dataPublisher.onNext(new DataSnapshort(searchResult, ""));
     }
 
     /**
@@ -78,7 +79,8 @@ public class ActualDataBusImp implements ActualDataBus {
         ).subscribe(new DisposableObserver<List<MyArticle>>() {
             @Override
             public void onNext(List<MyArticle> list) {
-                dataPublisher.onNext(list);
+                dataPublisher
+                        .onNext(new DataSnapshort(list, ""));
             }
 
             @Override

@@ -3,11 +3,12 @@ package ru.mihassu.mynews.data.eventbus;
 import java.util.List;
 
 import io.reactivex.Observable;
+import ru.mihassu.mynews.domain.model.DataSnapshort;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface ActualDataBus {
     // Точка подключения клиентов к отформатированным данным
-    Observable<List<MyArticle>> connectToActualData();
+    Observable<DataSnapshort> connectToActualData();
 
     Observable<List<MyArticle>> connectToBookmarkData();
 

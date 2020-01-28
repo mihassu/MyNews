@@ -10,6 +10,7 @@ import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
+import ru.mihassu.mynews.domain.model.DataSnapshort;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
@@ -37,13 +38,13 @@ public class RegularArticlePresenter implements ArticlePresenter {
     private void subscribeToDataSources() {
         dataBus
                 .connectToActualData()
-                .subscribe(new DisposableObserver<List<MyArticle>>() {
+                .subscribe(new DisposableObserver<DataSnapshort>() {
                     @Override
-                    public void onNext(List<MyArticle> list) {
+                    public void onNext(DataSnapshort dataSnapshort) {
                         if (currentState != null) {
-                            currentState.setCurrentArticles(list);
+                            currentState.setCurrentArticles(dataSnapshort.getArticles());
                         } else {
-                            currentState = new MainFragmentState(list);
+                            currentState = new MainFragmentState(dataSnapshort.getArticles());
                         }
                     }
 

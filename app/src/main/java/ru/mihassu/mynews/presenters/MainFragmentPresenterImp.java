@@ -10,6 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
+import ru.mihassu.mynews.domain.model.DataSnapshort;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
@@ -32,15 +33,15 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
         dataBus
                 .connectToActualData()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<List<MyArticle>>() {
+                .subscribe(new DisposableObserver<DataSnapshort>() {
                     @Override
-                    public void onNext(List<MyArticle> list) {
+                    public void onNext(DataSnapshort dataSnapshort) {
                         if (liveData.getValue() != null) {
                             MainFragmentState currentState = liveData.getValue();
-                            currentState.setCurrentArticles(list);
+                            currentState.setCurrentArticles(dataSnapshort.getArticles());
                             liveData.setValue(currentState);
                         } else {
-                            liveData.setValue(new MainFragmentState(list));
+                            liveData.setValue(new MainFragmentState(dataSnapshort.getArticles()));
                         }
                     }
 
