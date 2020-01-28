@@ -49,6 +49,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     private NewsViewPagerAdapter viewPagerAdapter;
     private ConstraintLayout progressBarContainer;
     private AnimatedVectorDrawableCompat animatedProgressBar;
+    private List<String> tabHeaders = new ArrayList<>();
 
     @Inject
     Context context;
@@ -136,6 +137,9 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
     public void onChanged(Object obj) {
         currentState = (MainFragmentState) obj;
 
+        tabHeaders.clear();
+        tabHeaders.addAll(currentState.getCategoriesNames(context));
+
         // Убрать ProgressBar, показать новости
         hideProgressBar();
         viewPagerAdapter.updateContent();
@@ -159,11 +163,8 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                 tabLayout,
                 viewPager,
                 (tab, position) -> {
-                    if (currentState != null) {
-                        tab.setText(context.getString(
-                                currentState
-                                        .getCurrentCategories()[position]
-                                        .getTextId()));
+                    if (tabHeaders.size() != 0 && position < tabHeaders.size()) {
+                        tab.setText(tabHeaders.get(position));
                     }
                 }
         );
@@ -237,9 +238,8 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
                 // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
                 if (searchedList.size() > 0) {
+                    searchResultPublisher.onNext(searchedList);
 
-                    // Без этого поиск глючил, т.к. запрос помещался в RX на основном потоке
-                    executeInSeparateThread(() -> searchResultPublisher.onNext(searchedList));
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }
@@ -252,11 +252,5 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
                 return false;
             }
         });
-    }
-
-    private void executeInSeparateThread(Runnable runnable) {
-        Completable.fromRunnable(runnable)
-                .subscribeOn(Schedulers.io())
-                .subscribe();
     }
 }

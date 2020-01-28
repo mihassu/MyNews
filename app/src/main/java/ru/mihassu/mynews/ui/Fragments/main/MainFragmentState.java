@@ -1,6 +1,9 @@
 package ru.mihassu.mynews.ui.Fragments.main;
 
+import android.content.Context;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
@@ -71,5 +74,11 @@ public class MainFragmentState {
 
     public ArticleCategory[] getCurrentCategories() {
         return currentCategories;
+    }
+
+    public List<String> getCategoriesNames(Context context) {
+        ArrayList<String> list = new ArrayList<>();
+        Arrays.asList(currentCategories).forEach(c -> list.add(context.getString(c.getTextId())));
+        return list;
     }
 }
