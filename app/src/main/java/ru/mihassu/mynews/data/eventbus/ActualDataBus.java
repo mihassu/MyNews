@@ -16,5 +16,5 @@ public interface ActualDataBus {
     void updateActualData();
 
     // Клиент просит объявить по "шине" результаты поиска
-    void broadcastSearchResult(List<MyArticle> searchResult);
+    void broadcastSearchResult(DataSnapshort dataSnapshort);
 }

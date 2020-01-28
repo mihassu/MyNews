@@ -57,8 +57,8 @@ public class ActualDataBusImp implements ActualDataBus {
     }
 
     @Override
-    public void broadcastSearchResult(List<MyArticle> searchResult) {
-        dataPublisher.onNext(new DataSnapshort(searchResult, ""));
+    public void broadcastSearchResult(DataSnapshort dataSnapshort) {
+        dataPublisher.onNext(dataSnapshort);
     }
 
     /**

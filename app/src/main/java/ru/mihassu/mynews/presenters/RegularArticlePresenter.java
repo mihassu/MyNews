@@ -43,8 +43,9 @@ public class RegularArticlePresenter implements ArticlePresenter {
                     public void onNext(DataSnapshort dataSnapshort) {
                         if (currentState != null) {
                             currentState.setCurrentArticles(dataSnapshort.getArticles());
+                            currentState.setHighlight(dataSnapshort.getHighlight());
                         } else {
-                            currentState = new MainFragmentState(dataSnapshort.getArticles());
+                            currentState = new MainFragmentState(dataSnapshort);
                         }
                     }
 
@@ -127,6 +128,11 @@ public class RegularArticlePresenter implements ArticlePresenter {
     @Override
     public MyArticle getArticle(int listPosition) {
         return null;
+    }
+
+    @Override
+    public String getHighlight() {
+        return currentState.getHighlight();
     }
 
     // Найти статью в общем списке по её ID

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
+import ru.mihassu.mynews.domain.model.DataSnapshort;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 /**
@@ -24,6 +25,14 @@ public class MainFragmentState {
     private List<MyArticle> currentArticles;
     private EnumMap<ArticleCategory, List<MyArticle>> currentSortedArticles;
     private ArticleCategory[] currentCategories;
+    private String highlight;
+
+    public MainFragmentState(DataSnapshort dataSnapshort) {
+        this.currentArticles = new ArrayList<>(dataSnapshort.getArticles());
+        this.currentSortedArticles = sortForCategories();
+        this.currentCategories = getActualCategories();
+        this.highlight = dataSnapshort.getHighlight();
+    }
 
     public MainFragmentState(List<MyArticle> currentArticles) {
         this.currentArticles = new ArrayList<>(currentArticles);
@@ -80,5 +89,13 @@ public class MainFragmentState {
         ArrayList<String> list = new ArrayList<>();
         Arrays.asList(currentCategories).forEach(c -> list.add(context.getString(c.getTextId())));
         return list;
+    }
+
+    public String getHighlight() {
+        return highlight;
+    }
+
+    public void setHighlight(String highlight) {
+        this.highlight = highlight;
     }
 }

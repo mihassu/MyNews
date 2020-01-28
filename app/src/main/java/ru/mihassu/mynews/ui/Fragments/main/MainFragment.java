@@ -35,6 +35,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.App;
 import ru.mihassu.mynews.R;
 import ru.mihassu.mynews.di.modules.ui.MainFragmentModule;
+import ru.mihassu.mynews.domain.model.DataSnapshort;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
@@ -60,7 +61,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
     @Inject
     @Named("search_result_publisher")
-    BehaviorSubject<List<MyArticle>> searchResultPublisher;
+    BehaviorSubject<DataSnapshort> searchResultPublisher;
 
     // 1.
     @Override
@@ -222,8 +223,8 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                String text = s.toLowerCase();
+            public boolean onQueryTextSubmit(String query) {
+                String text = query.toLowerCase();
                 List<MyArticle> searchedList = new ArrayList<>();
                 List<MyArticle> currentList = currentState.getCurrentArticles();
 
@@ -236,8 +237,7 @@ public class MainFragment extends Fragment implements Observer, UpdateAgent {
 
                 // Если поиск успешный, то объявить результаты подписчикам (MainFragmentPresenter)
                 if (searchedList.size() > 0) {
-                    searchResultPublisher.onNext(searchedList);
-
+                    searchResultPublisher.onNext(new DataSnapshort(searchedList, query));
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.not_found), Toast.LENGTH_SHORT).show();
                 }

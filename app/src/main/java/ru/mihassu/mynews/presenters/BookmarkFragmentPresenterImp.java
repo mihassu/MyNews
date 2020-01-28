@@ -132,6 +132,11 @@ public class BookmarkFragmentPresenterImp implements BookmarkFragmentPresenter {
     }
 
     @Override
+    public String getHighlight() {
+        return "";
+    }
+
+    @Override
     public void bindBookmarkChangeListener(ItemUpdateListener listener) {
         this.listener = listener;
     }

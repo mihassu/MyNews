@@ -10,6 +10,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.di.qualifiers.FragmentScope;
+import ru.mihassu.mynews.domain.model.DataSnapshort;
 import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
@@ -38,7 +39,7 @@ public class MainFragmentModule {
     @Provides
     @FragmentScope
     @Named("search_result_publisher")
-    public BehaviorSubject<List<MyArticle>> provideBehaviorSubject() {
+    public BehaviorSubject<DataSnapshort> provideBehaviorSubject() {
         return BehaviorSubject.create();
     }
 

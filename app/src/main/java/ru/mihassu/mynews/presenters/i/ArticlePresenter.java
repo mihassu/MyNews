@@ -14,4 +14,5 @@ public interface ArticlePresenter {
     List<MyArticle> getTabArticles(int tabPosition);
     List<MyArticle> getArticles();
     MyArticle getArticle(int listPosition);
+    String getHighlight();
 }

@@ -1,6 +1,9 @@
 package ru.mihassu.mynews.ui.viewholder;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -91,8 +94,20 @@ public class ViewHolderBase extends RecyclerView.ViewHolder implements View.OnCl
         articleId = article.id;
         // Ссылку на контент статьи сохр в теге элемента списка
         itemView.setTag(article.link);
+
         // Заголовок статьи
-        itemTitle.setText(article.title.trim());
+        String title = article.title.trim();
+        String highlight = presenter.getHighlight();
+
+        if (highlight.length() != 0 && title.toLowerCase().contains(highlight)) {
+            SpannableString highlightedString = new SpannableString(title);
+            int startIndex = title.toLowerCase(Locale.getDefault()).indexOf(highlight.toLowerCase(Locale.getDefault()));
+            highlightedString.setSpan(new ForegroundColorSpan(Color.RED), startIndex, startIndex + highlight.length(), 0);
+            itemTitle.setText(highlightedString);
+        } else {
+            itemTitle.setText(title);
+        }
+
         // Основной текст
         itemContentSetText(article);
         // Основная картинка

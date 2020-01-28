@@ -3,15 +3,12 @@ package ru.mihassu.mynews.presenters;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.List;
-
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.domain.model.DataSnapshort;
-import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
 import ru.mihassu.mynews.ui.Fragments.main.MainFragmentState;
 
@@ -39,9 +36,10 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
                         if (liveData.getValue() != null) {
                             MainFragmentState currentState = liveData.getValue();
                             currentState.setCurrentArticles(dataSnapshort.getArticles());
+                            currentState.setHighlight(dataSnapshort.getHighlight());
                             liveData.setValue(currentState);
                         } else {
-                            liveData.setValue(new MainFragmentState(dataSnapshort.getArticles()));
+                            liveData.setValue(new MainFragmentState(dataSnapshort));
                         }
                     }
 
@@ -67,10 +65,10 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
     }
 
     @Override
-    public void onFragmentConnected(Observable<List<MyArticle>> searchObservable) {
+    public void onFragmentConnected(Observable<DataSnapshort> searchObservable) {
         searchDisposable = searchObservable
                 .subscribe(
-                        list -> dataBus.broadcastSearchResult(list)
+                        snapshort -> dataBus.broadcastSearchResult(snapshort)
                 );
     }
 
