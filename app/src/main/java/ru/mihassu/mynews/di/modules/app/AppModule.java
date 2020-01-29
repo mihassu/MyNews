@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 import ru.mihassu.mynews.data.eventbus.ActualDataBus;
 import ru.mihassu.mynews.data.eventbus.ActualDataBusImp;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
@@ -45,6 +46,13 @@ public class AppModule {
 
     @Provides
     @Singleton
+    @Named("data_bus_pre_publisher")
+    Subject<DataSnapshot> providesPrePublisherData() {
+        return BehaviorSubject.<DataSnapshot>create().toSerialized();
+    }
+
+    @Provides
+    @Singleton
     @Named("data_bus_publisher")
     BehaviorSubject<DataSnapshot> providesPublisherData() {
         return BehaviorSubject.create();
@@ -57,14 +65,16 @@ public class AppModule {
         return BehaviorSubject.create();
     }
 
+
     @Provides
     @Singleton
     ActualDataBus providesActualDataBus(
             RoomRepoBookmark repo,
             ChannelCollector collector,
+            @Named("data_bus_pre_publisher") Subject<DataSnapshot> prePublisherData,
             @Named("data_bus_publisher") BehaviorSubject<DataSnapshot> publisherData,
             @Named("bookmark_bus_publisher") BehaviorSubject<List<MyArticle>> publisherBookmark) {
-        return new ActualDataBusImp(repo, collector, publisherData, publisherBookmark);
+        return new ActualDataBusImp(repo, collector, prePublisherData, publisherData, publisherBookmark);
     }
 
     @Provides

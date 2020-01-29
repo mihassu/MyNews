@@ -7,6 +7,9 @@ import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface ActualDataBus {
+
+    String NO_HIGHLIGHT = "";
+
     // Точка подключения клиентов к отформатированным данным
     Observable<DataSnapshot> connectToActualData();
 

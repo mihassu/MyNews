@@ -1,7 +1,6 @@
 package ru.mihassu.mynews.ui.fragments.main;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -236,7 +234,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
                 .fromView(searchView)
                 .subscribe(query -> {
                     List<MyArticle> searchedList = new ArrayList<>();
-                    List<MyArticle> currentList = currentState.getCurrentArticles();
+                    List<MyArticle> currentList = currentState.getLastUpdateArticles();
 
                     for (MyArticle article : currentList) {
                         String title = article.title.toLowerCase();

@@ -35,8 +35,8 @@ public class MainFragmentPresenterImp implements MainFragmentPresenter {
                     public void onNext(DataSnapshot dataSnapshot) {
                         if (liveData.getValue() != null) {
                             MainFragmentState currentState = liveData.getValue();
-                            currentState.setCurrentArticles(dataSnapshot.getArticles());
-                            currentState.setHighlight(dataSnapshot.getHighlight());
+                            currentState.updateState(dataSnapshot);
+
                             liveData.setValue(currentState);
                         } else {
                             liveData.setValue(new MainFragmentState(dataSnapshot));

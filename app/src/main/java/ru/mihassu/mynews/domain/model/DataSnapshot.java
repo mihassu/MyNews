@@ -4,18 +4,18 @@ import java.util.List;
 
 public class DataSnapshot {
     private List<MyArticle> articles;
-    private String highlight;
+    private String query;
 
-    public DataSnapshot(List<MyArticle> articles, String highlight) {
+    public DataSnapshot(List<MyArticle> articles, String query) {
         this.articles = articles;
-        this.highlight = highlight;
+        this.query = query;
     }
 
     public List<MyArticle> getArticles() {
         return articles;
     }
 
-    public String getHighlight() {
-        return highlight;
+    public String getQuery() {
+        return query;
     }
 }

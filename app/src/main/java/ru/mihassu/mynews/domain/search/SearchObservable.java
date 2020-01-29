@@ -29,9 +29,9 @@ public class SearchObservable {
                         return true;
                     }
                 }))
-                .debounce(300, TimeUnit.MILLISECONDS)
+                .debounce(200, TimeUnit.MILLISECONDS)
                 .switchMap(text -> Observable.fromCallable(() -> text.toLowerCase().trim()))
-                .filter(text -> !text.isEmpty() && text.length() > 2)
+                .filter(text -> !text.isEmpty())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

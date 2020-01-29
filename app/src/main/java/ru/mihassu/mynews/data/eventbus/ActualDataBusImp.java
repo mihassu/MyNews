@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 import ru.mihassu.mynews.data.repository.RoomRepoBookmark;
 import ru.mihassu.mynews.domain.model.DataSnapshot;
 import ru.mihassu.mynews.domain.model.MyArticle;
@@ -20,16 +21,19 @@ public class ActualDataBusImp implements ActualDataBus {
 
     private RoomRepoBookmark roomRepoBookmark;
     private ChannelCollector collector;
+    private Subject<DataSnapshot> dataPrePublisher;
     private BehaviorSubject<DataSnapshot> dataPublisher;
     private BehaviorSubject<List<MyArticle>> bookmarkPublisher;
 
     public ActualDataBusImp(RoomRepoBookmark roomRepoBookmark,
                             ChannelCollector collector,
+                            Subject<DataSnapshot> dataPrePublisher,
                             BehaviorSubject<DataSnapshot> dataPublisher,
                             BehaviorSubject<List<MyArticle>> bookmarkPublisher) {
 
         this.roomRepoBookmark = roomRepoBookmark;
         this.collector = collector;
+        this.dataPrePublisher = dataPrePublisher;
         this.dataPublisher = dataPublisher;
         this.bookmarkPublisher = bookmarkPublisher;
         subscribeToDataSources();
@@ -52,7 +56,7 @@ public class ActualDataBusImp implements ActualDataBus {
 
     @Override
     public void broadcastSearchResult(DataSnapshot dataSnapshot) {
-        dataPublisher.onNext(dataSnapshot);
+        dataPrePublisher.onNext(dataSnapshot);
     }
 
     /**
@@ -60,21 +64,25 @@ public class ActualDataBusImp implements ActualDataBus {
      */
     private void subscribeToDataSources() {
 
-        // Bookmarks
+        // From Bookmarks
         roomRepoBookmark
                 .getBookmarkedArticles()
                 .subscribe(bookmarkPublisher);
 
-        // Склеить Bookmarks и основные данные
+        // From Collector (map List to Snapshot)
+        collector
+                .collectChannels()
+                .map(list -> new DataSnapshot(list, NO_HIGHLIGHT))
+                .subscribe(dataPrePublisher);
+
         Observable.combineLatest(
-                collector.collectChannels(),
+                dataPrePublisher,
                 bookmarkPublisher,
-                this::setBookmarks
-        ).subscribe(new DisposableObserver<List<MyArticle>>() {
+                this::setBookmarksEx
+        ).subscribe(new DisposableObserver<DataSnapshot>() {
             @Override
-            public void onNext(List<MyArticle> list) {
-                dataPublisher
-                        .onNext(new DataSnapshot(list, ""));
+            public void onNext(DataSnapshot dataSnapshot) {
+                dataPublisher.onNext(dataSnapshot);
             }
 
             @Override
@@ -87,6 +95,43 @@ public class ActualDataBusImp implements ActualDataBus {
             }
         });
     }
+
+    // Проставить Bookmark
+    private DataSnapshot setBookmarksEx(DataSnapshot dataSnapshot,
+                                        List<MyArticle> markedArticles) {
+
+        List<MyArticle> allArticles = dataSnapshot.getArticles();
+
+        // Сделать КОПИЮ оригинального списка и поместить его в synchronized HashMap
+        Map<Long, MyArticle> map =
+                Collections.synchronizedMap(
+                        (new ArrayList<>(allArticles))
+                                .stream()
+                                .collect(Collectors.toMap(a -> a.id,
+                                        a -> {
+                                            a.isMarked = false;
+                                            return a;
+                                        })));
+
+        for (MyArticle markedArticle : markedArticles) {
+            long key = markedArticle.id;
+
+            if (map.containsKey(key)) {
+                MyArticle a = map.get(key);
+                if (a != null) {
+                    a.isMarked = true;
+                    map.replace(key, a);
+                }
+            }
+        }
+
+        // Итоговый список статей отсортировать по дате
+        ArrayList<MyArticle> result = new ArrayList<>(map.values());
+        Collections.sort(result);
+
+        return new DataSnapshot(result, dataSnapshot.getQuery());
+    }
+
 
     // Проставить Bookmark
     private List<MyArticle> setBookmarks(List<MyArticle> allArticles,

@@ -17,32 +17,26 @@ import ru.mihassu.mynews.domain.model.MyArticle;
  *
  * @currentArticles - общий текущий список статей
  * @currentSortedArticles - статьи отсортированы по категориям
- * @currentCategories - список категорий статей из @currentArticles
+ * @currentCategories - список категорий статей из @lastUpdateArticles
  */
 
 public class MainFragmentState {
 
-    private List<MyArticle> currentArticles;
+    private List<MyArticle> lastUpdateArticles;
     private EnumMap<ArticleCategory, List<MyArticle>> currentSortedArticles;
     private ArticleCategory[] currentCategories;
-    private String highlight;
+    private String query;
 
     public MainFragmentState(DataSnapshot dataSnapshot) {
-        this.currentArticles = new ArrayList<>(dataSnapshot.getArticles());
-        this.currentSortedArticles = sortForCategories();
+        this.lastUpdateArticles = new ArrayList<>(dataSnapshot.getArticles());
+        this.currentSortedArticles = sortForCategories(this.lastUpdateArticles);
         this.currentCategories = getActualCategories();
-        this.highlight = dataSnapshot.getHighlight();
-    }
-
-    public MainFragmentState(List<MyArticle> currentArticles) {
-        this.currentArticles = new ArrayList<>(currentArticles);
-        this.currentSortedArticles = sortForCategories();
-        this.currentCategories = getActualCategories();
+        this.query = dataSnapshot.getQuery();
     }
 
     // Раскидать статьи по категориям. При каждом обновлении создается новая
     // EnumMap со списком актуальных новостных категорий.
-    private EnumMap<ArticleCategory, List<MyArticle>> sortForCategories() {
+    private EnumMap<ArticleCategory, List<MyArticle>> sortForCategories(List<MyArticle> currentArticles) {
 
         EnumMap<ArticleCategory, List<MyArticle>> enumMap = new EnumMap<>(ArticleCategory.class);
 
@@ -57,7 +51,7 @@ public class MainFragmentState {
         return enumMap;
     }
 
-    // Получить список актуальных категорий для текущего содержимого currentArticles
+    // Получить список актуальных категорий для текущего содержимого lastUpdateArticles
     // На выходе получаем упорядоченный массив категорий.
     private ArticleCategory[] getActualCategories() {
         ArticleCategory[] actualCategories =
@@ -67,14 +61,21 @@ public class MainFragmentState {
         return actualCategories;
     }
 
-    public void setCurrentArticles(List<MyArticle> currentArticles) {
-        this.currentArticles = new ArrayList<>(currentArticles);
-        this.currentSortedArticles = sortForCategories();
+    public void updateState(DataSnapshot dataSnapshot) {
+        String query = dataSnapshot.getQuery();
+        List<MyArticle> currentArticles = new ArrayList<>(dataSnapshot.getArticles());
+
+        if (query.isEmpty()) {
+            this.lastUpdateArticles = currentArticles;
+        }
+
+        this.currentSortedArticles = sortForCategories(currentArticles);
         this.currentCategories = getActualCategories();
+        this.query = query;
     }
 
-    public List<MyArticle> getCurrentArticles() {
-        return currentArticles;
+    public List<MyArticle> getLastUpdateArticles() {
+        return lastUpdateArticles;
     }
 
     public EnumMap<ArticleCategory, List<MyArticle>> getCurrentSortedArticles() {
@@ -91,11 +92,7 @@ public class MainFragmentState {
         return list;
     }
 
-    public String getHighlight() {
-        return highlight;
-    }
-
-    public void setHighlight(String highlight) {
-        this.highlight = highlight;
+    public String getQuery() {
+        return query;
     }
 }

@@ -42,8 +42,7 @@ public class RegularArticlePresenter implements ArticlePresenter {
                     @Override
                     public void onNext(DataSnapshot dataSnapshot) {
                         if (currentState != null) {
-                            currentState.setCurrentArticles(dataSnapshot.getArticles());
-                            currentState.setHighlight(dataSnapshot.getHighlight());
+                            currentState.updateState(dataSnapshot);
                         } else {
                             currentState = new MainFragmentState(dataSnapshot);
                         }
@@ -120,7 +119,7 @@ public class RegularArticlePresenter implements ArticlePresenter {
     @Override
     public List<MyArticle> getArticles() {
         if (currentState != null) {
-            return currentState.getCurrentArticles();
+            return currentState.getLastUpdateArticles();
         }
         return new ArrayList<>();
     }
@@ -132,13 +131,13 @@ public class RegularArticlePresenter implements ArticlePresenter {
 
     @Override
     public String getHighlight() {
-        return currentState.getHighlight();
+        return currentState.getQuery();
     }
 
     // Найти статью в общем списке по её ID
     private MyArticle findArticle(long articleId) {
         return currentState
-                .getCurrentArticles()
+                .getLastUpdateArticles()
                 .stream()
                 .filter((a) -> a.id == articleId)
                 .collect(Collectors.toList())
