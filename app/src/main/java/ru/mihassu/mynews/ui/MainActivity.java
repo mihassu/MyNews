@@ -11,21 +11,33 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
-import ru.mihassu.mynews.R;
+import javax.inject.Inject;
 
+import ru.mihassu.mynews.App;
+import ru.mihassu.mynews.R;
+import ru.mihassu.mynews.di.modules.ui.MainActivityModule;
 
 public class MainActivity extends AppCompatActivity {
+
+    @Inject
+    SharedPreferences preferences;
 
     private AppBarConfiguration appBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        App
+                .get()
+                .getAppComponent()
+                .plusMainActivityComponent(new MainActivityModule())
+                .inject(this);
+
         setAppTheme();
         setContentView(R.layout.activity_main);
         showBottomNavigationMenu();
@@ -43,12 +55,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_main, R.id.nav_settings)
+                R.id.nav_main,
+                R.id.nav_settings,
+                R.id.nav_bookmarks)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }
@@ -62,8 +78,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAppTheme() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean userTheme = preferences.getBoolean("dark_theme", false);
+        boolean userTheme =
+                preferences.getBoolean(
+                        getString(R.string.pref_key_dark_theme),
+                        false);
+
         if (userTheme) {
             setTheme(R.style.AppThemeDark);
         } else {
@@ -74,13 +93,15 @@ public class MainActivity extends AppCompatActivity {
     private void showBottomNavigationMenu() {
         View bottomNavigationMenu = findViewById(R.id.bottom_navigation);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean navigationMenuEnabled = preferences.getBoolean("show_bottom_navigation", false);
+        boolean navigationMenuEnabled =
+                preferences.getBoolean(
+                        getString(R.string.pref_key_show_bottom_navigation),
+                        false);
+
         if (navigationMenuEnabled) {
             bottomNavigationMenu.setVisibility(View.VISIBLE);
         } else {
             bottomNavigationMenu.setVisibility(View.GONE);
         }
     }
-
 }

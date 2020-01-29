@@ -27,6 +27,7 @@ public enum ArticleCategory {
         return textId;
     }
 
+    // Используется конвертером CategoryConverter
     public static Stream<ArticleCategory> toStream() {
         return Stream.of(ArticleCategory.values());
     }

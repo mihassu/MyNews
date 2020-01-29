@@ -1,6 +1,7 @@
 package ru.mihassu.mynews.domain.model;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -8,6 +9,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import java.util.Date;
+import java.util.Objects;
 
 import ru.mihassu.mynews.data.db.CategoryConverter;
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
@@ -33,6 +35,9 @@ public class MyArticle implements Comparable<MyArticle> {
     public String author;
     public String image;
 
+    @ColumnInfo(name = "marked")
+    public boolean isMarked;
+
     public MyArticle() {
     }
 
@@ -43,6 +48,7 @@ public class MyArticle implements Comparable<MyArticle> {
                      long pubDate,
                      String author,
                      String image,
+                     boolean isMarked,
                      String categoryOrigin,
                      ArticleCategory category) {
         this.id = calculateId(title, pubDate);
@@ -54,6 +60,7 @@ public class MyArticle implements Comparable<MyArticle> {
         this.image = image;
         this.categoryOrigin = categoryOrigin;
         this.category = category;
+        this.isMarked = isMarked;
     }
 
     @NonNull
@@ -70,6 +77,22 @@ public class MyArticle implements Comparable<MyArticle> {
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, isMarked, pubDate);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        final MyArticle other = (MyArticle)obj;
+        return this.id == other.id &&
+                this.isMarked == other.isMarked &&
+                this.pubDate == other.pubDate;
     }
 
     // Вычислить Id

@@ -1,10 +1,11 @@
 package ru.mihassu.mynews.domain.repository;
 
-import androidx.lifecycle.LiveData;
+import java.util.List;
 
-import ru.mihassu.mynews.ui.Fragments.MainFragmentState;
+import io.reactivex.Observable;
+import ru.mihassu.mynews.domain.model.MyArticle;
 
 public interface ChannelCollector {
-    LiveData<MainFragmentState> collectChannels();
+    Observable<List<MyArticle>> collectChannels();
     void updateChannels();
 }

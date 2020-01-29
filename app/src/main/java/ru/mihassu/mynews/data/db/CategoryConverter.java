@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import ru.mihassu.mynews.domain.entity.ArticleCategory;
 
+/**
+ * Конвертер для хранения в базе енума ArticleCategory
+ */
 public class CategoryConverter {
 
     @TypeConverter

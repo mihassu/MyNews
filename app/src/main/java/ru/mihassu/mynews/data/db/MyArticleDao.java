@@ -3,28 +3,38 @@ package ru.mihassu.mynews.data.db;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import ru.mihassu.mynews.domain.model.MyArticle;
 
 @Dao
 public interface MyArticleDao {
 
+    /**
+     * Записи есть - onSuccess
+     * Записей нет - onComplete и пустой список
+     */
     @Query("SELECT * FROM articles")
-    List<MyArticle> getAll();
+    Observable<List<MyArticle>> getAll();
 
+    /**
+     * Запись есть - onSuccess
+     * Записи нет - onComplete
+     */
     @Query("SELECT * FROM articles WHERE id = :id")
-    MyArticle getById(long id);
+    Maybe<MyArticle> getById(long id);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(MyArticle article);
-
-    @Update
-    void update(MyArticle article);
 
     @Delete
     void delete(MyArticle article);
+
+    @Query("delete from articles")
+    void clear();
 }

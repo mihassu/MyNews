@@ -34,8 +34,9 @@
         tools:text="lenta.ru * 2 hors ago" />
 
     <ImageView
+        android:id="@+id/flag_bookmark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        app:srcCompat="@drawable/ic_unselected" />
+        app:srcCompat="@drawable/asl_bookmark" />
 </LinearLayout>

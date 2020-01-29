@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="bookmark_state">
+        <attr name="state_on" format="boolean"/>
+        <attr name="state_off" format="boolean"/>
+    </declare-styleable>
+
+</resources>

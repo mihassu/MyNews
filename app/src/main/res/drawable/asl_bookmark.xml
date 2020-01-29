@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-selector xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/bookmark_off"
+        android:drawable="@drawable/ic_unselected"
+        app:state_off="true" />
+
+    <item
+        android:id="@+id/bookmark_on"
+        android:drawable="@drawable/ic_selected"/>
+
+    <transition
+        android:drawable="@drawable/avd_off_to_on"
+        android:fromId="@id/bookmark_off"
+        android:toId="@id/bookmark_on" />
+
+    <transition
+        android:drawable="@drawable/avd_on_to_off"
+        android:fromId="@id/bookmark_on"
+        android:toId="@id/bookmark_off" />
+</animated-selector>
+

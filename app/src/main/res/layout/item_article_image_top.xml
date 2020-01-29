@@ -11,50 +11,48 @@
     app:cardUseCompatPadding="true"
     card_view:cardCornerRadius="6dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="?android:attr/selectableItemBackground"
+    <ru.mihassu.mynews.ui.custom.AnimatedNewsCard
+        android:id="@+id/motionLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layoutDescription="@xml/motion_scene_news_card">
 
-        <LinearLayout
-            android:id="@+id/header"
+        <ImageView
+            android:id="@+id/item_preview"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginTop="192dp"
+            android:background="?attr/colorOnBackground"
+            android:padding="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/item_preview"
-                android:layout_width="match_parent"
-                android:layout_height="192dp"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/item_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="Заголовок" />
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Заголовок" />
 
         <TextView
             android:id="@+id/item_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:background="?attr/colorOnBackground"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
             app:layout_constraintBottom_toTopOf="@id/footer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header"
+            app:layout_constraintTop_toBottomOf="@+id/item_title"
             tools:text="Текст новости" />
 
-        <include layout="@layout/layout_footer"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/layout_footer" />
+    </ru.mihassu.mynews.ui.custom.AnimatedNewsCard>
 
 </com.google.android.material.card.MaterialCardView>
