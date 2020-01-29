@@ -236,6 +236,13 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
                     List<MyArticle> searchedList = new ArrayList<>();
                     List<MyArticle> currentList = currentState.getLastUpdateArticles();
 
+                    // При пустой строке в запросе снова показать все новости
+                    if(query.isEmpty()) {
+                        searchResultPublisher.onNext(
+                                new DataSnapshot(currentState.getLastUpdateArticles(), ""));
+                        return;
+                    }
+
                     for (MyArticle article : currentList) {
                         String title = article.title.toLowerCase();
                         if (title.contains(query)) {
