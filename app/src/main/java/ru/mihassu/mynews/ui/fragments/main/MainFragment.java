@@ -47,8 +47,8 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     private ViewPager2 viewPager;
     private ImageView progressBarImage;
     private View coordinatorLayoutView;
-    private ru.mihassu.mynews.ui.fragments.main.MainFragmentState currentState;
-    private ru.mihassu.mynews.ui.fragments.main.NewsViewPagerAdapter viewPagerAdapter;
+    private MainFragmentState currentState;
+    private NewsViewPagerAdapter viewPagerAdapter;
     private ConstraintLayout progressBarContainer;
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private List<String> tabHeaders = new ArrayList<>();
@@ -131,7 +131,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     public void onDestroy() {
         super.onDestroy();
         fragmentPresenter.onFragmentDisconnected();
-        if(searchDisposable != null && !searchDisposable.isDisposed()) {
+        if (searchDisposable != null && !searchDisposable.isDisposed()) {
             searchDisposable.dispose();
         }
     }
@@ -150,6 +150,10 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         // Убрать ProgressBar, показать новости
         hideProgressBar();
         viewPagerAdapter.updateContent();
+
+        if (currentState.isUpdateRequired()) {
+            showNotFoundSnackbar();
+        }
     }
 
     // Init ViewPager
@@ -236,7 +240,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
                     List<MyArticle> currentList = currentState.getLastUpdateArticles();
 
                     // При пустой строке в запросе снова показать все новости
-                    if(query.isEmpty()) {
+                    if (query.isEmpty()) {
                         searchResultPublisher.onNext(
                                 new DataSnapshot(currentState.getLastUpdateArticles(), ""));
                         return;
@@ -260,7 +264,11 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
 
     private void showNotFoundSnackbar() {
         if (getActivity() != null) {
-            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+//            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+            CustomSnackbar customSnackbar = CustomSnackbar.make(
+                    coordinatorLayoutView,
+                    R.drawable.vd_replay_end,
+                    "HELLO");
             customSnackbar.show();
         }
     }
