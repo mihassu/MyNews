@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/coordinator_main"
+    android:layout_centerHorizontal="true"
+
     tools:activityContext=".ui.MainActivity">
 
     <include layout="@layout/content_main" />

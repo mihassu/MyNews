@@ -42,6 +42,7 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.search.SearchObservable;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
+import ru.mihassu.mynews.ui.custom.CustomSnackbar;
 
 public class MainFragment extends Fragment implements Observer, ru.mihassu.mynews.ui.fragments.main.UpdateAgent {
 
@@ -260,12 +261,17 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     }
 
     private void showNotFoundSnackbar() {
+//        if (getActivity() != null) {
+//            Snackbar snackbar = Snackbar.make(contextView, getString(R.string.not_found), Snackbar.LENGTH_LONG);
+//            snackbar.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
+//            View snackBarView = snackbar.getView();
+//            snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackgroundDark));
+//            snackbar.show();
+//        }
+
         if (getActivity() != null) {
-            Snackbar snackbar = Snackbar.make(contextView, getString(R.string.not_found), Snackbar.LENGTH_LONG);
-            snackbar.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
-            View snackBarView = snackbar.getView();
-            snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackgroundDark));
-            snackbar.show();
+            CustomSnackbar customSnackbar = CustomSnackbar.make((ViewGroup) contextView, CustomSnackbar.LENGTH_LONG);
+            customSnackbar.show();
         }
     }
 }
