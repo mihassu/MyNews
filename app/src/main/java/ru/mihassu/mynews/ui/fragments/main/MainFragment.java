@@ -15,14 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -42,12 +40,13 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.search.SearchObservable;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
+import ru.mihassu.mynews.ui.custom.CustomSnackbar;
 
 public class MainFragment extends Fragment implements Observer, ru.mihassu.mynews.ui.fragments.main.UpdateAgent {
 
     private ViewPager2 viewPager;
     private ImageView progressBarImage;
-    private View contextView;
+    private View coordinatorLayoutView;
     private ru.mihassu.mynews.ui.fragments.main.MainFragmentState currentState;
     private ru.mihassu.mynews.ui.fragments.main.NewsViewPagerAdapter viewPagerAdapter;
     private ConstraintLayout progressBarContainer;
@@ -92,7 +91,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
 
         View viewFragment = inflater.inflate(R.layout.fragment_main, container, false);
 
-        contextView = viewFragment.findViewById(R.id.coordinator_main);
+        coordinatorLayoutView = viewFragment.findViewById(R.id.coordinator_main);
         progressBarContainer = viewFragment.findViewById(R.id.pb_container);
         progressBarImage = progressBarContainer.findViewById(R.id.iv_moving_points);
 
@@ -261,11 +260,8 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
 
     private void showNotFoundSnackbar() {
         if (getActivity() != null) {
-            Snackbar snackbar = Snackbar.make(contextView, getString(R.string.not_found), Snackbar.LENGTH_LONG);
-            snackbar.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
-            View snackBarView = snackbar.getView();
-            snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackgroundDark));
-            snackbar.show();
+            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+            customSnackbar.show();
         }
     }
 }
