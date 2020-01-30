@@ -1,13 +1,10 @@
 package ru.mihassu.mynews.ui.custom;
 
-/**
- * https://medium.com/@fabionegri/make-snackbar-great-again-51edf7c940d4
- */
-
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -21,56 +18,58 @@ import ru.mihassu.mynews.R;
 public class CustomSnackbar extends BaseTransientBottomBar<CustomSnackbar> {
 
     public CustomSnackbar(@NonNull ViewGroup parent,
-                          @NonNull View content,
-                          @NonNull ContentViewCallback contentViewCallback) {
-        super(parent, content, contentViewCallback);
+                          @NonNull CustomSnackBarView contentView) {
+        super(parent, contentView, contentView);
 
-        View view = getView();
-//
-//        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)parent.getLayoutParams();
-//        params.gravity = Gravity.CENTER_HORIZONTAL;
-//        parent.setLayoutParams(params);
+        // Позиционировать содержимое Snackbar'а (кастомную CustomSnackBarView) по центру
+        // родительского контейнера (SnackbarLayout/FrameLayout)
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) contentView.getLayoutParams();
+        params.gravity = Gravity.CENTER_HORIZONTAL;
+        contentView.setLayoutParams(params);
 
-        view.setForegroundGravity(Gravity.CENTER);
-        view.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.transparent));
-        view.setPadding(0, 0, 0, 0);
-
-
+        // В контейнере SnackbarLayout установить прозрачный фон и отступы
+        View snackbarLayout = getView();
+        snackbarLayout.setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.transparent));
+        snackbarLayout.setPadding(0, 0, 0, 0);
     }
 
-    public static CustomSnackbar make(ViewGroup parent, int duration) {
-        // inflate custom layout
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.layout_snackbar, parent, false);
+    public static CustomSnackbar make(@NonNull View view) {
+        ViewGroup parent = findSuitableParent((ViewGroup) view);
 
-        // create with custom view
-        ContentViewCallback callback = new ContentViewCallback(view);
-        CustomSnackbar customSnackbar = new CustomSnackbar(parent, view, callback);
-        customSnackbar.setDuration(duration);
+        if (parent == null) {
+            throw new IllegalArgumentException("No suitable parent found");
+        }
 
-        return customSnackbar;
+        LayoutInflater inflater = LayoutInflater.from(view.getContext());
+        CustomSnackBarView customView =
+                (CustomSnackBarView) inflater
+                        .inflate(R.layout.layout_snackbar_content_view, parent, false);
+
+        return new CustomSnackbar(parent, customView);
     }
 
-    private static class ContentViewCallback
-            implements BaseTransientBottomBar.ContentViewCallback {
+    private static ViewGroup findSuitableParent(ViewGroup view) {
+        ViewGroup fallback = null;
 
-        // view inflated from custom layout
-        private View view;
+        do {
+            if (view instanceof CoordinatorLayout) {
+                return view;
+            } else if (view instanceof FrameLayout) {
+                if (view.getId() == android.R.id.content) {
+                    return view;
+                } else {
+                    fallback = view;
+                }
+            }
 
-        public ContentViewCallback(View view) {
-            this.view = view;
-        }
+            if (view != null) {
+                ViewParent parent = view.getParent();
+                view = parent instanceof View ? (ViewGroup) parent : null;
+            }
 
-        @Override
-        public void animateContentIn(int delay, int duration) {
-            // TODO: handle enter animation
-        }
+        } while (view != null);
 
-        @Override
-        public void animateContentOut(int delay, int duration) {
-            // TODO: handle exit animation
-        }
+        return fallback;
     }
-
 }
 

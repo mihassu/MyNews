@@ -6,9 +6,12 @@ import android.view.View;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.material.snackbar.ContentViewCallback;
+
 import ru.mihassu.mynews.R;
 
-public class CustomSnackBarView extends ConstraintLayout {
+public class CustomSnackBarView extends ConstraintLayout implements ContentViewCallback {
+
     public CustomSnackBarView(Context context) {
         super(context);
     }
@@ -19,11 +22,14 @@ public class CustomSnackBarView extends ConstraintLayout {
 
     public CustomSnackBarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, 0);
-
-        View.inflate(context, R.layout.layout_snackbar, this);
+        View.inflate(context, R.layout.layout_snackbar_content_view, this);
     }
 
-    public CustomSnackBarView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, 0);
+    @Override
+    public void animateContentIn(int delay, int duration) {
+    }
+
+    @Override
+    public void animateContentOut(int delay, int duration) {
     }
 }
