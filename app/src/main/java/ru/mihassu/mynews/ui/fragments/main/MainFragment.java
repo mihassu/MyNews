@@ -157,7 +157,9 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         hideProgressBar();
         viewPagerAdapter.updateContent();
 
-        hideUpdateSnackbar();
+        if(!currentState.isUpdateRequired()) {
+            hideUpdateSnackbar();
+        }
     }
 
     // Init ViewPager
@@ -288,12 +290,14 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
 
     private void showUpdateSnackbar() {
 
+        final int duration20sec = 20 * 1000; 
+
         hideUpdateSnackbar();
         updateSnackbar = CustomSnackbar.make(coordinatorLayoutView);
         updateSnackbar
                 .setBackground(R.drawable.snackbar_update_bg)
                 .setText(R.string.press_to_update)
-                .setDuration(Snackbar.LENGTH_INDEFINITE)
+                .setDuration(duration20sec)
                 .setOnClickHandler(this::launchUpdate)
                 .show();
     }
