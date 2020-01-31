@@ -1,0 +1,99 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="200dp"
+            android:height="12dp"
+            android:viewportWidth="200.0"
+            android:viewportHeight="12.0">
+
+            <group
+                android:name="point1"
+                android:pivotX="@dimen/pivot_x_point"
+                android:pivotY="@dimen/pivot_y_point"
+                android:scaleX="@dimen/scale_point"
+                android:scaleY="@dimen/scale_point"
+                android:translateX="@dimen/translate_x_point"
+                android:translateY="@dimen/translate_y_point_sb">
+                <path
+                    android:fillColor="@android:color/white"
+                    android:pathData="M0,0 c1.1,0 2,0.9 2,2s-0.9,2 -2,2 -2,-0.9 -2,-2 0.9,-2 2,-2z" />
+            </group>
+
+            <group
+                android:name="point2"
+                android:pivotX="@dimen/pivot_x_point"
+                android:pivotY="@dimen/pivot_y_point"
+                android:scaleX="@dimen/scale_point"
+                android:scaleY="@dimen/scale_point"
+                android:translateX="@dimen/translate_x_point"
+                android:translateY="@dimen/translate_y_point_sb">
+                <path
+                    android:fillColor="@android:color/white"
+                    android:pathData="M0,0 c1.1,0 2,0.9 2,2s-0.9,2 -2,2 -2,-0.9 -2,-2 0.9,-2 2,-2z" />
+            </group>
+
+            <group
+                android:name="point3"
+                android:pivotX="@dimen/pivot_x_point"
+                android:pivotY="@dimen/pivot_y_point"
+                android:scaleX="@dimen/scale_point"
+                android:scaleY="@dimen/scale_point"
+                android:translateX="@dimen/translate_x_point"
+                android:translateY="@dimen/translate_y_point_sb">
+                <path
+                    android:fillColor="@android:color/white"
+                    android:pathData="M0,0 c1.1,0 2,0.9 2,2s-0.9,2 -2,2 -2,-0.9 -2,-2 0.9,-2 2,-2z" />
+            </group>
+
+        </vector>
+    </aapt:attr>
+
+    <target android:name="point1">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="1000"
+                android:propertyName="translateX"
+                android:startOffset="0"
+                android:valueFrom="-10"
+                android:valueTo="210">
+                <aapt:attr name="android:interpolator">
+
+                    <pathInterpolator android:pathData="M0.0,0.0 C0.33,0.755 0.66,0.135 1,1" />
+                </aapt:attr>
+            </objectAnimator>
+        </aapt:attr>
+    </target>
+
+    <target android:name="point2">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="1000"
+                android:propertyName="translateX"
+                android:startOffset="150"
+                android:valueFrom="-10"
+                android:valueTo="210">
+                <aapt:attr name="android:interpolator">
+                    <pathInterpolator android:pathData="M0.0,0.0 C0.33,0.755 0.66,0.135 1,1" />
+                </aapt:attr>
+            </objectAnimator>
+        </aapt:attr>
+    </target>
+
+    <target android:name="point3">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="1000"
+                android:propertyName="translateX"
+                android:startOffset="300"
+                android:valueFrom="-10"
+                android:valueTo="210">
+                <aapt:attr name="android:interpolator">
+                    <pathInterpolator android:pathData="M0.0,0.0 C0.33,0.755 0.66,0.135 1,1" />
+                </aapt:attr>
+            </objectAnimator>
+        </aapt:attr>
+    </target>
+
+</animated-vector>

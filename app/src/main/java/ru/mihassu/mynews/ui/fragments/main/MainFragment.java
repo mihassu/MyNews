@@ -21,6 +21,7 @@ import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -47,12 +48,13 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     private ViewPager2 viewPager;
     private ImageView progressBarImage;
     private View coordinatorLayoutView;
-    private ru.mihassu.mynews.ui.fragments.main.MainFragmentState currentState;
-    private ru.mihassu.mynews.ui.fragments.main.NewsViewPagerAdapter viewPagerAdapter;
+    private MainFragmentState currentState;
+    private NewsViewPagerAdapter viewPagerAdapter;
     private ConstraintLayout progressBarContainer;
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private List<String> tabHeaders = new ArrayList<>();
     private Disposable searchDisposable;
+    private CustomSnackbar updateSnackbar;
 
     @Inject
     Context context;
@@ -125,13 +127,17 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     public void onResume() {
         super.onResume();
         viewPagerAdapter.updateContent();
+
+        if (currentState != null && currentState.isUpdateRequired()) {
+            showUpdateSnackbar();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         fragmentPresenter.onFragmentDisconnected();
-        if(searchDisposable != null && !searchDisposable.isDisposed()) {
+        if (searchDisposable != null && !searchDisposable.isDisposed()) {
             searchDisposable.dispose();
         }
     }
@@ -150,6 +156,8 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         // Убрать ProgressBar, показать новости
         hideProgressBar();
         viewPagerAdapter.updateContent();
+
+        hideUpdateSnackbar();
     }
 
     // Init ViewPager
@@ -203,6 +211,14 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         }
     }
 
+    // Убрать update CustomSnackbar
+    private void hideUpdateSnackbar() {
+        if (updateSnackbar != null && updateSnackbar.isShown()) {
+            updateSnackbar.dismiss();
+            updateSnackbar = null;
+        }
+    }
+
     @Override
     public void launchUpdate() {
         fragmentPresenter.updateChannels();
@@ -236,7 +252,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
                     List<MyArticle> currentList = currentState.getLastUpdateArticles();
 
                     // При пустой строке в запросе снова показать все новости
-                    if(query.isEmpty()) {
+                    if (query.isEmpty()) {
                         searchResultPublisher.onNext(
                                 new DataSnapshot(currentState.getLastUpdateArticles(), ""));
                         return;
@@ -261,7 +277,24 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     private void showNotFoundSnackbar() {
         if (getActivity() != null) {
             CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
-            customSnackbar.show();
+            customSnackbar
+                    .setBackground(R.drawable.shackbar_not_found_bg)
+                    .setText(R.string.not_found)
+                    .setIcon(R.drawable.vd_replay_start)
+                    .setDuration(Snackbar.LENGTH_LONG)
+                    .show();
         }
+    }
+
+    private void showUpdateSnackbar() {
+
+        hideUpdateSnackbar();
+        updateSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+        updateSnackbar
+                .setBackground(R.drawable.snackbar_update_bg)
+                .setText(R.string.press_to_update)
+                .setDuration(Snackbar.LENGTH_INDEFINITE)
+                .setOnClickHandler(this::launchUpdate)
+                .show();
     }
 }
