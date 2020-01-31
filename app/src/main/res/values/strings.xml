@@ -28,6 +28,7 @@
 
     <string name="action_search">Search</string>
     <string name="not_found">Not found</string>
+    <string name="press_to_update">Press to update</string>
 
     <string name="loading_news">Loading&#8230;</string>
 

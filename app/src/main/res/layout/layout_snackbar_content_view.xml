@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ru.mihassu.mynews.ui.custom.CustomSnackBarView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/shackbar_bg">
+    android:padding="10dp"
+    tools:background="@drawable/shackbar_not_found_bg">
 
     <ImageView
         android:id="@+id/iv_sb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/vd_replay_start"
         android:contentDescription="@null"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/tv_sb"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/vd_replay_start"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_sb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/not_found"
         android:layout_marginStart="12dp"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/iv_sb"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/not_found" />
 
 </ru.mihassu.mynews.ui.custom.CustomSnackBarView>

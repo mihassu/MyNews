@@ -21,6 +21,7 @@ import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -152,7 +153,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         viewPagerAdapter.updateContent();
 
         if (currentState.isUpdateRequired()) {
-            showNotFoundSnackbar();
+            showUpdateSnackbar();
         }
     }
 
@@ -264,12 +265,24 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
 
     private void showNotFoundSnackbar() {
         if (getActivity() != null) {
-//            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
-            CustomSnackbar customSnackbar = CustomSnackbar.make(
-                    coordinatorLayoutView,
-                    R.drawable.vd_replay_end,
-                    "HELLO");
-            customSnackbar.show();
+            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+            customSnackbar
+                    .setBackground(R.drawable.shackbar_not_found_bg)
+                    .setText(R.string.not_found)
+                    .setIcon(R.drawable.vd_replay_start)
+                    .setDuration(Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    private void showUpdateSnackbar() {
+        if (getActivity() != null) {
+            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+            customSnackbar
+                    .setBackground(R.drawable.snackbar_update_bg)
+                    .setText(R.string.press_to_update)
+                    .setDuration(Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 }
