@@ -54,6 +54,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private List<String> tabHeaders = new ArrayList<>();
     private Disposable searchDisposable;
+    private CustomSnackbar updateSnackbar;
 
     @Inject
     Context context;
@@ -126,6 +127,10 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     public void onResume() {
         super.onResume();
         viewPagerAdapter.updateContent();
+
+        if (currentState != null && currentState.isUpdateRequired()) {
+            showUpdateSnackbar();
+        }
     }
 
     @Override
@@ -152,9 +157,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         hideProgressBar();
         viewPagerAdapter.updateContent();
 
-        if (currentState.isUpdateRequired()) {
-            showUpdateSnackbar();
-        }
+        hideUpdateSnackbar();
     }
 
     // Init ViewPager
@@ -205,6 +208,14 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         progressBarContainer.setVisibility(View.INVISIBLE);
         if (animatedProgressBar != null) {
             animatedProgressBar.stop();
+        }
+    }
+
+    // Убрать update CustomSnackbar
+    private void hideUpdateSnackbar() {
+        if (updateSnackbar != null && updateSnackbar.isShown()) {
+            updateSnackbar.dismiss();
+            updateSnackbar = null;
         }
     }
 
@@ -276,14 +287,14 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     }
 
     private void showUpdateSnackbar() {
-        if (getActivity() != null) {
-            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
-            customSnackbar
-                    .setBackground(R.drawable.snackbar_update_bg)
-                    .setText(R.string.press_to_update)
-                    .setDuration(Snackbar.LENGTH_INDEFINITE)
-                    .setOnClickHandler(this::launchUpdate)
-                    .show();
-        }
+
+        hideUpdateSnackbar();
+        updateSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+        updateSnackbar
+                .setBackground(R.drawable.snackbar_update_bg)
+                .setText(R.string.press_to_update)
+                .setDuration(Snackbar.LENGTH_INDEFINITE)
+                .setOnClickHandler(this::launchUpdate)
+                .show();
     }
 }

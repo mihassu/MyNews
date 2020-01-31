@@ -98,11 +98,12 @@ public class MainFragmentState {
 
     public boolean isUpdateRequired() {
 
-        final long hourSeconds = 60 * 60;
+        // Для теста на 10 минут
+        final long hourSeconds = 60 * 10;
         long moreRecent = 0;
 
-        for(MyArticle article : lastUpdateArticles) {
-            if(article.pubDate > moreRecent) {
+        for (MyArticle article : lastUpdateArticles) {
+            if (article.pubDate > moreRecent) {
                 moreRecent = article.pubDate;
             }
         }
