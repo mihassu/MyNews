@@ -281,7 +281,8 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
             customSnackbar
                     .setBackground(R.drawable.snackbar_update_bg)
                     .setText(R.string.press_to_update)
-                    .setDuration(Snackbar.LENGTH_LONG)
+                    .setDuration(Snackbar.LENGTH_INDEFINITE)
+                    .setOnClickHandler(this::launchUpdate)
                     .show();
         }
     }

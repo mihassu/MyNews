@@ -98,7 +98,7 @@ public class MainFragmentState {
 
     public boolean isUpdateRequired() {
 
-        final long hourSeconds = 60 * 1;
+        final long hourSeconds = 60 * 60;
         long moreRecent = 0;
 
         for(MyArticle article : lastUpdateArticles) {
@@ -108,6 +108,5 @@ public class MainFragmentState {
         }
 
         return (System.currentTimeMillis() - moreRecent) / 1000 > hourSeconds;
-
     }
 }
