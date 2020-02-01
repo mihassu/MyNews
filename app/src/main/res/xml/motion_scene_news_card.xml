@@ -22,7 +22,7 @@
             android:id="@+id/item_preview"
             android:layout_width="match_parent"
             android:layout_height="256dp"
-            android:translationY="-50dp"
+            android:translationY="0dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
