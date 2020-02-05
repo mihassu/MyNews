@@ -7,6 +7,8 @@
     <color name="colorBackgroundLight">#FFFAFAFA</color>
     <color name="colorBackgroundDark">#FF121212</color>
 
+    <color name="holo_blue_dark_custom">#880099cc</color>
+
     <color name="spinner_out">@color/colorPrimary</color>
     <color name="spinner_in">#858585</color>
     <color name="text_anim">#421c52</color>
