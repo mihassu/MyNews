@@ -95,4 +95,19 @@ public class MainFragmentState {
     public String getQuery() {
         return query;
     }
+
+    public boolean isUpdateRequired() {
+
+        // Для теста на 10 минут
+        final long hourSeconds = 60 * 10;
+        long moreRecent = 0;
+
+        for (MyArticle article : lastUpdateArticles) {
+            if (article.pubDate > moreRecent) {
+                moreRecent = article.pubDate;
+            }
+        }
+
+        return (System.currentTimeMillis() - moreRecent) / 1000 > hourSeconds;
+    }
 }

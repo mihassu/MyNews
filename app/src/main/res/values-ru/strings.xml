@@ -23,6 +23,7 @@
 
     <string name="action_search">Поиск</string>
     <string name="not_found">Не найдено</string>
+    <string name="press_to_update">Нажмите, чтобы обновить</string>
 
     <string name="loading_news">Загружаю&#8230;</string>
 

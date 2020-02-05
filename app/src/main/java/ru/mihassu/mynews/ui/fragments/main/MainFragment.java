@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
@@ -42,18 +41,20 @@ import ru.mihassu.mynews.domain.model.MyArticle;
 import ru.mihassu.mynews.domain.search.SearchObservable;
 import ru.mihassu.mynews.presenters.i.ArticlePresenter;
 import ru.mihassu.mynews.presenters.i.MainFragmentPresenter;
+import ru.mihassu.mynews.ui.custom.CustomSnackbar;
 
 public class MainFragment extends Fragment implements Observer, ru.mihassu.mynews.ui.fragments.main.UpdateAgent {
 
     private ViewPager2 viewPager;
     private ImageView progressBarImage;
-    private View contextView;
-    private ru.mihassu.mynews.ui.fragments.main.MainFragmentState currentState;
-    private ru.mihassu.mynews.ui.fragments.main.NewsViewPagerAdapter viewPagerAdapter;
+    private View coordinatorLayoutView;
+    private MainFragmentState currentState;
+    private NewsViewPagerAdapter viewPagerAdapter;
     private ConstraintLayout progressBarContainer;
     private AnimatedVectorDrawableCompat animatedProgressBar;
     private List<String> tabHeaders = new ArrayList<>();
     private Disposable searchDisposable;
+    private CustomSnackbar updateSnackbar;
 
     @Inject
     Context context;
@@ -92,7 +93,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
 
         View viewFragment = inflater.inflate(R.layout.fragment_main, container, false);
 
-        contextView = viewFragment.findViewById(R.id.coordinator_main);
+        coordinatorLayoutView = viewFragment.findViewById(R.id.coordinator_main);
         progressBarContainer = viewFragment.findViewById(R.id.pb_container);
         progressBarImage = progressBarContainer.findViewById(R.id.iv_moving_points);
 
@@ -126,13 +127,17 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
     public void onResume() {
         super.onResume();
         viewPagerAdapter.updateContent();
+
+        if (currentState != null && currentState.isUpdateRequired()) {
+            showUpdateSnackbar();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         fragmentPresenter.onFragmentDisconnected();
-        if(searchDisposable != null && !searchDisposable.isDisposed()) {
+        if (searchDisposable != null && !searchDisposable.isDisposed()) {
             searchDisposable.dispose();
         }
     }
@@ -151,6 +156,10 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         // Убрать ProgressBar, показать новости
         hideProgressBar();
         viewPagerAdapter.updateContent();
+
+        if(!currentState.isUpdateRequired()) {
+            hideUpdateSnackbar();
+        }
     }
 
     // Init ViewPager
@@ -204,6 +213,14 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
         }
     }
 
+    // Убрать update CustomSnackbar
+    private void hideUpdateSnackbar() {
+        if (updateSnackbar != null && updateSnackbar.isShown()) {
+            updateSnackbar.dismiss();
+            updateSnackbar = null;
+        }
+    }
+
     @Override
     public void launchUpdate() {
         fragmentPresenter.updateChannels();
@@ -237,7 +254,7 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
                     List<MyArticle> currentList = currentState.getLastUpdateArticles();
 
                     // При пустой строке в запросе снова показать все новости
-                    if(query.isEmpty()) {
+                    if (query.isEmpty()) {
                         searchResultPublisher.onNext(
                                 new DataSnapshot(currentState.getLastUpdateArticles(), ""));
                         return;
@@ -261,11 +278,27 @@ public class MainFragment extends Fragment implements Observer, ru.mihassu.mynew
 
     private void showNotFoundSnackbar() {
         if (getActivity() != null) {
-            Snackbar snackbar = Snackbar.make(contextView, getString(R.string.not_found), Snackbar.LENGTH_LONG);
-            snackbar.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorAccent));
-            View snackBarView = snackbar.getView();
-            snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorBackgroundDark));
-            snackbar.show();
+            CustomSnackbar customSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+            customSnackbar
+                    .setBackground(R.drawable.shackbar_not_found_bg)
+                    .setText(R.string.not_found)
+                    .setIcon(R.drawable.vd_replay_start)
+                    .setDuration(Snackbar.LENGTH_LONG)
+                    .show();
         }
+    }
+
+    private void showUpdateSnackbar() {
+
+        final int duration20sec = 20 * 1000; 
+
+        hideUpdateSnackbar();
+        updateSnackbar = CustomSnackbar.make(coordinatorLayoutView);
+        updateSnackbar
+                .setBackground(R.drawable.snackbar_update_bg)
+                .setText(R.string.press_to_update)
+                .setDuration(duration20sec)
+                .setOnClickHandler(this::launchUpdate)
+                .show();
     }
 }
